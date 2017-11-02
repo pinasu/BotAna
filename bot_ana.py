@@ -36,7 +36,6 @@ while True: #"while 1" if you prefere *lennyface*
 			#Response to Twitch, checking if the Bot is still woke
 			if "PING" in line:
 				s.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-				print("?")
 			else:
 				#Get actual message and chatter username
 				parts = line.split(':')

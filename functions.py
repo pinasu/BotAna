@@ -25,7 +25,7 @@ def check_ban(socket):
 #Function to check if channel is online
 def check_online(socket):
 	offline = True
-	url = "https://api.twitch.tv/kraken/streams/stockhausen_l2p"
+	url = "https://api.twitch.tv/kraken/streams/"+config.NICK+""
 	params = {"Client-ID" : ""+config.CLIENT_ID+""}
 	resp = requests.get(url=url, headers=params)
 	is_online = json.loads(resp.text)
