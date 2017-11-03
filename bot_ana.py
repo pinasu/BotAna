@@ -41,7 +41,7 @@ while True: #"while 1" if you prefere *lennyface*
 				parts = line.split(':')
 				if len(parts) < 3: continue
 				if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-					config.message = parts[2][:len(parts[2])]
+					config.message = parts[2]
 
 				usernamesplit = parts[1].split("!")
 				config.username = usernamesplit[0]
