@@ -58,7 +58,7 @@ while True: #"while 1" if you prefere *lennyface*
 				arguments = ' '.join(message_list[1:])
 
 				#Check user message, if he's screaming he'll be warned by bot or banned
-				if sum(1 for c in message if c.isupper()) > 15:
+				if sum(1 for c in config.message if c.isupper()) + sum(1 for c in arguments if c.isupper()) > 15:
 					functions.check_ban(s)
 				
 				elif config.message.startswith('!'):
