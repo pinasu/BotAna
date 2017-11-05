@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt
 from botana import BotAna
@@ -61,6 +61,9 @@ class Window(QtWidgets.QWidget):
 
         self.show()
 
+    def closeEvent(self, e):
+        """ssss"""
+
     def printOnTextArea(self, msg):
         if(msg != ""):
             self.textarea.insertPlainText(msg + "\n")
@@ -79,5 +82,5 @@ class Window(QtWidgets.QWidget):
 
 app = QtWidgets.QApplication(sys.argv)
 a_window = Window()
+os._exit(app.exec_())
 
-sys.exit(app.exec_())
