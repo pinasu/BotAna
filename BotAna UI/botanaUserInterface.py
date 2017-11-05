@@ -73,8 +73,8 @@ class Window(QtWidgets.QWidget):
             self.inputText.setText("")
 
 
-
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     a_window = Window()
     sys.exit(app.exec_())
+    
