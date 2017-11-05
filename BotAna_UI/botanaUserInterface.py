@@ -11,17 +11,17 @@ class Window(QtWidgets.QWidget):
 
     def init_ui(self):
 
-        sshFile="style.css"
+        sshFile="res/style.css"
         with open(sshFile,"r") as fh:
             self.setStyleSheet(fh.read())
 
-        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.setWindowIcon(QtGui.QIcon('res/icon.png'))
         
         self.setGeometry(400,200,950, 450)
         self.setMinimumSize(700,300)
         self.logo = QtWidgets.QLabel()
         self.logo.setObjectName("logo")
-        self.logo.setPixmap(QtGui.QPixmap('botana.png'))
+        self.logo.setPixmap(QtGui.QPixmap('res/botana.png'))
         self.textarea = QtWidgets.QPlainTextEdit()
         self.textarea.setReadOnly(1)
         self.textarea.insertPlainText("Message here\n")
