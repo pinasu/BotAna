@@ -58,10 +58,13 @@ class Window(QtWidgets.QWidget):
 
         self.show()
 
+    def printOnTextArea(self, msg):
+        if(msg != ""):
+            self.textarea.insertPlainText(msg + "\n")
+
     def keyPressEvent(self, event):
         if(event.key() == Qt.Key_Return and self.inputText.hasFocus()):
             self.btn_click()
-
 
     def btn_click(self):
         msg = self.inputText.text()
