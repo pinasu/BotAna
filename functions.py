@@ -1,7 +1,7 @@
 #Bot useful functions
 
 #Useful imports
-import config, socket, time, json
+import config, socket, time, json, requests, datetime
 
 #Function to send given message to the chat
 def send_message(socket, message):
@@ -28,7 +28,7 @@ def check_online(socket):
     url = "https://api.twitch.tv/kraken/streams/"+config.NICK+""
     params = {"Client-ID" : ""+config.CLIENT_ID+""}
     resp = requests.get(url=url, headers=params)
-    is_online = json.loads(resp.text)
+    online = json.loads(resp.text)
     #Check if stream is offline or is a Vodcast
     while online["stream"] == None or online["stream"]["stream_type"] == "watch_party":
         #It's a vodcast
@@ -56,7 +56,7 @@ def check_online(socket):
         online = json.loads(resp.text)
 
         #Stockhausen always stream at 20, set for how much time will the Bot sleep
-        if datetime.datetime.now().time.strftime('%H') == "19":
+        if datetime.datetime.now().strftime('%H') == "19":
             offline = False
 
         if offline:

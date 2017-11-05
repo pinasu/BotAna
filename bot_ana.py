@@ -20,7 +20,7 @@ socket.send(bytes("JOIN " + config.CHAN + "\r\n", "UTF-8"))
 #Write to stdout to check if bot is connected
 print("I'm now connected to "+ config.NICK + ".")
 
-functions.check_online()
+functions.check_online(socket)
 
 #Send first bot message to the chat it's connected to
 functions.send_message(socket, "Don't even worry guys, Bottana is here anaLove")
@@ -30,7 +30,10 @@ while True: #"while 1" if you prefere *lennyface*
 
     #Get Twitch chat current message
     rec = str(socket.recv(1024)).split("\\r\\n")
-    rec = rec.decode('utf-8')
+
+    #da sistemare
+    #rec = rec.decode('utf-8')
+    
     if rec:
         #Parse received message
         for line in rec:
