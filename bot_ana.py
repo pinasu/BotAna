@@ -66,7 +66,7 @@ while True: #"while 1" if you prefere *lennyface*
                 elif config.message.startswith('!'):
                     if config.message in config.mods_commands:
                         functions.call_command_mod(socket)
-                    else
+                    else:
                         functions.process_command_pleb(socket)
 
     #Prevent Bot to use too much CPU

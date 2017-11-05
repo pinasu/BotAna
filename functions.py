@@ -154,7 +154,7 @@ def call_command_pleb(socket):
     elif config.message == "maledizione":
         file = open("maledizioni.txt", "r")
         maled = file.read()
-        count = (int)maled + 1
+        count = int(maled) + 1
         file.close()
 
         send_message(socket, "Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
@@ -162,7 +162,7 @@ def call_command_pleb(socket):
         file = open("maledizioni.txt", "w")
         file.write(str(count))
 
-    elif config.message == "!suicidio"
+    elif config.message == "!suicidio":
         if config.username == config.NICK:
             send_message(socket, "Imperatore mio Imperatore, non posso permetterti di farlo! BibleThump")
         elif config.username in config.mods:
