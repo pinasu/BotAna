@@ -28,46 +28,46 @@ functions.send_message(socket, "Don't even worry guys, Bottana is here anaLove")
 #Bot main while loop
 while True: #"while 1" if you prefere *lennyface*
 
-	#Get Twitch chat current message
-	rec = str(socket.recv(1024)).split("\\r\\n")
-	rec = rec.decode('utf-8')
-	if rec:
-		#Parse received message
-		for line in rec:
-			#Response to Twitch, checking if the Bot is still woke
-			if "PING" in line:
-				s.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-			else:
-				#Get actual message and chatter username
-				parts = line.split(':')
-				if len(parts) < 3: continue
-				if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-					config.message = parts[2]
+    #Get Twitch chat current message
+    rec = str(socket.recv(1024)).split("\\r\\n")
+    rec = rec.decode('utf-8')
+    if rec:
+        #Parse received message
+        for line in rec:
+            #Response to Twitch, checking if the Bot is still woke
+            if "PING" in line:
+                s.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+            else:
+                #Get actual message and chatter username
+                parts = line.split(':')
+                if len(parts) < 3: continue
+                if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
+                    config.message = parts[2]
 
-				usernamesplit = parts[1].split("!")
-				config.username = usernamesplit[0]
+                usernamesplit = parts[1].split("!")
+                config.username = usernamesplit[0]
 
-				#Print to stdout user's nick and message
-				print(config.username+": "+config.message)
+                #Print to stdout user's nick and message
+                print(config.username+": "+config.message)
 
-				message_list = config.message.split(' ');
+                message_list = config.message.split(' ');
 
-				#Get command from message
-				config.message = message_list[0]
-				
-				#Get message arguments, if there are any
-				config.arguments = ' '.join(message_list[1:])
+                #Get command from message
+                config.message = message_list[0]
+                
+                #Get message arguments, if there are any
+                config.arguments = ' '.join(message_list[1:])
 
-				#Check user message, if he's screaming he'll be warned by bot or banned
-				if sum(1 for c in config.message if c.isupper()) + sum(1 for c in config.arguments if c.isupper())> 15:
-					functions.check_ban(s)
-				
-				#Message is a command
-				elif config.message.startswith('!'):
-					if config.message in config.mods_commands:
-						functions.call_command_mod(socket)
-					else
-						functions.process_command_pleb(socket)
+                #Check user message, if he's screaming he'll be warned by bot or banned
+                if sum(1 for c in config.message if c.isupper()) + sum(1 for c in config.arguments if c.isupper())> 15:
+                    functions.check_ban(s)
+                
+                #Message is a command
+                elif config.message.startswith('!'):
+                    if config.message in config.mods_commands:
+                        functions.call_command_mod(socket)
+                    else
+                        functions.process_command_pleb(socket)
 
-	#Prevent Bot to use too much CPU
-	time.sleep(1/config.RATE)
+    #Prevent Bot to use too much CPU
+    time.sleep(1/config.RATE)
