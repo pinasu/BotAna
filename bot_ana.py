@@ -22,14 +22,15 @@ print("I'm now connected to "+ config.NICK + ".")
 
 functions.check_online()
 
-#Send first bot message to the chat he's connected to
+#Send first bot message to the chat it's connected to
 functions.send_message(socket, "Don't even worry guys, Bottana is here anaLove")
 
 #Bot main while loop
 while True: #"while 1" if you prefere *lennyface*
+
 	#Get Twitch chat current message
 	rec = str(socket.recv(1024)).split("\\r\\n")
-
+	rec = rec.decode('utf-8')
 	if rec:
 		#Parse received message
 		for line in rec:
@@ -55,13 +56,18 @@ while True: #"while 1" if you prefere *lennyface*
 				config.message = message_list[0]
 				
 				#Get message arguments, if there are any
-				arguments = ' '.join(message_list[1:])
+				config.arguments = ' '.join(message_list[1:])
 
 				#Check user message, if he's screaming he'll be warned by bot or banned
-				if sum(1 for c in config.message if c.isupper()) + sum(1 for c in arguments if c.isupper()) > 15:
+				if sum(1 for c in config.message if c.isupper()) + sum(1 for c in config.arguments if c.isupper())> 15:
 					functions.check_ban(s)
 				
+				#Message is a command
 				elif config.message.startswith('!'):
-					
+					if config.message in config.mods_commands:
+						functions.call_command_mod(socket)
+					else
+						functions.process_command_pleb(socket)
+
 	#Prevent Bot to use too much CPU
 	time.sleep(1/config.RATE)
