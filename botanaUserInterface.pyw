@@ -10,7 +10,7 @@ class Window(QtWidgets.QWidget):
         super().__init__()
         self.init_ui()
         self.bot = BotAna(self)
-        self.t = threading.Thread(target=self.bot.test, args=())
+        self.t = threading.Thread(target=self.bot.start, args=())
         self.t.start()
 
     def init_ui(self):

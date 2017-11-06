@@ -13,7 +13,7 @@ class BotAna():
     def sendMessage(self, msg):
         functions.send_message(self.sock, msg + "\n")
 
-    def test(self):
+    def start(self):
         
         #Chat connection
         self.sock.connect((config.HOST, config.PORT))
