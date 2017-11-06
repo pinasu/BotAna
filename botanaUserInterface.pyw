@@ -1,6 +1,7 @@
 import sys, os
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextCursor
 from botana import BotAna
 import threading
 
@@ -27,7 +28,7 @@ class Window(QtWidgets.QWidget):
         self.logo.setObjectName("logo")
         self.logo.setPixmap(QtGui.QPixmap('res/botana.png'))
         self.textarea = QtWidgets.QPlainTextEdit()
-        self.textarea.setReadOnly(1)
+        self.textarea.setReadOnly(True)
         self.textarea.setObjectName("textarea")
         self.inputText = QtWidgets.QLineEdit()
         self.inputText.setObjectName("inputText")
@@ -63,6 +64,7 @@ class Window(QtWidgets.QWidget):
 
     def printOnTextArea(self, msg):
         if(msg != ""):
+            self.textarea.moveCursor(QTextCursor.End)
             self.textarea.insertPlainText(msg + "\n")
 
     def keyPressEvent(self, event):
