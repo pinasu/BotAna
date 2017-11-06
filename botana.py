@@ -62,75 +62,77 @@ class BotAna():
         self.old_ball = ""
 
     def start(self):
+        try:
+            #Chat connection
+            self.sock.connect((self.HOST, self.PORT))
+
+            #Send to Twitch some usefuli nformations
+            #Bot OAuth, so he can write in chat
+            self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
+
+            #Channel to join
+            self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
+            self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
+
+            #Write to stdout to check if bot is connected
+            self.printMessage("I'm now connected to "+ self.NICK + ".")
+
+            self.check_online()
+
+            #Send first bot message to the chat it's connected to
+            self.send_message("Don't even worry guys, Bottana is here anaLove")
         
-        #Chat connection
-        self.sock.connect((self.HOST, self.PORT))
+            #Bot main while loop
+            while True: #"while 1" if you prefere *lennyface*
 
-        #Send to Twitch some usefuli nformations
-        #Bot OAuth, so he can write in chat
-        self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
+                #Get Twitch chat current message
+                rec = str(self.sock.recv(1024)).split("\\r\\n")
 
-        #Channel to join
-        self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
-        self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
+                #da sistemare
+                #rec = rec.decode('utf-8')
+                
+                if rec:
+                    #Parse received message
+                    for line in rec:
+                        #Response to Twitch, checking if the Bot is still woke
+                        if "PING" in line:
+                            s.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+                        else:
+                            #Get actual message and chatter username
+                            parts = line.split(':')
+                            if len(parts) < 3: continue
+                            if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
+                                self.message = parts[2]
 
-        #Write to stdout to check if bot is connected
-        self.printMessage("I'm now connected to "+ self.NICK + ".")
+                            usernamesplit = parts[1].split("!")
+                            self.username = usernamesplit[0]
 
-        self.check_online()
+                            #Print to stdout user's nick and message
+                            self.printMessage(self.username+": "+self.message)
 
-        #Send first bot message to the chat it's connected to
-        self.send_message("Don't even worry guys, Bottana is here anaLove")
+                            message_list = self.message.split(' ');
 
-        #Bot main while loop
-        while True: #"while 1" if you prefere *lennyface*
+                            #Get command from message
+                            self.message = message_list[0]
+                            
+                            #Get message arguments, if there are any
+                            self.arguments = ' '.join(message_list[1:])
 
-            #Get Twitch chat current message
-            rec = str(self.sock.recv(1024)).split("\\r\\n")
+                            #Check user message, if he's screaming he'll be warned by bot or banned
+                            if sum(1 for c in self.message if c.isupper()) + sum(1 for c in self.arguments if c.isupper())> 15:
+                                self.check_ban()
+                            
+                            #Message is a command
+                            elif self.message.startswith('!'):
+                                if self.message in self.mods_commands:
+                                    self.call_command_mod()
+                                else:
+                                    self.process_command_pleb()
 
-            #da sistemare
-            #rec = rec.decode('utf-8')
-            
-            if rec:
-                #Parse received message
-                for line in rec:
-                    #Response to Twitch, checking if the Bot is still woke
-                    if "PING" in line:
-                        s.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-                    else:
-                        #Get actual message and chatter username
-                        parts = line.split(':')
-                        if len(parts) < 3: continue
-                        if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                            self.message = parts[2]
-
-                        usernamesplit = parts[1].split("!")
-                        self.username = usernamesplit[0]
-
-                        #Print to stdout user's nick and message
-                        self.printMessage(self.username+": "+self.message)
-
-                        message_list = self.message.split(' ');
-
-                        #Get command from message
-                        self.message = message_list[0]
-                        
-                        #Get message arguments, if there are any
-                        self.arguments = ' '.join(message_list[1:])
-
-                        #Check user message, if he's screaming he'll be warned by bot or banned
-                        if sum(1 for c in self.message if c.isupper()) + sum(1 for c in self.arguments if c.isupper())> 15:
-                            self.check_ban(self.sock)
-                        
-                        #Message is a command
-                        elif self.message.startswith('!'):
-                            if self.message in self.mods_commands:
-                                self.call_command_mod(self.sock)
-                            else:
-                                self.process_command_pleb(self.sock)
-
-            #Prevent Bot to use too much CPU
-            time.sleep(1/self.RATE)
+                #Prevent Bot to use too much CPU
+                time.sleep(1/self.RATE)
+        except:
+            self.printMessage("SI E' VERIFICATO UN ERRORE")
 
     def printMessage(self, msg):
         print(msg)

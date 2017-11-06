@@ -27,7 +27,7 @@ class Window(QtWidgets.QWidget):
         self.logo = QtWidgets.QLabel()
         self.logo.setObjectName("logo")
         self.logo.setPixmap(QtGui.QPixmap('res/botana.png'))
-        self.textarea = QtWidgets.QPlainTextEdit()
+        self.textarea = QtWidgets.QTextEdit()
         self.textarea.setReadOnly(True)
         self.textarea.setObjectName("textarea")
         self.inputText = QtWidgets.QLineEdit()
@@ -64,8 +64,7 @@ class Window(QtWidgets.QWidget):
 
     def printOnTextArea(self, msg):
         if(msg != ""):
-            self.textarea.moveCursor(QTextCursor.End)
-            self.textarea.insertPlainText(msg + "\n")
+            self.textarea.append(msg)
 
     def keyPressEvent(self, event):
         if(event.key() == Qt.Key_Return and self.inputText.hasFocus()):
