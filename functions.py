@@ -1,7 +1,7 @@
 #Bot useful functions
 
 #Useful imports
-import config, socket, time, json, requests, datetime
+import config, socket, time, json
 
 #Function to send given message to the chat
 def send_message(socket, message):
@@ -28,7 +28,7 @@ def check_online(socket):
     url = "https://api.twitch.tv/kraken/streams/"+config.NICK+""
     params = {"Client-ID" : ""+config.CLIENT_ID+""}
     resp = requests.get(url=url, headers=params)
-    online = json.loads(resp.text)
+    is_online = json.loads(resp.text)
     #Check if stream is offline or is a Vodcast
     while online["stream"] == None or online["stream"]["stream_type"] == "watch_party":
         #It's a vodcast
@@ -56,7 +56,7 @@ def check_online(socket):
         online = json.loads(resp.text)
 
         #Stockhausen always stream at 20, set for how much time will the Bot sleep
-        if datetime.datetime.now().strftime('%H') == "19":
+        if datetime.datetime.now().time.strftime('%H') == "19":
             offline = False
 
         if offline:
@@ -154,7 +154,7 @@ def call_command_pleb(socket):
     elif config.message == "maledizione":
         file = open("maledizioni.txt", "r")
         maled = file.read()
-        count = int(maled) + 1
+        count = (int)maled + 1
         file.close()
 
         send_message(socket, "Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
@@ -162,7 +162,7 @@ def call_command_pleb(socket):
         file = open("maledizioni.txt", "w")
         file.write(str(count))
 
-    elif config.message == "!suicidio":
+    elif config.message == "!suicidio"
         if config.username == config.NICK:
             send_message(socket, "Imperatore mio Imperatore, non posso permetterti di farlo! BibleThump")
         elif config.username in config.mods:
@@ -186,6 +186,28 @@ def call_command_pleb(socket):
 
     elif config.message == "!suoni":
         get_sounds(socket)
+
+class Command(object):
+    command = ""
+    response = ""
+    cooldown = ""
+
+    def __init__(self,command, response, cooldown):
+        self.command = command
+        self.response = response
+        self.cooldown = cooldown
+
+def get_pleb_commands():
+    command_list = []
+    with open('commands.csv') as commands:
+        reader = csv.reader(commands, delimiter=',', quotechar='|')
+        for row in reader:
+            current = Command(row[0], row[1], row[2])
+            command_list.append(current)
+        
+        for current in command_list:
+            print(current.command+", "+current.response+", "+current.cooldown)
+    return commands
 
 #Get sounds list
 def get_sounds(socket):

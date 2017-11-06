@@ -74,28 +74,6 @@ mods_commands ["!warn"              ] = ""
 #List of players that want to play
 players = []
 
-#Chat commands the bot responds to
-commands = dict()
-
-#Direct response to command
-commands ["!alessiana"          ] = "Alessiana is toxic monkaS"
-commands ["!energia"                    ] = "༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ"
-commands ["!tiltana"                    ] = "Quando le cose vanno male Alessiana si trasforma nel suo alterego Tiltana. Partono madonne e non riesce a non tiltare per qualsiasi cosa. Lo spam di LUL alimenta la sua ira che probabilmente lo porterà a ragequittare LUL"
-commands ["!aim"                                    ] = "Nice aim bro LUL"
-commands ["!battuta"                    ] = "haHAA Ha fatto la battuta haHAA Divertentissimo haHAA"
-commands ["!fortnite"               ] = "Aggiungimi su Fortnite: Alessiana KappaPride"
-commands ["!discord"                    ] = "Attaccate a StoDiscord: https://goo.gl/2QSx3V KappaPride"
-
-#Response must be computed
-commands ["!suoni"                          ] = ""
-commands ["!8ball"                          ] = ""
-commands ["!roulette"               ] = ""
-commands ["!ban"                                    ] = ""
-commands ["!love"                               ] = ""
-commands ["!maledizione"    ] = ""
-commands ["!play"                               ] = ""
-commands ["!players"                    ] = ""
-
 #Used commands
 used = {}
 
@@ -104,14 +82,13 @@ players = []
 
 #8ball choices
 ball_choices = ["Non pensarci nemmeno LUL",
-                                                                "Ma in che pianeta vivi LUL",
-                                                                "Ma proprio no DansGame",
-                                                                "Ti piacerebbe Kappa",
-                                                                "Ma ovviamente PogChamp",
-                                                                "Vai tranqui Kreygasm"
+                "Ma in che pianeta vivi LUL",
+                "Ma proprio no DansGame",
+                "Ti piacerebbe Kappa",
+                "Ma ovviamente PogChamp",
+                "Vai tranqui Kreygasm"
 ]
 
 #Trick random
 old_ball = ""
 
-#Sounds list
