@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, time
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QTextCursor
@@ -10,9 +10,9 @@ class Window(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()
-        self.bot = BotAna(self)
-        self.t = threading.Thread(target=self.bot.start, args=())
-        self.t.start()
+        self.bot = BotAna()
+        self.bot.sign.connect(self.printOnTextArea)
+        self.bot.start()
 
     def init_ui(self):
 

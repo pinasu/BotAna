@@ -1,26 +1,28 @@
 #Main application file
 
 #Useful imports
-import socket, time, json, requests, datetime, command, os
+import socket, time, json, requests, datetime, command, os, traceback
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal
 
-class BotAna():
-    def __init__(self, ui):
+class BotAna(QtCore.QThread):
+    sign = pyqtSignal(str)
+    def __init__(self):
         super().__init__()
         #First, we need to create the socket to connect to the chat
         self.sock = socket.socket()
-        self.win=ui
         #Twitch Host, always this
         self.HOST = "irc.twitch.tv"
         #Twitch port, always this
         self.PORT = 6667
         #Bot OAuth
-        self.BOT_OAUTH = self.get_bot_oauth()
+        self.BOT_OAUTH = ""
         #NICK and CHAN are basically the same, but CHAN comes with a "#" before the channel name
         #Channel name
-        self.NICK = self.get_nick()
+        self.NICK = ""
         #Channel to join
-        self.CHAN = "#"+self.NICK
-        self.CLIENT_ID = self.get_clientID()
+        self.CHAN = ""
+        self.CLIENT_ID = ""
         #Chatter's name
         self.username = ""
         #Current message
@@ -30,7 +32,7 @@ class BotAna():
         #Bot message rate to prevent excessive CPU usage
         self.RATE = 20/30
         #Mods list
-        self.mods = ["boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "moobot", "nightbot", "pinasu", "revlobot", "stockazzobot", "stockhausen_l2p", "tubbablubbah", "urza2k", "vivbot", "xuneera"]
+        self.mods = ["lusyoo", "boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "moobot", "nightbot", "pinasu", "revlobot", "stockazzobot", "stockhausen_l2p", "tubbablubbah", "urza2k", "vivbot", "xuneera"]
         #Chatter to ban, he's screaming too much.
         self.to_ban = ""
         #Mod commands
@@ -61,8 +63,17 @@ class BotAna():
         #Trick random
         self.old_ball = ""
 
-    def start(self):
+    def run(self):
         try:
+            #Bot OAuth
+            self.BOT_OAUTH = self.get_bot_oauth()
+            #NICK and CHAN are basically the same, but CHAN comes with a "#" before the channel name
+            #Channel name
+            self.NICK = self.get_nick()
+            #Channel to join
+            self.CHAN = "#"+self.NICK
+            self.CLIENT_ID = self.get_clientID()
+            
             #Chat connection
             self.sock.connect((self.HOST, self.PORT))
 
@@ -133,10 +144,15 @@ class BotAna():
                 time.sleep(1/self.RATE)
         except:
             self.printMessage("SI E' VERIFICATO UN ERRORE")
+            traceback.print_exc()
+
+    def __del__(self):
+        self.exiting = True
+        self.wait()
 
     def printMessage(self, msg):
         print(msg)
-        self.win.printOnTextArea(msg)
+        self.sign.emit(msg)
 
     def readConfigFile(self, path):
         if os.path.exists(path):
@@ -226,17 +242,17 @@ class BotAna():
     #Function to answer mod command
     def call_command_mod(self):
         if self.username not in self.mods:
-            send_message("Mi dispiace, ma questo comando non è per te.")
+            self.send_message("Mi dispiace, ma questo comando non è per te.")
         else:
                 raffled = ""
                 
                 if self.message == "!restart":
-                    os.system("python bot_ana.py")
-                    exit(0)
+                    os.system("python botanaUserInterface.pyw")
+                    os._exit(0)
 
                 elif self.message == "!stop":
-                    send_message("HeyGuys")
-                    exit(0)
+                    self.send_message("HeyGuys")
+                    os._exit(0)
 
                 elif self.message == "!clean":
                     file = open("players.txt", "w")
@@ -251,7 +267,7 @@ class BotAna():
                     else:
                         raffled = ', '.join(self.players)
                         self.players = []
-                    send_message("Ho scelto "+raffled+" PogChamp")
+                    self.send_message("Ho scelto "+raffled+" PogChamp")
                 
                 elif self.message == "!pickone":
                     if len(self.players) > 0:
@@ -272,18 +288,17 @@ class BotAna():
                             cmd+="'"+p+"' "
                         else:
                             cmd+="'"+p+", "
-                    send_message(cmd+" ]")
+                    self.send_message(cmd+" ]")
 
                 elif self.message == "!suoni":
-                    get_sounds()
+                    self.get_sounds()
 
     #Function to check if message is in cooldown
     def process_command_pleb(self):
         if self.message not in self.used or time.time()-self.used[command] > self.command_coold:
             if command != "!play" and command != "!energia":
                 self.used[command] = time.time()
-
-            call_command_pleb()
+            self.call_command_pleb()
 
     #Function to answer pleb command
     def call_command_pleb(self):
@@ -292,23 +307,23 @@ class BotAna():
             time.sleep(5)
             doa = randint(1, 10)
             if doa <= 5:
-                send_message("Il corpo di "+self.username+" giace in chat monkaS Qualcuno può venire a pulire? LUL")
+                self.send_message("Il corpo di "+self.username+" giace in chat monkaS Qualcuno può venire a pulire? LUL")
             else:
-                send_message("La pistola si è inceppata! PogChamp "+self.username+" è sopravvissuto Kreygasm")
+                self.send_message("La pistola si è inceppata! PogChamp "+self.username+" è sopravvissuto Kreygasm")
 
         elif self.message == "!play":
             if self.username not in self.players:
                 self.players.append(self.username)
-                send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
+                self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
 
         elif self.message == "!players":
             if self.players:
                 pl = ', '.join(self.players)
-                send_message(pl+" vogliono giocare!")
+                self.send_message(pl+" vogliono giocare!")
                 if self.username in mods:
                     self.players = []
             else:
-                send_message("Non vuole giocare nessuno BibleThump")
+                self.send_message("Non vuole giocare nessuno BibleThump")
 
         elif self.message == "maledizione":
             file = open("maledizioni.txt", "r")
@@ -316,19 +331,19 @@ class BotAna():
             count = int(maled) + 1
             file.close()
 
-            send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
+            self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
 
             file = open("maledizioni.txt", "w")
             file.write(str(count))
 
         elif self.message == "!suicidio":
             if self.username == self.NICK:
-                send_message("Imperatore mio Imperatore, non posso permetterti di farlo! BibleThump")
+                self.send_message("Imperatore mio Imperatore, non posso permetterti di farlo! BibleThump")
             elif self.username in self.mods:
-                send_message(self.username+", l'Imperatore Alessiana non ha ancora finito con te! anaLove")
+                self.send_message(self.username+", l'Imperatore Alessiana non ha ancora finito con te! anaLove")
             else:
-                send_message("/timeout "+self.username+" 60")
-                send_message(self.username+" si è suicidato monkaS Press F to pay respect BibleThump")
+                self.send_message("/timeout "+self.username+" 60")
+                self.send_message(self.username+" si è suicidato monkaS Press F to pay respect BibleThump")
 
         elif self.message == "!8ball":
             new_ball = random.choice(self.ball_choices)
@@ -337,16 +352,16 @@ class BotAna():
             while new_ball == self.old_ball:
                 new_ball = random.choice(self.ball_choices)
 
-            send_message(new_ball)
+            self.send_message(new_ball)
             self.old_ball = new_ball
 
         elif self.message == "!ban":
-            send_message(self.username+" ha bannato "+self.arguments+" PogChamp")
+            self.send_message(self.username+" ha bannato "+self.arguments+" PogChamp")
 
         elif self.message == "!suoni":
-            get_sounds()
+            self.get_sounds()
 
-    def get_pleb_commands():
+    def get_pleb_commands(self):
         command_list = []
         with open('commands.csv') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
@@ -359,8 +374,8 @@ class BotAna():
         return commands
 
     #Get sounds list
-    def get_sounds():
-        send_message(self.username+", i suoni disponibili sono "+str(self.sounds))
+    def get_sounds(self):
+        self.send_message(self.username+", i suoni disponibili sono "+str(self.sounds))
 
 
 
