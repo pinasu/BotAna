@@ -61,9 +61,6 @@ class Window(QtWidgets.QWidget):
 
         self.show()
 
-    def closeEvent(self, e):
-        """ssss"""
-
     def printOnTextArea(self, msg):
         if(msg != ""):
             self.textarea.insertPlainText(msg + "\n")
@@ -75,8 +72,7 @@ class Window(QtWidgets.QWidget):
     def btn_click(self):
         msg = self.inputText.text()
         if(msg != ""):
-            self.bot.sendMessage(msg)
-            self.textarea.insertPlainText("BotAna_: " + msg + "\n")
+            self.bot.send_message(msg)
             self.inputText.setText("")
 
 
