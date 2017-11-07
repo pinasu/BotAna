@@ -1,7 +1,7 @@
 #Main application file
 
 #Useful imports
-import socket, time, json, requests, datetime, command, os, traceback
+import socket, time, json, requests, datetime, command, os, traceback, subprocess
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 
@@ -247,7 +247,7 @@ class BotAna(QtCore.QThread):
                 raffled = ""
                 
                 if self.message == "!restart":
-                    os.system("python botanaUserInterface.pyw")
+                    subprocess.Popen("botanaUserInterface.pyw", shell=True)
                     os._exit(0)
 
                 elif self.message == "!stop":

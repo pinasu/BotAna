@@ -1,1 +1,3 @@
 pyinstaller --windowed --icon=res/icon.ico --clean botanaUserInterface.pyw
+
+P.S. Non dimenticare di modificare il nome del file da eseguire quando viene mandato il comando !restart da un mod una volta creato l'eseguibile
