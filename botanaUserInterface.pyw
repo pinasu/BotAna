@@ -20,7 +20,7 @@ class Window(QtWidgets.QWidget):
         with open(sshFile,"r") as fh:
             self.setStyleSheet(fh.read())
 
-        self.setWindowIcon(QtGui.QIcon('res/icon.png'))
+        self.setWindowIcon(QtGui.QIcon('res/icon.ico'))
         
         self.setGeometry(400,200,950, 450)
         self.setMinimumSize(700,300)
