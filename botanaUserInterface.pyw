@@ -27,6 +27,10 @@ class Window(QtWidgets.QWidget):
         self.logo = QtWidgets.QLabel()
         self.logo.setObjectName("logo")
         self.logo.setPixmap(QtGui.QPixmap('res/botana.png'))
+
+        self.creators = QtWidgets.QLabel()
+        self.creators.setPixmap(QtGui.QPixmap('res/creators.png'))
+        
         self.textarea = QtWidgets.QTextEdit()
         self.textarea.setReadOnly(True)
         self.textarea.setObjectName("textarea")
@@ -40,6 +44,7 @@ class Window(QtWidgets.QWidget):
         v_box = QtWidgets.QVBoxLayout()
         v_box.addWidget(self.logo)
         v_box.addStretch()
+        v_box.addWidget(self.creators)
 
         h_box2 = QtWidgets.QHBoxLayout()
         h_box2.addWidget(self.inputText)

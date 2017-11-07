@@ -143,7 +143,7 @@ class BotAna(QtCore.QThread):
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
-            self.printMessage("SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI")
+            self.printMessage("----------SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI----------")
             traceback.print_exc()
 
     def __del__(self):
