@@ -1,7 +1,9 @@
 #Main application file
 
 #Useful imports
-import socket, time, json, requests, datetime, command, os, traceback, subprocess, random
+import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv
+from random import randint
+from command import Command
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 
@@ -65,7 +67,7 @@ class BotAna(QtCore.QThread):
         #Trick random
         self.old_ball = ""
         #Collect times of lasts comands calls
-        timeCommandsCalled = dict()
+        self.timeCommandsCalled = dict()
         
 
     def run(self):
@@ -143,7 +145,7 @@ class BotAna(QtCore.QThread):
                                 if self.message in self.mods_commands:
                                     self.call_command_mod()
                                 else:
-                                    self.process_command_pleb()
+                                    self.call_command_pleb()
 
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
@@ -246,8 +248,15 @@ class BotAna(QtCore.QThread):
 
     #Function to answer mod command
 
-    def isTimeouted(self, comand):
-        """whait"""
+    def isInTimeout(self, command, ltime):
+        if command not in self.timeCommandsCalled:
+            return False
+        else:
+            if (time.time() - self.timeCommandsCalled[command] >= float(ltime)):
+                return False
+            else:
+                return True
+
         
     def call_command_mod(self):
         if self.username not in self.mods:
@@ -302,17 +311,35 @@ class BotAna(QtCore.QThread):
             elif self.message == "!suoni":
                 self.get_sounds()
 
-    #Function to check if message is in cooldown
-    def process_command_pleb(self):
-        if self.message not in self.used or time.time()-self.used[command] > self.command_coold:
-            if command != "!play" and command != "!energia":
-                self.used[command] = time.time()
-            self.call_command_pleb()
+    def addCommand(self, name, message, cooldown):
+        fields=[name, message, cooldown]
+        with open('commands.csv', 'a') as f:
+            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+            writer.writerow(fields)
 
+    def deleteCommand(self, name):
+        exist = False
+        tmp = self.get_pleb_commands()
+        f = open('commands.csv', "w+")
+        f.close()
+        with open('commands.csv', 'a', encoding='utf-8') as f:
+            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+            for c in tmp:
+                if c.getName() != name:
+                    writer.writerow([c.getName(), c.getResponse(), c.getCooldown()])
+                else:
+                    exist=True
+        if exist:
+            self.send_message("Comando " + name + " eliminato")
+        else:
+            self.send_message("Comando " + name + " inesistente")
+        
+                    
     #Function to answer pleb command
     def call_command_pleb(self):
-        if self.message == "!roulette":
-            send_message("Punto la pistola nella testa di "+self.username+"... monkaS")
+        if self.message == "!roulette" and not self.isInTimeout("!roulette", 20):
+            self.timeCommandsCalled["!roulette"] = time.time()
+            self.send_message("Punto la pistola nella testa di "+self.username+"... monkaS")
             time.sleep(5)
             doa = randint(1, 10)
             if doa <= 5:
@@ -325,7 +352,8 @@ class BotAna(QtCore.QThread):
                 self.players.append(self.username)
                 self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
 
-        elif self.message == "!players":
+        elif self.message == "!players" and not self.isInTimeout("!players", 20):
+            self.timeCommandsCalled["!players"] = time.time()
             if self.players:
                 pl = ', '.join(self.players)
                 self.send_message(pl+" vogliono giocare!")
@@ -334,7 +362,8 @@ class BotAna(QtCore.QThread):
             else:
                 self.send_message("Non vuole giocare nessuno BibleThump")
 
-        elif self.message == "!maledizione":
+        elif self.message == "!maledizione" and not self.isInTimeout("!maledizione", 20):
+            self.timeCommandsCalled["!maledizione"] = time.time()
             file = open("maledizioni.txt", "r")
             maled = file.read()
             count = int(maled) + 1
@@ -354,7 +383,8 @@ class BotAna(QtCore.QThread):
                 self.send_message("/timeout "+self.username+" 60")
                 self.send_message(self.username+" si è suicidato monkaS Press F to pay respect BibleThump")
 
-        elif self.message == "!8ball":
+        elif self.message == "!8ball" and not self.isInTimeout("!8ball", 10):
+            self.timeCommandsCalled["!8ball"] = time.time()
             new_ball = random.choice(self.ball_choices)
 
             #Alessiana rompeva le palle ogni volta che usciva due volte la stessa
@@ -365,23 +395,33 @@ class BotAna(QtCore.QThread):
             self.send_message(new_ball)
             self.old_ball = new_ball
 
-        elif self.message == "!ban":
+        elif self.message == "!ban" and not self.isInTimeout("!ban", 10):
+            self.timeCommandsCalled["!ban"] = time.time()
             self.send_message(self.username+" ha bannato "+self.arguments+" PogChamp")
 
-        elif self.message == "!suoni":
+        elif self.message == "!suoni" and not self.isInTimeout("!suoni", 20):
+            self.timeCommandsCalled["!suoni"] = time.time()
             self.get_sounds()
+
+        else:
+            for com in self.get_pleb_commands():
+                if self.message == com.getName():
+                    if not self.isInTimeout(com.getName(), com.getCooldown()):
+                        self.timeCommandsCalled[com.getName()] = time.time()
+                        self.send_message(com.getResponse())
+            
 
     def get_pleb_commands(self):
         command_list = []
-        with open('commands.csv') as commands:
+        with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
                 current = Command(row[0], row[1], row[2])
                 command_list.append(current)
-            
-            for current in command_list:
-                print(current.command+", "+current.response+", "+current.cooldown)
-        return commands
+##            
+##            for current in command_list:
+##                print(current.command+", "+current.response+", "+current.cooldown)
+        return command_list
 
     #Get sounds list
     def get_sounds(self):
