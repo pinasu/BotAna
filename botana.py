@@ -50,6 +50,9 @@ class BotAna(QtCore.QThread):
         self.mods_commands ["!pickone"] = ""
         #Warns a user if he's being a dick
         self.mods_commands ["!warn"] = ""
+
+        self.mods_commands ["!add"] = ""
+        self.mods_commands ["!remove"] = ""
         #List of players that want to play
         self.players = []
         #Used commands
@@ -311,28 +314,57 @@ class BotAna(QtCore.QThread):
             elif self.message == "!suoni":
                 self.get_sounds()
 
-    def addCommand(self, name, message, cooldown):
-        fields=[name, message, cooldown]
-        with open('commands.csv', 'a') as f:
-            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-            writer.writerow(fields)
-
-    def deleteCommand(self, name):
-        exist = False
-        tmp = self.get_pleb_commands()
-        f = open('commands.csv', "w+")
-        f.close()
-        with open('commands.csv', 'a', encoding='utf-8') as f:
-            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-            for c in tmp:
-                if c.getName() != name:
-                    writer.writerow([c.getName(), c.getResponse(), c.getCooldown()])
+            elif self.message == "!add":
+                tmp = self.arguments.split(";")
+                if (len(tmp) == 3 and len(tmp[0].split(" ")) == 1):
+                    fields=[tmp[0], tmp[1], tmp[2]]
+                    with open('commands.csv', 'a') as f:
+                        writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                        writer.writerow(fields)
+                    self.send_message("Comando " + tmp[0] + " aggiunto")
                 else:
-                    exist=True
-        if exist:
-            self.send_message("Comando " + name + " eliminato")
-        else:
-            self.send_message("Comando " + name + " inesistente")
+                    self.send_message("impossibile aggiungere il comando " + tmp[0])
+
+            elif self.message == "!remove":
+                exist = False
+                tmp = self.get_pleb_commands()
+                f = open('commands.csv', "w+")
+                f.close()
+                with open('commands.csv', 'a', encoding='utf-8') as f:
+                    writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                    for c in tmp:
+                        if c.getName() != self.arguments:
+                            writer.writerow([c.getName(), c.getResponse(), c.getCooldown()])
+                        else:
+                            exist=True
+                if exist:
+                    self.send_message("Comando " + self.arguments + " eliminato")
+                else:
+                    self.send_message("Comando " + self.arguments + " inesistente")
+
+
+##    def addCommand(self, name, message, cooldown):
+##        fields=[name, message, cooldown]
+##        with open('commands.csv', 'a') as f:
+##            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+##            writer.writerow(fields)
+
+##    def deleteCommand(self, name):
+##        exist = False
+##        tmp = self.get_pleb_commands()
+##        f = open('commands.csv', "w+")
+##        f.close()
+##        with open('commands.csv', 'a', encoding='utf-8') as f:
+##            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+##            for c in tmp:
+##                if c.getName() != name:
+##                    writer.writerow([c.getName(), c.getResponse(), c.getCooldown()])
+##                else:
+##                    exist=True
+##        if exist:
+##            self.send_message("Comando " + name + " eliminato")
+##        else:
+##            self.send_message("Comando " + name + " inesistente")
         
                     
     #Function to answer pleb command
