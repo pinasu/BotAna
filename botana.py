@@ -15,6 +15,8 @@ class BotAna(QtCore.QThread):
         self.HOST = "irc.twitch.tv"
         #Twitch port, always this
         self.PORT = 6667
+        #name of Bot
+        self.botName = "BotAna__"
         #Bot OAuth
         self.BOT_OAUTH = ""
         #NICK and CHAN are basically the same, but CHAN comes with a "#" before the channel name
@@ -62,8 +64,9 @@ class BotAna(QtCore.QThread):
         ]
         #Trick random
         self.old_ball = ""
-        #name of Bot
-        self.botName = "BotAna__"
+        #Collect times of lasts comands calls
+        timeCommandsCalled = dict()
+        
 
     def run(self):
         try:
@@ -242,6 +245,10 @@ class BotAna(QtCore.QThread):
     ##            time.sleep(300)
 
     #Function to answer mod command
+
+    def isTimeouted(self, comand):
+        """whait"""
+        
     def call_command_mod(self):
         if self.username not in self.mods:
             self.send_message("Mi dispiace, ma questo comando non è per te.")
