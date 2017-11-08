@@ -1,7 +1,7 @@
 #Main application file
 
 #Useful imports
-import socket, time, json, requests, datetime, command, os, traceback, subprocess
+import socket, time, json, requests, datetime, command, os, traceback, subprocess, random
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 
@@ -62,6 +62,8 @@ class BotAna(QtCore.QThread):
         ]
         #Trick random
         self.old_ball = ""
+        #name of Bot
+        self.botName = "BotAna__"
 
     def run(self):
         try:
@@ -107,7 +109,7 @@ class BotAna(QtCore.QThread):
                     for line in rec:
                         #Response to Twitch, checking if the Bot is still woke
                         if "PING" in line:
-                            s.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+                            self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
                             #Get actual message and chatter username
                             parts = line.split(':')
@@ -179,7 +181,7 @@ class BotAna(QtCore.QThread):
     #Function to send given message to the chat
     def send_message(self, message):
         self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n","UTF-8"))
-        self.printMessage("BotAna_: " + message)
+        self.printMessage(self.botName + ": " + message)
 
     #Function to send whisper to user
     #Watch out, if you abuse using whispers Twitch will ban your Bot's account
@@ -244,54 +246,54 @@ class BotAna(QtCore.QThread):
         if self.username not in self.mods:
             self.send_message("Mi dispiace, ma questo comando non è per te.")
         else:
-                raffled = ""
+            raffled = ""
                 
-                if self.message == "!restart":
-                    subprocess.Popen("botanaUserInterface.pyw", shell=True)
-                    os._exit(0)
+            if self.message == "!restart":
+                subprocess.Popen("botanaUserInterface.pyw", shell=True)
+                os._exit(0)
 
-                elif self.message == "!stop":
-                    self.send_message("HeyGuys")
-                    os._exit(0)
+            elif self.message == "!stop":
+                self.send_message("HeyGuys")
+                os._exit(0)
 
-                elif self.message == "!clean":
-                    file = open("players.txt", "w")
-                    file.write("")
+            elif self.message == "!clean":
+                file = open("players.txt", "w")
+                file.write("")
+                self.players = []
+
+            elif self.message == "!raffle":
+                if len(self.players) > 3:
+                    raffle = random.sample(self.players, 3)
+                    raffled = ', '.join(raffle)
+                    self.players = set(self.players) - set(raffle)
+                else:
+                    raffled = ', '.join(self.players)
                     self.players = []
-
-                elif self.message == "!raffle":
-                    if len(self.players) > 3:
-                        raffle = random.sample(self.players, 3)
-                        raffled = ', '.join(raffle)
-                        self.players = set(self.players) - set(raffle)
-                    else:
-                        raffled = ', '.join(self.players)
-                        self.players = []
-                    self.send_message("Ho scelto "+raffled+" PogChamp")
+                self.send_message("Ho scelto "+raffled+" PogChamp")
                 
-                elif self.message == "!pickone":
-                    if len(self.players) > 0:
-                        raffle = random.sample(self.players, 1)
-                        raffled = ", ".join(raffle)
-                        send_message("Ho scelto "+raffled+" PogChamp")
+            elif self.message == "!pickone":
+                if len(self.players) > 0:
+                    raffle = random.sample(self.players, 1)
+                    raffled = ", ".join(raffle)
+                    self.send_message("Ho scelto "+raffled+" PogChamp")
+                else:
+                    self.send_message("Non ci sono persone da scegliere BibleThump")
+
+            elif self.message == "!comandi":
+                cmd = self.username+", i comandi disponibili sono [ "
+                #Commands for everyone
+                for r in self.commands:
+                    cmd+="'"+p+", "
+                for r in self.mods_commands:
+                    #Last command in the dict?
+                    if list(self.commands.keys())[-1] == p:
+                        cmd+="'"+p+"' "
                     else:
-                        send_message("Non ci sono persone da scegliere BibleThump")
-
-                elif self.message == "!comandi":
-                    cmd = self.username+", i comandi disponibili sono [ "
-                    #Commands for everyone
-                    for r in self.commands:
                         cmd+="'"+p+", "
-                    for r in self.mods_commands:
-                        #Last command in the dict?
-                        if list(self.commands.keys())[-1] == p:
-                            cmd+="'"+p+"' "
-                        else:
-                            cmd+="'"+p+", "
-                    self.send_message(cmd+" ]")
+                self.send_message(cmd+" ]")
 
-                elif self.message == "!suoni":
-                    self.get_sounds()
+            elif self.message == "!suoni":
+                self.get_sounds()
 
     #Function to check if message is in cooldown
     def process_command_pleb(self):
@@ -320,12 +322,12 @@ class BotAna(QtCore.QThread):
             if self.players:
                 pl = ', '.join(self.players)
                 self.send_message(pl+" vogliono giocare!")
-                if self.username in mods:
+                if self.username in self.mods:
                     self.players = []
             else:
                 self.send_message("Non vuole giocare nessuno BibleThump")
 
-        elif self.message == "maledizione":
+        elif self.message == "!maledizione":
             file = open("maledizioni.txt", "r")
             maled = file.read()
             count = int(maled) + 1
@@ -349,6 +351,7 @@ class BotAna(QtCore.QThread):
             new_ball = random.choice(self.ball_choices)
 
             #Alessiana rompeva le palle ogni volta che usciva due volte la stessa
+            #OMG IS SO ORRIBLE... SECONDO ME VA TOLTO PROPRIO IL WHILE... LASCIAMOLO FOTTERE AD ALESSIANA LUL
             while new_ball == self.old_ball:
                 new_ball = random.choice(self.ball_choices)
 
