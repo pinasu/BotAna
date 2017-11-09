@@ -1,5 +1,5 @@
 #logo{
-	margin:10px 20px 0 10px;
+	margin-bottom:15px;
 }
 
 #textarea{
@@ -16,20 +16,30 @@
 	color:#1f1633;
 }
 
-#sendButton{
+.button{
 	background-color:#1f1633;
 	color:#fff;
 	border:1px solid #0f0b1a;
+}
+
+#sendButton{
 	padding:5px 30px;
 	font-size:14px;
 }
 
-#sendButton:hover{
-	background-color:#241a3b;
-	border:1px solid #1a132b;
-	
+.button:disabled{
+	background-color:#62577c;
+	border:1px solid #42306e;
 }
 
+.button:hover{
+	background-color:#241a3b;
+	border:1px solid #1a132b;
+}
+
+#greenScreenButton{
+	padding:5px 10px;
+}
 
 Window{
 	background-color:#4b367c;

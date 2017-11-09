@@ -9,6 +9,7 @@ from PyQt5.QtCore import pyqtSignal
 
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
+    sign2 = pyqtSignal(str)
     def __init__(self):
         super().__init__()
         #First, we need to create the socket to connect to the chat
@@ -159,6 +160,9 @@ class BotAna(QtCore.QThread):
     def __del__(self):
         self.exiting = True
         self.wait()
+
+    def showImage(self, path):
+        self.sign2.emit(path)
 
     def printMessage(self, msg):
         print(msg)
@@ -434,6 +438,10 @@ class BotAna(QtCore.QThread):
         elif self.message == "!suoni" and not self.isInTimeout("!suoni", 20):
             self.timeCommandsCalled["!suoni"] = time.time()
             self.get_sounds()
+
+        elif self.message == "!bush" and not self.isInTimeout("images", 20):
+            self.timeCommandsCalled["images"] = time.time()
+            self.showImage("res/ShowImages/bush.png")
 
         else:
             for com in self.get_pleb_commands():
