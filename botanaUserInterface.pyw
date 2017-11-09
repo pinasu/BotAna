@@ -79,6 +79,7 @@ class Window(QtWidgets.QWidget):
         self.sendButton.setObjectName("sendButton")
         self.sendButton.setProperty('class','button')
         self.greenScreenButton = QtWidgets.QPushButton("")
+        self.greenScreenButton.setIcon(QtGui.QIcon('res/greenScreenButton.png'))
         self.greenScreenButton.setIconSize(QtCore.QSize(40,40))
         self.greenScreenButton.setCursor (Qt.PointingHandCursor)
         self.greenScreenButton.setObjectName("greenScreenButton")
