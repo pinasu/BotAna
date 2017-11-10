@@ -13,8 +13,8 @@ class WindowTwo(QtWidgets.QWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.setGeometry(150,200,0,0)
         self.setFixedSize(450,450)
+        self.setPosition()
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.setStyleSheet("WindowTwo{background-color:#0f0;}")
         self.setWindowTitle('BotAnaImage')
@@ -27,6 +27,13 @@ class WindowTwo(QtWidgets.QWidget):
         
         self.setLayout(v_box)
         self.show()
+
+    def setPosition(self):
+        print(self.parent.pos().x())
+        if (self.parent.pos().x() - self.width()) >= 0:
+            self.move(self.parent.pos().x() - 450,self.parent.pos().y())
+        else:
+            self.move(0,0)
 
     def closeEvent(self, event):
         self.parent.activateGreenScreenButton(True)
@@ -60,7 +67,8 @@ class Window(QtWidgets.QWidget):
 
         self.setWindowIcon(QtGui.QIcon('res/icon.ico'))
         
-        self.setGeometry(600,200,950, 450)
+        self.setGeometry(0,0,950, 450)
+        self.move(600, 200)
         self.setMinimumSize(700,300)
         self.logo = QtWidgets.QLabel()
         self.logo.setObjectName("logo")
