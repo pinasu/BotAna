@@ -57,7 +57,8 @@ class BotAna(QtCore.QThread):
         #Trick random
         self.old_ball = ""
         #Collect times of lasts comands calls
-        self.timeCommandsCalled = dict()
+        self.timeCommandsModCalled = dict()
+        self.timeCommandsPlebCalled = dict()
 
         self.commandsMod = dict()
         self.commandsPleb = dict()
@@ -247,11 +248,20 @@ class BotAna(QtCore.QThread):
 
     #Function to answer mod command
 
+    def addInTimeout(self, command):
+        if command in self.commandsMod.keys():
+            self.timeCommandsModCalled[command] = time.time()
+        elif command in self.commandsPleb.keys():
+            self.timeCommandsPlebCalled[command] = time.time()
+
     def isInTimeout(self, command, ltime):
-        if command not in self.timeCommandsCalled:
-            return False
-        else:
-            if (time.time() - self.timeCommandsCalled[command] >= float(ltime)):
+        if command in self.commandsMod.keys():
+            if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(ltime)):
+                return False
+            else:
+                return True
+        elif command in self.commandsPleb.keys():
+            if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(ltime)):
                 return False
             else:
                 return True
@@ -299,6 +309,9 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!add":
             tmp = self.arguments.split(";")
+            if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
+                self.send_message("Comando già esistente")
+                return
             if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
                 fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
                 with open('commands.csv', 'a') as f:
@@ -319,30 +332,37 @@ class BotAna(QtCore.QThread):
                 self.send_message("Comando errato")
                 return
             exist=False
-            tmp = self.commandsPleb.keys()
-            f = open('commands.csv', "w+")
-            f.close()
-            with open('commands.csv', 'a', encoding='utf-8') as f:
-                writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-                for c in tmp:
-                    if c.getName() != args[0] and self.commandsPleb[c].getTipo() != args[1]:
-                        writer.writerow([c.getName(), c.getResponse(), c.getCooldown(), c.getTipo()])
-                    else:
-                        if args[1] == "mod":
-                            del self.commandsMod[args[0]]
-                        elif args[1] == "pleb":
-                            del self.commandsPleb[args[0]]
-                        exist=True
+            if args[1] == "mod" and args[0] in self.commandsMod.keys():
+                del self.commandsMod[args[0]]
+                exist=True
+            elif args[1] == "pleb" and args[0] in self.commandsPleb.keys():
+                del self.commandsPleb[args[0]]
+                exist=True
             if exist:
+                f = open('commands.csv', "w+")
+                f.close()
+                with open('commands.csv', 'a', encoding='utf-8') as f:
+                    writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                    for p in self.commandsPleb.values():
+                        writer.writerow([p.getName(), p.getResponse(), p.getCooldown(), p.getTipo()])
+                    for m in self.commandsMod.values():
+                        writer.writerow([m.getName(), m.getResponse(), m.getCooldown(), m.getTipo()])
                 self.send_message("Comando " + self.arguments + " eliminato")
             else:
                 self.send_message("Comando " + self.arguments + " inesistente")
+                
+        else:
+            for com in self.commandsMod.values():
+                if self.message == com.getName():
+                    if not self.isInTimeout(com.getName(), com.getCooldown()):
+                        self.addInTimeout(com.getName())
+                        self.send_message(com.getResponse())
         
                     
     #Function to answer pleb command
     def call_command_pleb(self):
         if self.message == "!roulette" and not self.isInTimeout("!roulette", 20):
-            self.timeCommandsCalled["!roulette"] = time.time()
+            self.addInTimeout("!roulette")
             self.send_message("Punto la pistola nella testa di "+self.username+"... monkaS")
             time.sleep(5)
             doa = randint(1, 10)
@@ -357,7 +377,7 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
 
         elif self.message == "!players" and not self.isInTimeout("!players", 20):
-            self.timeCommandsCalled["!players"] = time.time()
+            self.addInTimeout("!players")
             if self.players:
                 pl = ', '.join(self.players)
                 self.send_message(pl+" vogliono giocare!")
@@ -367,7 +387,7 @@ class BotAna(QtCore.QThread):
                 self.send_message("Non vuole giocare nessuno BibleThump")
 
         elif self.message == "!maledizione" and not self.isInTimeout("!maledizione", 20):
-            self.timeCommandsCalled["!maledizione"] = time.time()
+            self.addInTimeout("!maledizione")
             file = open("maledizioni.txt", "r")
             maled = file.read()
             count = int(maled) + 1
@@ -388,7 +408,7 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.username+" si è suicidato monkaS Press F to pay respect BibleThump")
 
         elif self.message == "!8ball" and not self.isInTimeout("!8ball", 10):
-            self.timeCommandsCalled["!8ball"] = time.time()
+            self.addInTimeout("!8ball")
             new_ball = random.choice(self.ball_choices)
 
             #Alessiana rompeva le palle ogni volta che usciva due volte la stessa
@@ -400,26 +420,26 @@ class BotAna(QtCore.QThread):
             self.old_ball = new_ball
 
         elif self.message == "!ban" and not self.isInTimeout("!ban", 10):
-            self.timeCommandsCalled["!ban"] = time.time()
+            self.addInTimeout("!ban")
             self.send_message(self.username+" ha bannato "+self.arguments+" PogChamp")
 
         elif self.message == "!comandi" and not self.isInTimeout("!comandi", 20):
-            self.timeCommandsCalled["!comandi"] = time.time()
+            self.addInTimeout("!comandi")
             self.send_message(str(list(self.commandsPleb.keys())))
 
         elif self.message == "!suoni" and not self.isInTimeout("!suoni", 20):
-            self.timeCommandsCalled["!suoni"] = time.time()
+            self.addInTimeout("!suoni")
             self.get_sounds()
 
         elif self.message == "!bush" and not self.isInTimeout("images", 20):
-            self.timeCommandsCalled["images"] = time.time()
+            self.addInTimeout("!bush")
             self.showImage("res/ShowImages/bush.png")
 
         else:
             for com in self.commandsPleb.values():
                 if self.message == com.getName():
                     if not self.isInTimeout(com.getName(), com.getCooldown()):
-                        self.timeCommandsCalled[com.getName()] = time.time()
+                        self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
 
     def loadCommands(self):
