@@ -18,6 +18,11 @@ class Command(object):
     def getTipo(self):
         return self.tipo
 
+    def isSimpleCommand(self):
+        if self.response == "":
+            return False
+        return True
+
     def isMod(self):
         if self.tipo == "mod":
             return True

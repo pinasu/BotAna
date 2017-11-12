@@ -355,7 +355,7 @@ class BotAna(QtCore.QThread):
                 
         else:
             for com in self.commandsMod.values():
-                if self.message == com.getName():
+                if com.isSimpleCommand() and self.message == com.getName():
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
@@ -439,7 +439,7 @@ class BotAna(QtCore.QThread):
 
         else:
             for com in self.commandsPleb.values():
-                if self.message == com.getName():
+                if com.isSimpleCommand() and self.message == com.getName():
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
