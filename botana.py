@@ -155,6 +155,8 @@ class BotAna(QtCore.QThread):
                 time.sleep(1/self.RATE)
         except:
             self.printMessage("----------SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI----------")
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
 
     def __del__(self):

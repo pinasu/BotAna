@@ -24,12 +24,10 @@ class WindowTwo(QtWidgets.QWidget):
         v_box = QtWidgets.QVBoxLayout()
         v_box.setContentsMargins(0,0,0,0)
         v_box.addWidget(self.img)
-        
         self.setLayout(v_box)
         self.show()
 
     def setPosition(self):
-        print(self.parent.pos().x())
         if (self.parent.pos().x() - self.width()) >= 0:
             self.move(self.parent.pos().x() - 450,self.parent.pos().y())
         else:
