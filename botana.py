@@ -314,7 +314,7 @@ class BotAna(QtCore.QThread):
                 self.send_message("impossibile aggiungere il comando " + tmp[0])
 
         elif self.message == "!remove":
-            args = split(self.arguments, " ")
+            args = self.arguments.split(" ")
             if len(args) != 2:
                 self.send_message("Comando errato")
                 return
