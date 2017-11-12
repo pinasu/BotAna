@@ -138,7 +138,6 @@ class BotAna(QtCore.QThread):
                             elif self.message.startswith('!'):
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
-                                    self.call_command_pleb()
                                 else:
                                     self.call_command_pleb()
 
@@ -259,80 +258,85 @@ class BotAna(QtCore.QThread):
 
         
     def call_command_mod(self):
-	    raffled = ""
+        raffled = ""
 			
-	    if self.message == "!restart":
-	    	subprocess.Popen("botanaUserInterface.pyw", shell=True)
-    		os._exit(0)
+        if self.message == "!restart":
+            subprocess.Popen("botanaUserInterface.pyw", shell=True)
+            os._exit(0)
 
-	    elif self.message == "!stop":
-	    	self.send_message("HeyGuys")
-	    	os._exit(0)
+        elif self.message == "!stop":
+            self.send_message("HeyGuys")
+            os._exit(0)
 
-	    elif self.message == "!clean":
-	    	file = open("players.txt", "w")
-	    	file.write("")
-	    	self.players = []
+        elif self.message == "!clean":
+            file = open("players.txt", "w")
+            file.write("")
+            self.players = []
 
-	    elif self.message == "!raffle":
-	    	if len(self.players) > 3:
-	    		raffle = random.sample(self.players, 3)
-		    	raffled = ', '.join(raffle)
-		    	self.players = set(self.players) - set(raffle)
-	    	else:
-		    	raffled = ', '.join(self.players)
-		    	self.players = []
-	    	self.send_message("Ho scelto "+raffled+" PogChamp")
+        elif self.message == "!raffle":
+            if len(self.players) > 3:
+                raffle = random.sample(self.players, 3)
+                raffled = ', '.join(raffle)
+                self.players = set(self.players) - set(raffle)
+            else:
+                raffled = ', '.join(self.players)
+                self.players = []
+            self.send_message("Ho scelto "+raffled+" PogChamp")
 			
-	    elif self.message == "!pickone":
-	    	if len(self.players) > 0:
-	    		raffle = random.sample(self.players, 1)
-	    		raffled = ", ".join(raffle)
-	    		self.send_message("Ho scelto "+raffled+" PogChamp")
-	    	else:
-	    		self.send_message("Non ci sono persone da scegliere BibleThump")
+        elif self.message == "!pickone":
+            if len(self.players) > 0:
+                raffle = random.sample(self.players, 1)
+                raffled = ", ".join(raffle)
+                self.send_message("Ho scelto "+raffled+" PogChamp")
+            else:
+                self.send_message("Non ci sono persone da scegliere BibleThump")
 
-	    elif self.message == "!comandi":
-	    	self.send_message("Per tutti: " + str(list(self.commandsPleb.keys())) + " Per i mod: " + str(list(self.commandsMod.keys())))
+        elif self.message == "!comandi":
+            self.send_message("Per tutti: " + str(list(self.commandsPleb.keys())) + " Per i mod: " + str(list(self.commandsMod.keys())))
 
-	    elif self.message == "!suoni":
-	    	self.get_sounds()
+        elif self.message == "!suoni":
+            self.get_sounds()
 
-	    elif self.message == "!add":
-	    	tmp = self.arguments.split(";")
-	    	if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
-	    		fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
-	    		with open('commands.csv', 'a') as f:
-	    			writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-	    			writer.writerow(fields)
-	    		self.send_message("Comando " + tmp[0] + " aggiunto")
-	    	else:
-	    		self.send_message("impossibile aggiungere il comando " + tmp[0])
+        elif self.message == "!add":
+            tmp = self.arguments.split(";")
+            if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
+                fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
+                with open('commands.csv', 'a') as f:
+                    writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                    writer.writerow(fields)
+                newComm = Command(tmp[0], tmp[1], tmp[2], tmp[3])
+                if tmp[3] == "mod":
+                    self.commandsMod[tmp[0]] = newComm
+                elif tmp[3] == "pleb":
+                    self.commandsPleb[tmp[0]] = newComm
+                self.send_message("Comando " + tmp[0] + " aggiunto")
+            else:
+                self.send_message("impossibile aggiungere il comando " + tmp[0])
 
-	    elif self.message == "!remove":
-                args = split(self.arguments, " ")
-                if len(args) != 2:
-                    self.send_message("Comando errato")
-                    return
-                exist=False
-                tmp = self.commandsPleb.keys()
-                f = open('commands.csv', "w+")
-                f.close()
-                with open('commands.csv', 'a', encoding='utf-8') as f:
-                        writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-                        for c in tmp:
-                            if c.getName() != args[0] and self.commandsPleb[c].getTipo() != args[1]:
-                                writer.writerow([c.getName(), c.getResponse(), c.getCooldown(), c.getTipo()])
-                            else:
-                                if args[1] == "mod":
-                                    del self.commandsMod[args[0]]
-                                elif args[1] == "pleb":
-                                    del self.commandsPleb[args[0]]
-                                    exist=True
-                if exist:
-                    self.send_message("Comando " + self.arguments + " eliminato")
-                else:
-                    self.send_message("Comando " + self.arguments + " inesistente")
+        elif self.message == "!remove":
+            args = split(self.arguments, " ")
+            if len(args) != 2:
+                self.send_message("Comando errato")
+                return
+            exist=False
+            tmp = self.commandsPleb.keys()
+            f = open('commands.csv', "w+")
+            f.close()
+            with open('commands.csv', 'a', encoding='utf-8') as f:
+                writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                for c in tmp:
+                    if c.getName() != args[0] and self.commandsPleb[c].getTipo() != args[1]:
+                        writer.writerow([c.getName(), c.getResponse(), c.getCooldown(), c.getTipo()])
+                    else:
+                        if args[1] == "mod":
+                            del self.commandsMod[args[0]]
+                        elif args[1] == "pleb":
+                            del self.commandsPleb[args[0]]
+                        exist=True
+            if exist:
+                self.send_message("Comando " + self.arguments + " eliminato")
+            else:
+                self.send_message("Comando " + self.arguments + " inesistente")
         
                     
     #Function to answer pleb command
