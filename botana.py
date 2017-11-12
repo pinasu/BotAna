@@ -254,14 +254,14 @@ class BotAna(QtCore.QThread):
         elif command in self.commandsPleb.keys():
             self.timeCommandsPlebCalled[command] = time.time()
 
-    def isInTimeout(self, command, ltime):
+    def isInTimeout(self, command):
         if command in self.commandsMod.keys():
-            if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(ltime)):
+            if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(self.commandsMod[command].getCooldown())):
                 return False
             else:
                 return True
         elif command in self.commandsPleb.keys():
-            if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(ltime)):
+            if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(self.commandsPleb[command].getCooldown())):
                 return False
             else:
                 return True
@@ -339,6 +339,8 @@ class BotAna(QtCore.QThread):
                 del self.commandsPleb[args[0]]
                 exist=True
             if exist:
+                #SAREBBE BUONO PRIMA COPIARSI TUTTO IL CONTENUTO DEL FILE CSV IN UNA VARIABILE, E IN CASO DI ECCEZIONI (CHE LASCIEREBBERO IL FILE VUOTO) RISCRIVERE IL CONTENUTO DELLA VARIABILE NEL FILE
+                #OPPURE TROVARE UN'ALTRO METODO PER ELIMINARE UNA RIGA DAL FILE IN MANIERA SAFE
                 f = open('commands.csv', "w+")
                 f.close()
                 with open('commands.csv', 'a', encoding='utf-8') as f:
@@ -354,14 +356,14 @@ class BotAna(QtCore.QThread):
         else:
             for com in self.commandsMod.values():
                 if self.message == com.getName():
-                    if not self.isInTimeout(com.getName(), com.getCooldown()):
+                    if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
         
                     
     #Function to answer pleb command
     def call_command_pleb(self):
-        if self.message == "!roulette" and not self.isInTimeout("!roulette", 20):
+        if self.message == "!roulette" and not self.isInTimeout("!roulette"):
             self.addInTimeout("!roulette")
             self.send_message("Punto la pistola nella testa di "+self.username+"... monkaS")
             time.sleep(5)
@@ -376,7 +378,7 @@ class BotAna(QtCore.QThread):
                 self.players.append(self.username)
                 self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
 
-        elif self.message == "!players" and not self.isInTimeout("!players", 20):
+        elif self.message == "!players" and not self.isInTimeout("!players"):
             self.addInTimeout("!players")
             if self.players:
                 pl = ', '.join(self.players)
@@ -386,7 +388,7 @@ class BotAna(QtCore.QThread):
             else:
                 self.send_message("Non vuole giocare nessuno BibleThump")
 
-        elif self.message == "!maledizione" and not self.isInTimeout("!maledizione", 20):
+        elif self.message == "!maledizione" and not self.isInTimeout("!maledizione"):
             self.addInTimeout("!maledizione")
             file = open("maledizioni.txt", "r")
             maled = file.read()
@@ -407,7 +409,7 @@ class BotAna(QtCore.QThread):
                 self.send_message("/timeout "+self.username+" 60")
                 self.send_message(self.username+" si è suicidato monkaS Press F to pay respect BibleThump")
 
-        elif self.message == "!8ball" and not self.isInTimeout("!8ball", 10):
+        elif self.message == "!8ball" and not self.isInTimeout("!8ball"):
             self.addInTimeout("!8ball")
             new_ball = random.choice(self.ball_choices)
 
@@ -419,26 +421,26 @@ class BotAna(QtCore.QThread):
             self.send_message(new_ball)
             self.old_ball = new_ball
 
-        elif self.message == "!ban" and not self.isInTimeout("!ban", 10):
+        elif self.message == "!ban" and not self.isInTimeout("!ban"):
             self.addInTimeout("!ban")
             self.send_message(self.username+" ha bannato "+self.arguments+" PogChamp")
 
-        elif self.message == "!comandi" and not self.isInTimeout("!comandi", 20):
+        elif self.message == "!comandi" and not self.isInTimeout("!comandi"):
             self.addInTimeout("!comandi")
             self.send_message(str(list(self.commandsPleb.keys())))
 
-        elif self.message == "!suoni" and not self.isInTimeout("!suoni", 20):
+        elif self.message == "!suoni" and not self.isInTimeout("!suoni"):
             self.addInTimeout("!suoni")
             self.get_sounds()
 
-        elif self.message == "!bush" and not self.isInTimeout("images", 20):
+        elif self.message == "!bush" and not self.isInTimeout("images"):
             self.addInTimeout("!bush")
             self.showImage("res/ShowImages/bush.png")
 
         else:
             for com in self.commandsPleb.values():
                 if self.message == com.getName():
-                    if not self.isInTimeout(com.getName(), com.getCooldown()):
+                    if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
 
