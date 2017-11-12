@@ -138,6 +138,7 @@ class BotAna(QtCore.QThread):
                             elif self.message.startswith('!'):
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
+                                    self.call_command_pleb()
                                 else:
                                     self.call_command_pleb()
 
