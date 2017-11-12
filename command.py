@@ -1,9 +1,10 @@
 class Command(object):
 
-    def __init__(self,command, response, cooldown):
+    def __init__(self,command, response, cooldown, tipo):
         self.command = command
         self.response = response
         self.cooldown = cooldown
+        self.tipo = tipo
 
     def getName(self):
         return self.command
@@ -13,3 +14,12 @@ class Command(object):
 
     def getCooldown(self):
         return self.cooldown
+
+    def getTipo(self):
+        return self.tipo
+
+    def isMod(self):
+        if self.tipo == "mod":
+            return True
+        elif self.tipo == "pleb":
+            return False

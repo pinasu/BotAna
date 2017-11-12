@@ -40,20 +40,6 @@ class BotAna(QtCore.QThread):
         self.mods = ["lusyoo", "boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "moobot", "nightbot", "pinasu", "revlobot", "stockazzobot", "stockhausen_l2p", "tubbablubbah", "urza2k", "vivbot", "xuneera"]
         #Chatter to ban, he's screaming too much.
         self.to_ban = ""
-        #Mod commands
-        self.mods_commands = dict()
-        #Bot control
-        self.mods_commands ["!restart"] = ""
-        self.mods_commands ["!stop"] = ""
-        #Raffle related commands
-        self.mods_commands ["!clean" ] = ""
-        self.mods_commands ["!raffle"] = ""
-        self.mods_commands ["!pickone"] = ""
-        #Warns a user if he's being a dick
-        self.mods_commands ["!warn"] = ""
-
-        self.mods_commands ["!add"] = ""
-        self.mods_commands ["!remove"] = ""
         #List of players that want to play
         self.players = []
         #Used commands
@@ -72,6 +58,9 @@ class BotAna(QtCore.QThread):
         self.old_ball = ""
         #Collect times of lasts comands calls
         self.timeCommandsCalled = dict()
+
+        self.commandsMod = dict()
+        self.commandsPleb = dict()
         
 
     def run(self):
@@ -84,6 +73,7 @@ class BotAna(QtCore.QThread):
             #Channel to join
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID()
+            self.loadCommands()
             
             #Chat connection
             self.sock.connect((self.HOST, self.PORT))
@@ -146,7 +136,7 @@ class BotAna(QtCore.QThread):
                             
                             #Message is a command
                             elif self.message.startswith('!'):
-                                if self.message in self.mods_commands:
+                                if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
                                 else:
                                     self.call_command_pleb()
@@ -172,13 +162,13 @@ class BotAna(QtCore.QThread):
 
     def readConfigFile(self, path):
         if os.path.exists(path):
-            with open(path,"r") as f:
-                try:
+            try:
+                with open(path,"r") as f:
                     tmp = f.read()
                     self.printMessage(path + " was read correctly.")
                     return tmp
-                except: # whatever reader errors you care about
-                    self.printMessage("Error reading " + path + "\n")
+            except: # whatever reader errors you care about
+                self.printMessage("Error reading " + path + "\n")
         else:
             self.printMessage("Error reading " + path + "\n")
 
@@ -268,109 +258,80 @@ class BotAna(QtCore.QThread):
 
         
     def call_command_mod(self):
-        if self.username not in self.mods:
-            self.send_message("Mi dispiace, ma questo comando non è per te.")
-        else:
-            raffled = ""
-                
-            if self.message == "!restart":
-                subprocess.Popen("botanaUserInterface.pyw", shell=True)
-                os._exit(0)
+	    raffled = ""
+			
+	    if self.message == "!restart":
+	    	subprocess.Popen("botanaUserInterface.pyw", shell=True)
+    		os._exit(0)
 
-            elif self.message == "!stop":
-                self.send_message("HeyGuys")
-                os._exit(0)
+	    elif self.message == "!stop":
+	    	self.send_message("HeyGuys")
+	    	os._exit(0)
 
-            elif self.message == "!clean":
-                file = open("players.txt", "w")
-                file.write("")
-                self.players = []
+	    elif self.message == "!clean":
+	    	file = open("players.txt", "w")
+	    	file.write("")
+	    	self.players = []
 
-            elif self.message == "!raffle":
-                if len(self.players) > 3:
-                    raffle = random.sample(self.players, 3)
-                    raffled = ', '.join(raffle)
-                    self.players = set(self.players) - set(raffle)
-                else:
-                    raffled = ', '.join(self.players)
-                    self.players = []
-                self.send_message("Ho scelto "+raffled+" PogChamp")
-                
-            elif self.message == "!pickone":
-                if len(self.players) > 0:
-                    raffle = random.sample(self.players, 1)
-                    raffled = ", ".join(raffle)
-                    self.send_message("Ho scelto "+raffled+" PogChamp")
-                else:
-                    self.send_message("Non ci sono persone da scegliere BibleThump")
+	    elif self.message == "!raffle":
+	    	if len(self.players) > 3:
+	    		raffle = random.sample(self.players, 3)
+		    	raffled = ', '.join(raffle)
+		    	self.players = set(self.players) - set(raffle)
+	    	else:
+		    	raffled = ', '.join(self.players)
+		    	self.players = []
+	    	self.send_message("Ho scelto "+raffled+" PogChamp")
+			
+	    elif self.message == "!pickone":
+	    	if len(self.players) > 0:
+	    		raffle = random.sample(self.players, 1)
+	    		raffled = ", ".join(raffle)
+	    		self.send_message("Ho scelto "+raffled+" PogChamp")
+	    	else:
+	    		self.send_message("Non ci sono persone da scegliere BibleThump")
 
-            elif self.message == "!comandi":
-                cmd = self.username+", i comandi disponibili sono [ "
-                #Commands for everyone
-                for r in self.commands:
-                    cmd+="'"+p+", "
-                for r in self.mods_commands:
-                    #Last command in the dict?
-                    if list(self.commands.keys())[-1] == p:
-                        cmd+="'"+p+"' "
-                    else:
-                        cmd+="'"+p+", "
-                self.send_message(cmd+" ]")
+	    elif self.message == "!comandi":
+	    	self.send_message("Per tutti: " + str(list(self.commandsPleb.keys())) + " Per i mod: " + str(list(self.commandsMod.keys())))
 
-            elif self.message == "!suoni":
-                self.get_sounds()
+	    elif self.message == "!suoni":
+	    	self.get_sounds()
 
-            elif self.message == "!add":
-                tmp = self.arguments.split(";")
-                if (len(tmp) == 3 and len(tmp[0].split(" ")) == 1):
-                    fields=[tmp[0], tmp[1], tmp[2]]
-                    with open('commands.csv', 'a') as f:
-                        writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-                        writer.writerow(fields)
-                    self.send_message("Comando " + tmp[0] + " aggiunto")
-                else:
-                    self.send_message("impossibile aggiungere il comando " + tmp[0])
+	    elif self.message == "!add":
+	    	tmp = self.arguments.split(";")
+	    	if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
+	    		fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
+	    		with open('commands.csv', 'a') as f:
+	    			writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+	    			writer.writerow(fields)
+	    		self.send_message("Comando " + tmp[0] + " aggiunto")
+	    	else:
+	    		self.send_message("impossibile aggiungere il comando " + tmp[0])
 
-            elif self.message == "!remove":
-                exist = False
-                tmp = self.get_pleb_commands()
-                f = open('commands.csv', "w+")
-                f.close()
-                with open('commands.csv', 'a', encoding='utf-8') as f:
-                    writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-                    for c in tmp:
-                        if c.getName() != self.arguments:
-                            writer.writerow([c.getName(), c.getResponse(), c.getCooldown()])
-                        else:
-                            exist=True
-                if exist:
-                    self.send_message("Comando " + self.arguments + " eliminato")
-                else:
-                    self.send_message("Comando " + self.arguments + " inesistente")
-
-
-##    def addCommand(self, name, message, cooldown):
-##        fields=[name, message, cooldown]
-##        with open('commands.csv', 'a') as f:
-##            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-##            writer.writerow(fields)
-
-##    def deleteCommand(self, name):
-##        exist = False
-##        tmp = self.get_pleb_commands()
-##        f = open('commands.csv', "w+")
-##        f.close()
-##        with open('commands.csv', 'a', encoding='utf-8') as f:
-##            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-##            for c in tmp:
-##                if c.getName() != name:
-##                    writer.writerow([c.getName(), c.getResponse(), c.getCooldown()])
-##                else:
-##                    exist=True
-##        if exist:
-##            self.send_message("Comando " + name + " eliminato")
-##        else:
-##            self.send_message("Comando " + name + " inesistente")
+	    elif self.message == "!remove":
+                args = split(self.arguments, " ")
+                if len(args) != 2:
+                    self.send_message("Comando errato")
+                    return 
+	    	exist = False
+	    	tmp = self.commandsPleb.keys()
+	    	f = open('commands.csv', "w+")
+	    	f.close()
+	    	with open('commands.csv', 'a', encoding='utf-8') as f:
+	    		writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+	    		for c in tmp:
+	    			if c.getName() != args[0] and self.commandsPleb[c].getTipo() != args[1]:
+	    			    writer.writerow([c.getName(), c.getResponse(), c.getCooldown(), c.getTipo()])
+	    			else:
+                                    if args[1] == "mod":
+                                        del self.commandsMod[args[0]]
+                                    elif:
+                                        del self.commandsPleb[args[0]]
+	    			    exist=True
+	    	if exist:
+	    		self.send_message("Comando " + self.arguments + " eliminato")
+	    	else:
+	    		self.send_message("Comando " + self.arguments + " inesistente")
         
                     
     #Function to answer pleb command
@@ -437,6 +398,10 @@ class BotAna(QtCore.QThread):
             self.timeCommandsCalled["!ban"] = time.time()
             self.send_message(self.username+" ha bannato "+self.arguments+" PogChamp")
 
+        elif self.message == "!comandi" and not self.isInTimeout("!comandi", 20):
+            self.timeCommandsCalled["!comandi"] = time.time()
+            self.send_message(str(list(self.commandsPleb.keys())))
+
         elif self.message == "!suoni" and not self.isInTimeout("!suoni", 20):
             self.timeCommandsCalled["!suoni"] = time.time()
             self.get_sounds()
@@ -446,24 +411,25 @@ class BotAna(QtCore.QThread):
             self.showImage("res/ShowImages/bush.png")
 
         else:
-            for com in self.get_pleb_commands():
+            for com in self.commandsPleb.values():
                 if self.message == com.getName():
                     if not self.isInTimeout(com.getName(), com.getCooldown()):
                         self.timeCommandsCalled[com.getName()] = time.time()
                         self.send_message(com.getResponse())
-            
 
-    def get_pleb_commands(self):
-        command_list = []
-        with open('commands.csv', encoding='utf-8') as commands:
-            reader = csv.reader(commands, delimiter=';', quotechar='|')
-            for row in reader:
-                current = Command(row[0], row[1], row[2])
-                command_list.append(current)
-##            
-##            for current in command_list:
-##                print(current.command+", "+current.response+", "+current.cooldown)
-        return command_list
+    def loadCommands(self):
+        try:
+            with open('commands.csv', encoding='utf-8') as commands:
+                reader = csv.reader(commands, delimiter=';', quotechar='|')
+                for row in reader:
+                    current = Command(row[0], row[1], row[2], row[3])
+                    if row[3] == "mod":
+                        self.commandsMod[row[0]] = current
+                    elif row[3] == "pleb":
+                        self.commandsPleb[row[0]] = current
+            self.printMessage("commands.csv was read correctly.")
+        except:
+            self.printMessage("Error reading commands.csv")
 
     #Get sounds list
     def get_sounds(self):
