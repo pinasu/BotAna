@@ -312,26 +312,26 @@ class BotAna(QtCore.QThread):
                 args = split(self.arguments, " ")
                 if len(args) != 2:
                     self.send_message("Comando errato")
-                    return 
-	    	exist = False
-	    	tmp = self.commandsPleb.keys()
-	    	f = open('commands.csv', "w+")
-	    	f.close()
-	    	with open('commands.csv', 'a', encoding='utf-8') as f:
-	    		writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
-	    		for c in tmp:
-	    			if c.getName() != args[0] and self.commandsPleb[c].getTipo() != args[1]:
-	    			    writer.writerow([c.getName(), c.getResponse(), c.getCooldown(), c.getTipo()])
-	    			else:
-                                    if args[1] == "mod":
-                                        del self.commandsMod[args[0]]
-                                    elif:
-                                        del self.commandsPleb[args[0]]
-	    			    exist=True
-	    	if exist:
-	    		self.send_message("Comando " + self.arguments + " eliminato")
-	    	else:
-	    		self.send_message("Comando " + self.arguments + " inesistente")
+                    return
+                exist=False
+                tmp = self.commandsPleb.keys()
+                f = open('commands.csv', "w+")
+                f.close()
+                with open('commands.csv', 'a', encoding='utf-8') as f:
+                        writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                        for c in tmp:
+                            if c.getName() != args[0] and self.commandsPleb[c].getTipo() != args[1]:
+                                writer.writerow([c.getName(), c.getResponse(), c.getCooldown(), c.getTipo()])
+                            else:
+                                if args[1] == "mod":
+                                    del self.commandsMod[args[0]]
+                                elif args[1] == "pleb":
+                                    del self.commandsPleb[args[0]]
+                                    exist=True
+                if exist:
+                    self.send_message("Comando " + self.arguments + " eliminato")
+                else:
+                    self.send_message("Comando " + self.arguments + " inesistente")
         
                     
     #Function to answer pleb command
