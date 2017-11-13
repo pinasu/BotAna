@@ -1,6 +1,7 @@
 import sys, os, time
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QTextCursor
 from botana import BotAna
 import threading
@@ -88,11 +89,22 @@ class Window(QtWidgets.QWidget):
         self.greenScreenButton.setIcon(QtGui.QIcon('res/greenScreenButton.png'))
         self.greenScreenButton.setIconSize(QtCore.QSize(40,40))
         self.greenScreenButton.setCursor (Qt.PointingHandCursor)
-        self.greenScreenButton.setObjectName("greenScreenButton")
-        self.greenScreenButton.setProperty('class','button')
+        self.greenScreenButton.setProperty('class','button gridButton')
+        self.logErrorButton = QtWidgets.QPushButton("")
+        self.logErrorButton.setIcon(QtGui.QIcon('res/errorLogButton.png'))
+        self.logErrorButton.setIconSize(QtCore.QSize(40,40))
+        self.logErrorButton.setCursor (Qt.PointingHandCursor)
+        self.logErrorButton.setObjectName("")
+        self.logErrorButton.setProperty('class','button gridButton')
+        self.msgLog = QtWidgets.QMessageBox()
+        self.msgLog.setIcon(QMessageBox.Information)
+        self.msgLog.setText("Nessun log di errore presente")
+        self.msgLog.setWindowTitle("Info")
+        self.msgLog.setWindowIcon(QtGui.QIcon('res/icon.ico'))
 
         g_box = QtWidgets.QGridLayout()
         g_box.addWidget(self.greenScreenButton, 0 , 0)
+        g_box.addWidget(self.logErrorButton, 0 , 1)
 
         v_box = QtWidgets.QVBoxLayout()
         v_box.setContentsMargins(7,7,14,0)
@@ -120,8 +132,15 @@ class Window(QtWidgets.QWidget):
 
         self.sendButton.clicked.connect(self.btn_click)
         self.greenScreenButton.clicked.connect(self.openGreenScreen)
+        self.logErrorButton.clicked.connect(self.openErrorLog)
 
         self.show()
+
+    def openErrorLog(self):
+        if os.path.exists('LogError.txt'):
+            os.startfile('LogError.txt')
+        else:
+            self.msgLog.exec_()
 
     def activateGreenScreenButton(self, bo):
         self.greenScreenButton.setEnabled(bo)
