@@ -20,5 +20,5 @@
 !clean;;0;mod
 !raffle;;0;mod
 !pickone;;0;mod
-!add;;0;mod
-!remove;;0;mod
+!addcommand;;0;mod
+!removecommand;;0;mod

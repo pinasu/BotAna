@@ -26,5 +26,5 @@ class Command(object):
     def isMod(self):
         if self.tipo == "mod":
             return True
-        elif self.tipo == "pleb":
-            return False
+    
+        return False
