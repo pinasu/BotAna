@@ -65,7 +65,7 @@ class BotAna(QtCore.QThread):
 		self.commandsPleb = dict()
 
 		self.sounds = dict()
-		self.soundCalled = dict()
+		self.timeSoundCalled = dict()
 
 	def run(self):
 		try:
@@ -212,7 +212,7 @@ class BotAna(QtCore.QThread):
 
 	#Function to check if channel is online
 	def check_online(self):
-		"""Momentaneamente commentata per far credere al bot che il canale è live"""
+		'''Momentaneamente commentata per far credere al bot che il canale è live
 	##    offline = True
 	##    url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
 	##    params = {"Client-ID" : ""+self.CLIENT_ID+""}
@@ -239,19 +239,11 @@ class BotAna(QtCore.QThread):
 	##                            self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
 	##                            time.sleep(1)
 	##                            self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
-	##                            time.sleep(300)
+	##        time.sleep(10)
 	##
 	##        resp = requests.get(url=url, headers=params)
 	##        online = json.loads(resp.text)
-	##
-	##        #Stockhausen always stream at 20, set for how much time will the Bot sleep
-	##        if datetime.datetime.now().strftime('%H') == "19":
-	##            offline = False
-	##
-	##        if offline:
-	##            time.sleep(900)
-	##        else:
-	##            time.sleep(300)
+		'''
 
 	def addInTimeout(self, command):
 		if command in self.commandsMod.keys():
@@ -271,9 +263,14 @@ class BotAna(QtCore.QThread):
 			else:
 				return True
 
+	def soundAddInTimeout(self, sound):
+		if sound in self.sounds.keys():
+			self.timeSoundCalled[sound] = time.time()
+
 	def soundIsInTimeout(self, sound):
 		if sound in self.sounds.keys():
-			if sound not in self.soundCalled or (time.time() - self.soundCalled[sound] >= float(self.sounds[sound].getCooldown())):
+			print(sound+": "+self.sounds[sound].getCooldown())
+			if sound not in self.timeSoundCalled or (time.time() - self.timeSoundCalled[sound] >= float(self.sounds[sound].getCooldown())):
 				return False
 			return True
 
@@ -483,15 +480,16 @@ class BotAna(QtCore.QThread):
 		self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
 
 	def call_sound(self):
-		pygame.mixer.pre_init(44100, 16, 2, 4096)
-		pygame.mixer.init()
-		sound = pygame.mixer.Sound("res/Sounds/" + self.message[1:] + ".wav")
+		if not self.soundIsInTimeout(self.message):
+			self.soundAddInTimeout(self.message)
 
-		print(self.message+".wav")
+			pygame.mixer.pre_init(44100, 16, 2, 4096)
+			pygame.mixer.init()
+			sound = pygame.mixer.Sound("res/Sounds/" + self.message[1:] + ".wav")
 
-		sound.play(0)
-		clock = pygame.time.Clock()
-		clock.tick(10)
-		while pygame.mixer.music.get_busy():
-			pygame.event.poll()
+			sound.play(0)
+			clock = pygame.time.Clock()
 			clock.tick(10)
+			while pygame.mixer.music.get_busy():
+				pygame.event.poll()
+				clock.tick(10)

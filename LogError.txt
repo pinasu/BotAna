@@ -1,21 +1,9 @@
-[15/11/2017 - 10:44:31] Traceback (most recent call last):
+[15/11/2017 - 11:47:14] Traceback (most recent call last):
   File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 150, in run
     self.call_sound()
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 489, in call_sound
-    sound = pygame.mixer.Sound(self.message + ".wav")
-pygame.error: Unable to open file '!naisu.wav'
-
-[15/11/2017 - 10:45:39] Traceback (most recent call last):
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 150, in run
-    self.call_sound()
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 489, in call_sound
-    sound = pygame.mixer.Sound(self.message + ".wav")
-pygame.error: Unable to open file '!gg.wav'
-
-[15/11/2017 - 10:50:35] Traceback (most recent call last):
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 150, in run
-    self.call_sound()
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 489, in call_sound
-    sound = pygame.mixer.Sound(self.message + ".wav")
-pygame.error: Unable to open file '!gg.wav'
+  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 483, in call_sound
+    if not self.soundIsInTimeout(self.message):
+  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 273, in soundIsInTimeout
+    if sound not in self.timeSoundCalled or (time.time() - self.timeSoundCalled[sound] >= float(self.sounds[sound].getCooldown())):
+ValueError: could not convert string to float: 
 
