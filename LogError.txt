@@ -1,8 +1,0 @@
-
-[15/11/2017 - 12:30:42] Traceback (most recent call last):
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 150, in run
-    self.call_command_pleb()
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 395, in call_command_pleb
-    self.send_message(str(skip_count)+" persone vogliono skippare questa canzone LUL")
-NameError: name 'skip_count' is not defined
-
