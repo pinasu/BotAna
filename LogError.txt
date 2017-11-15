@@ -1,0 +1,6 @@
+[15/11/2017 - 09:57:07] Traceback (most recent call last):
+  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 143, in run
+    self.call_command_mod()
+  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 306, in call_command_mod
+    self.send_message(self.username+", essendo un mod hai anche: " + str(list(self.commandsMod.keys()) - list("!comandi")))
+TypeError: unsupported operand type(s) for -: 'list' and 'list'

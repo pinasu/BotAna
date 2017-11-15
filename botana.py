@@ -301,9 +301,9 @@ class BotAna(QtCore.QThread):
 				self.send_message("Non ci sono persone da scegliere BibleThump")
 
 		elif self.message == "!comandi":
-			self.send_message(self.username+", i tuoi comandi sono " + str(list(self.commandsPleb.keys())))
+			self.send_message(self.username+", i tuoi comandi sono " + str(set(self.commandsPleb.keys())))
 			time.sleep(2)
-			self.send_message(self.username+", essendo un mod hai anche: " + str(list(self.commandsMod.keys())))
+			self.send_message(self.username+", essendo un mod hai anche: " + str(set(self.commandsMod.keys()).difference(set("!comandi"))))
 
 		elif self.message == "!suoni":
 			self.get_sounds()
@@ -422,7 +422,7 @@ class BotAna(QtCore.QThread):
 
 		elif self.message == "!comandi" and not self.isInTimeout("!comandi"):
 			self.addInTimeout("!comandi")
-			self.send_message(str(list(self.commandsPleb.keys())))
+			self.send_message(str(set(self.commandsPleb.keys())))
 
 		elif self.message == "!suoni" and not self.isInTimeout("!suoni"):
 			self.addInTimeout("!suoni")
