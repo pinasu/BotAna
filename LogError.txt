@@ -1,15 +1,8 @@
 
-[15/11/2017 - 12:09:34] Traceback (most recent call last):
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 147, in run
+[15/11/2017 - 12:30:42] Traceback (most recent call last):
+  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 150, in run
     self.call_command_pleb()
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 452, in call_command_pleb
-    if json_str['chatters']['moderators']:
-NameError: name 'json_str' is not defined
-
-[15/11/2017 - 12:11:33] Traceback (most recent call last):
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 147, in run
-    self.call_command_pleb()
-  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 470, in call_command_pleb
-    self.send_message(user+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
-NameError: name 'user' is not defined
+  File "/home/pinasu/Documenti/Programmi/BotAna/botana.py", line 395, in call_command_pleb
+    self.send_message(str(skip_count)+" persone vogliono skippare questa canzone LUL")
+NameError: name 'skip_count' is not defined
 

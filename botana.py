@@ -67,6 +67,9 @@ class BotAna(QtCore.QThread):
 		self.sounds = dict()
 		self.timeSoundCalled = dict()
 
+		self.skippers = []
+		self.skip_count = 0
+
 	def run(self):
 		try:
 			#Bot OAuth
@@ -381,6 +384,19 @@ class BotAna(QtCore.QThread):
 			else:
 				self.send_message("La pistola si è inceppata! PogChamp "+self.username+" è sopravvissuto Kreygasm")
 
+		elif self.message == "!salta":
+			if self.username not in self.skippers:
+				self.skip_count += 1
+				self.skippers.append(self.username)
+				if self.skip_count >= 3:
+					self.skip_count = 0
+					self.send_message("!songs skip")
+				else:
+					if len(self.skippers) == 1:
+						self.send_message(self.username+" vuole saltare questa canzone LUL")
+					else:
+						self.send_message("Anche "+self.username+" assieme ad altri "+str(self.skip_count-1)+" vuole saltare questa canzone LUL")
+
 		elif self.message == "!play":
 			if self.username not in self.players:
 				self.players.append(self.username)
@@ -426,14 +442,14 @@ class BotAna(QtCore.QThread):
 
 		elif self.message == "!love" and not self.isInTimeout("!love"):
 			self.addInTimeout("!love")
-				emote = ""
-				rand = randint(0, 100)
-				if rand < 50:
-					emote = "FeelsBadMan"
-				elif rand == 50:
-					emote = "monkaS"
-				elif rand > 50:
-					emote = "PogChamp"
+			emote = ""
+			rand = randint(0, 100)
+			if rand < 50:
+				emote = "FeelsBadMan"
+			elif rand == 50:
+				emote = "monkaS"
+			elif rand > 50:
+				emote = "PogChamp"
 
 			if self.arguments:
 				self.send_message(self.username+" ama "+self.arguments+" al "+str(rand)+"% "+emote)
