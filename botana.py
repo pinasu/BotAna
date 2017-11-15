@@ -157,16 +157,15 @@ class BotAna(QtCore.QThread):
                                     self.call_sound(self.message)
 
                             elif "classic" in self.message.lower():
-                                self.send_message("CLASSIC")
+                                self.send_message("CLASSIC LUL")
 
                             elif "anche io" in self.message.lower():
-                                self.send_message("Anche io!!!")
-
+                                self.send_message("Anche io KappaPride")
 
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
-            self.call_sound("BotAnaCrash")
+            self.call_sound("crash")
             self.printMessage("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
@@ -509,6 +508,7 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!bush" and not self.isInTimeout("!bush"):
             self.addInTimeout("!bush")
+            self.send_message("Pro strats PogChamp")
             self.showImage("res/ShowImages/bush.png")
 
         else:
