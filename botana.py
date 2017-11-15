@@ -155,7 +155,7 @@ class BotAna(QtCore.QThread):
 				#Prevent Bot to use too much CPU
 				time.sleep(1/self.RATE)
 		except:
-			self.printMessage("----------SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI----------")
+			self.printMessage("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
 			file = open("LogError.txt", "a")
 			file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
 			traceback.print_exc()
@@ -201,13 +201,12 @@ class BotAna(QtCore.QThread):
 	#Function to send whisper to user
 	#Watch out, if you abuse using whispers Twitch will ban your Bot's account
 	def send_whisper(self, message):
-		self.sock.send(bytes("PRIVMSG #"+self.username+" "+message+"#\r\n", "UTF-8"))
+		self.sock.send(bytes("PRIVMSG #botana__ :/w "+self.username+" "+message+"\r\n", "UTF-8"))
 
 	#Function to check if user needs to be banned
 	def check_ban(self):
 		if self.username not in self.mods:
 			if self.username == to_ban:
-				#Ban user for 5 seconds, with no parameter is 600 seconds
 				self.send_message("/timeout "+self.username+" 5")
 			else:
 				to_ban = self.username
@@ -318,7 +317,7 @@ class BotAna(QtCore.QThread):
 		elif self.message == "!comandi":
 			self.send_message(self.username+", i tuoi comandi sono " + str(set(self.commandsPleb.keys())))
 			time.sleep(2)
-			self.send_message(self.username+", essendo un mod hai anche: " + str(set(self.commandsMod.keys()).difference(set("!comandi"))))
+			self.send_whisper(self.username+", essendo un mod hai anche: " + str(set(self.commandsMod.keys())))
 
 		elif self.message == "!suoni":
 			self.get_sounds()
