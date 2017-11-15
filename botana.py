@@ -424,6 +424,51 @@ class BotAna(QtCore.QThread):
 			ball = random.choice(self.ball_choices)
 			self.send_message(ball)
 
+		elif self.message == "!love" and not self.isInTimeout("!love"):
+			self.addInTimeout("!love")
+			if self.arguments:
+				emote = ""
+				rand = randint(0, 100)
+				if rand < 50:
+					emote = "FeelsBadMan"
+				elif rand == 50:
+					emote = "monkaS"
+				elif rand > 50:
+					emote = "PogChamp"
+				
+				self.send_message(self.username+" ama "+self.arguments+" al "+str(rand)+"% "+emote)
+			else:
+				emote = ""
+				rand = randint(0, 100)
+				if rand < 50:
+					emote = "FeelsBadMan"
+				elif rand == 50:
+					emote = "monkaS"
+				elif rand > 50:
+					emote = "PogChamp"
+
+				url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
+				params = dict(user = "na")
+				resp = requests.get(url=url, params=params)
+				json_str = json.loads(resp.text)
+
+				ret_list = []
+				rand_mod = self.username
+				if json_str['chatters']['moderators']:
+					while rand_mod == self.username:
+						rand_mod = random.choice(json_str['chatters']['moderators'])
+
+				ret_list.append(rand_mod)
+
+				rand_user = self.username
+				if json_str['chatters']['viewers']:
+					while rand_user == self.username:
+						rand_user = random.choice(json_str['chatters']['viewers'])
+
+				ret_list.append(rand_user)
+
+				self.send_message(self.username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
+
 		elif self.message == "!ban" and not self.isInTimeout("!ban"):
 			self.addInTimeout("!ban")
 			self.send_message(self.username+" ha bandito "+self.arguments+" dalla chat PogChamp")
