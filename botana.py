@@ -486,7 +486,7 @@ class BotAna(QtCore.QThread):
 	def call_sound(self):
 		pygame.mixer.pre_init(44100, 16, 2, 4096)
 		pygame.mixer.init()
-		sound = pygame.mixer.Sound(self.message + ".wav")
+		sound = pygame.mixer.Sound("res/Sounds/" + self.message[1:] + ".wav")
 
 		print(self.message+".wav")
 
