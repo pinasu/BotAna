@@ -5,6 +5,7 @@ import socket, time, json, requests, datetime, command, os, traceback, subproces
 from pygame import mixer
 from random import randint
 from command import Command
+from image import Image
 from sound import Sound
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
@@ -66,7 +67,14 @@ class BotAna(QtCore.QThread):
         self.commandsPleb = dict()
 
         self.sounds = dict()
-        self.timeSoundCalled = dict()
+        self.timeLastSoundCalled = None
+        self.cooldownSound = 20
+        #self.timeSoundCalled = dict()
+
+        self.images = dict()
+        self.timeLastImageCalled = None
+        self.cooldownImage = 20
+        #self.timeImageCalled = dict()
 
         self.skippers = []
         self.skip_count = 0
@@ -83,6 +91,7 @@ class BotAna(QtCore.QThread):
             self.CLIENT_ID = self.get_clientID()
             self.loadCommands()
             self.loadSounds()
+            self.loadImage()
             
             #Chat connection
             self.sock.connect((self.HOST, self.PORT))
@@ -155,6 +164,8 @@ class BotAna(QtCore.QThread):
 
                                 if self.message in self.sounds.keys():
                                     self.call_sound(self.message)
+                                elif self.message in self.images.keys():
+                                    self.call_image(self.message)
 
                             elif "classic" in self.message.lower():
                                 self.send_message("CLASSIC LUL")
@@ -165,7 +176,7 @@ class BotAna(QtCore.QThread):
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
-            self.call_sound("crash")
+            self.play_sound("crash")
             self.printMessage("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
@@ -276,14 +287,25 @@ class BotAna(QtCore.QThread):
 
     def soundAddInTimeout(self, sound):
         if sound in self.sounds.keys():
-            self.timeSoundCalled[sound] = time.time()
+            self.timeLastSoundCalled = time.time()
 
     def soundIsInTimeout(self, sound):
         if sound in self.sounds.keys():
-            print(sound+": "+self.sounds[sound].getCooldown())
-            if sound not in self.timeSoundCalled or (time.time() - self.timeSoundCalled[sound] >= float(self.sounds[sound].getCooldown())):
+            #print(sound+": "+self.sounds[sound].getCooldown())
+            #if sound not in self.timeSoundCalled or (time.time() - self.timeSoundCalled[sound] >= float(self.sounds[sound].getCooldown())):
+            if self.timeLastSoundCalled == None or (time.time() - self.timeLastSoundCalled >= float(self.cooldownSound)):
                 return False
-            return True
+        return True
+
+    def imageAddInTimeout(self, img):
+        if img in self.images.keys():
+            self.timeLastImageCalled = time.time()
+
+    def imageIsInTimeout(self, img):
+        if img in self.images.keys():
+            if self.timeLastImageCalled == None or (time.time() - self.timeLastImageCalled >= float(self.cooldownImage)):
+                return False
+        return True
                 
     def restart(self):
         subprocess.Popen("botanaUserInterface.pyw", shell=True)
@@ -506,11 +528,6 @@ class BotAna(QtCore.QThread):
             self.addInTimeout("!suoni")
             self.get_sounds()
 
-        elif self.message == "!bush" and not self.isInTimeout("!bush"):
-            self.addInTimeout("!bush")
-            self.send_message("Pro strats PogChamp")
-            self.showImage("res/ShowImages/bush.png")
-
         else:
             for com in self.commandsPleb.values():
                 if com.isSimpleCommand() and self.message == com.getName():
@@ -519,52 +536,71 @@ class BotAna(QtCore.QThread):
                         self.send_message(com.getResponse())
 
     def loadCommands(self):
-        try:
-            with open('commands.csv', encoding='utf-8') as commands:
-                reader = csv.reader(commands, delimiter=';', quotechar='|')
-                for row in reader:
-                    current = Command(row[0], row[1], row[2], row[3])
-                    if row[3] == "mod":
-                        self.commandsMod[row[0]] = current
-                    elif row[3] == "pleb":
-                        self.commandsPleb[row[0]] = current
-            self.printMessage("commands.csv was read correctly.")
-        except:
-            self.printMessage("Error reading commands.csv")
+        #try:
+        with open('commands.csv', encoding='utf-8') as commands:
+            reader = csv.reader(commands, delimiter=';', quotechar='|')
+            for row in reader:
+                current = Command(row[0], row[1], row[2], row[3])
+                if row[3] == "mod":
+                    self.commandsMod[row[0]] = current
+                elif row[3] == "pleb":
+                    self.commandsPleb[row[0]] = current
+        self.printMessage("commands.csv was read correctly.")
+        #except:
+            #self.printMessage("Error reading commands.csv")
+
+    def loadImage(self):
+        #try:
+        with open('images.csv', encoding='utf-8') as imgs:
+            reader = csv.reader(imgs, delimiter=';', quotechar='|')
+            for row in reader:
+                current = Image(row[0], row[1], row[2])
+                self.images[row[0]] = current
+        self.printMessage("images.csv was read correctly.")
+        #except:
+            #self.printMessage("Error reading images.csv")
 
     def loadSounds(self):
-        try:
-            with open('sounds.csv', encoding='utf-8') as sounds:
-                reader = csv.reader(sounds, delimiter=';', quotechar='|')
-                for row in reader:
-                    current = Sound(row[0], row[1])
-                    self.sounds[row[0]] = current
-            self.printMessage("sounds.csv was read correctly.")
-        except:
-            self.printMessage("Error reading sounds.csv")
-            file = open("LogError.txt", "a")
-            file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
-            traceback.print_exc()
+        #try:
+        with open('sounds.csv', encoding='utf-8') as sounds:
+            reader = csv.reader(sounds, delimiter=';', quotechar='|')
+            for row in reader:
+                current = Sound(row[0])
+                self.sounds[row[0]] = current
+        self.printMessage("sounds.csv was read correctly.")
+        #except:
+            #self.printMessage("Error reading sounds.csv")
+            #file = open("LogError.txt", "a")
+            #file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
+            #traceback.print_exc()
 
     #Get sounds list
     def get_sounds(self):
         self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
 
+    def call_image(self, name):
+        for img in self.images.values():
+            if name == img.getName() and not self.imageIsInTimeout(name):
+                self.imageAddInTimeout(name)
+                self.send_message("Pro strats PogChamp")
+                self.showImage(img.getMessage())
+
+    def play_sound(self, name):
+        pygame.mixer.pre_init(44100, 16, 2, 4096)
+        pygame.mixer.init()
+
+        sound = pygame.mixer.Sound("res/Sounds/" + name + ".wav")
+
+        sound.play(0)
+        clock = pygame.time.Clock()
+        clock.tick(10)
+        while pygame.mixer.music.get_busy():
+            pygame.event.poll()
+            clock.tick(10)
+
     def call_sound(self, name):
         if name[:1] == "!":
-            name = name[1:]
-
-        print(name)
+                sname = name[1:]
         if not self.soundIsInTimeout(name):
             self.soundAddInTimeout(name)
-
-            pygame.mixer.pre_init(44100, 16, 2, 4096)
-            pygame.mixer.init()
-            sound = pygame.mixer.Sound("res/Sounds/" + name + ".wav")
-
-            sound.play(0)
-            clock = pygame.time.Clock()
-            clock.tick(10)
-            while pygame.mixer.music.get_busy():
-                pygame.event.poll()
-                clock.tick(10)
+            self.play_sound(sname)

@@ -1,11 +1,7 @@
 class Sound(object):
 
-    def __init__(self, sound, cooldown):
+    def __init__(self, sound):
         self.sound = sound
-        self.cooldown = cooldown
 
     def getName(self):
         return self.sound
-
-    def getCooldown(self):
-        return self.cooldown
