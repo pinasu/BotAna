@@ -426,18 +426,6 @@ class BotAna(QtCore.QThread):
 
 		elif self.message == "!love" and not self.isInTimeout("!love"):
 			self.addInTimeout("!love")
-			if self.arguments:
-				emote = ""
-				rand = randint(0, 100)
-				if rand < 50:
-					emote = "FeelsBadMan"
-				elif rand == 50:
-					emote = "monkaS"
-				elif rand > 50:
-					emote = "PogChamp"
-				
-				self.send_message(self.username+" ama "+self.arguments+" al "+str(rand)+"% "+emote)
-			else:
 				emote = ""
 				rand = randint(0, 100)
 				if rand < 50:
@@ -447,6 +435,9 @@ class BotAna(QtCore.QThread):
 				elif rand > 50:
 					emote = "PogChamp"
 
+			if self.arguments:
+				self.send_message(self.username+" ama "+self.arguments+" al "+str(rand)+"% "+emote)
+			else:
 				url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
 				params = dict(user = "na")
 				resp = requests.get(url=url, params=params)
