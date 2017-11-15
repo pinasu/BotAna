@@ -9,6 +9,7 @@ import threading
 class WindowTwo(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__()
+        self.isInTest = False
         self.parent = parent
         self.parent.activateGreenScreenButton(False)
         self.init_ui()
@@ -19,7 +20,7 @@ class WindowTwo(QtWidgets.QWidget):
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.setStyleSheet("WindowTwo{background-color:#0f0;}")
         self.setWindowTitle('BotAnaImage')
-        self.setWindowIcon(QtGui.QIcon('res/icon.ico'))
+        self.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
         self.img = QtWidgets.QLabel()
         
         v_box = QtWidgets.QVBoxLayout()
@@ -36,10 +37,24 @@ class WindowTwo(QtWidgets.QWidget):
 
     def closeEvent(self, event):
         self.parent.activateGreenScreenButton(True)
+        self.setButtonTestImageActive(False)
         event.accept()
 
+    def setButtonTestImageActive(self, bo):
+        self.isInTest = bo
+        self.parent.setButtonTestImage(bo)
+
+    def triggerTestImage(self):
+        if not self.isInTest:
+            self.img.setPixmap(QtGui.QPixmap("res/ShowImages/bush.png"))
+            self.setButtonTestImageActive(True)
+        else:
+            self.img.clear()
+            self.setButtonTestImageActive(False)
+        
+
     def showImage(self, path):
-        if self.isVisible():
+        if self.isVisible() and not self.isInTest:
             threading.Thread(target=self.process, args=[path]).start()
 
     def process(self, path):
@@ -64,17 +79,17 @@ class Window(QtWidgets.QWidget):
         with open(sshFile,"r") as fh:
             self.setStyleSheet(fh.read())
 
-        self.setWindowIcon(QtGui.QIcon('res/icon.ico'))
+        self.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
         
         self.setGeometry(0,0,950, 450)
         self.move(600, 200)
         self.setMinimumSize(700,300)
         self.logo = QtWidgets.QLabel()
         self.logo.setObjectName("logo")
-        self.logo.setPixmap(QtGui.QPixmap('res/botana.png'))
+        self.logo.setPixmap(QtGui.QPixmap('res/Gui/botana.png'))
 
         self.creators = QtWidgets.QLabel()
-        self.creators.setPixmap(QtGui.QPixmap('res/creators.png'))
+        self.creators.setPixmap(QtGui.QPixmap('res/Gui/creators.png'))
         
         self.textarea = QtWidgets.QTextEdit()
         self.textarea.setReadOnly(True)
@@ -86,25 +101,30 @@ class Window(QtWidgets.QWidget):
         self.sendButton.setObjectName("sendButton")
         self.sendButton.setProperty('class','button')
         self.greenScreenButton = QtWidgets.QPushButton("")
-        self.greenScreenButton.setIcon(QtGui.QIcon('res/greenScreenButton.png'))
+        self.greenScreenButton.setIcon(QtGui.QIcon('res/Gui/greenScreenButton.png'))
         self.greenScreenButton.setIconSize(QtCore.QSize(40,40))
         self.greenScreenButton.setCursor (Qt.PointingHandCursor)
         self.greenScreenButton.setProperty('class','button gridButton')
         self.logErrorButton = QtWidgets.QPushButton("")
-        self.logErrorButton.setIcon(QtGui.QIcon('res/errorLogButton.png'))
+        self.logErrorButton.setIcon(QtGui.QIcon('res/Gui/errorLogButton.png'))
         self.logErrorButton.setIconSize(QtCore.QSize(40,40))
         self.logErrorButton.setCursor (Qt.PointingHandCursor)
-        self.logErrorButton.setObjectName("")
         self.logErrorButton.setProperty('class','button gridButton')
         self.msgLog = QtWidgets.QMessageBox()
         self.msgLog.setIcon(QMessageBox.Information)
         self.msgLog.setText("Nessun log di errore presente")
         self.msgLog.setWindowTitle("Info")
-        self.msgLog.setWindowIcon(QtGui.QIcon('res/icon.ico'))
+        self.msgLog.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
+        self.testImageGreenScreen = QtWidgets.QPushButton("")
+        self.testImageGreenScreen.setIcon(QtGui.QIcon('res/Gui/testImageGreenScreen.png'))
+        self.testImageGreenScreen.setIconSize(QtCore.QSize(40,40))
+        self.testImageGreenScreen.setCursor (Qt.PointingHandCursor)
+        self.testImageGreenScreen.setProperty('class','button gridButton')
 
         g_box = QtWidgets.QGridLayout()
         g_box.addWidget(self.greenScreenButton, 0 , 0)
-        g_box.addWidget(self.logErrorButton, 0 , 1)
+        g_box.addWidget(self.testImageGreenScreen, 0 , 1)
+        g_box.addWidget(self.logErrorButton, 1 , 0, 1, 0)
 
         v_box = QtWidgets.QVBoxLayout()
         v_box.setContentsMargins(7,7,14,0)
@@ -133,8 +153,18 @@ class Window(QtWidgets.QWidget):
         self.sendButton.clicked.connect(self.btn_click)
         self.greenScreenButton.clicked.connect(self.openGreenScreen)
         self.logErrorButton.clicked.connect(self.openErrorLog)
+        self.testImageGreenScreen.clicked.connect(self.triggerTestImage)
 
         self.show()
+
+    def setButtonTestImage(self, active):
+        if active:
+            self.testImageGreenScreen.setIcon(QtGui.QIcon('res/Gui/testImageGreenScreenX.png'))
+        else:
+            self.testImageGreenScreen.setIcon(QtGui.QIcon('res/Gui/testImageGreenScreen.png'))
+
+    def triggerTestImage(self):
+        self.secondWind.triggerTestImage()
 
     def openErrorLog(self):
         if os.path.exists('LogError.txt'):
@@ -144,6 +174,7 @@ class Window(QtWidgets.QWidget):
 
     def activateGreenScreenButton(self, bo):
         self.greenScreenButton.setEnabled(bo)
+        self.testImageGreenScreen.setEnabled(not bo)
 
     def openGreenScreen(self):
         self.secondWind = WindowTwo(self)
