@@ -1,7 +1,8 @@
 #Main application file
 
 #Useful imports
-import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv
+import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame
+from pygame import mixer
 from random import randint
 from command import Command
 from sound import Sound
@@ -64,6 +65,7 @@ class BotAna(QtCore.QThread):
 		self.commandsPleb = dict()
 
 		self.sounds = dict()
+		self.soundCalled = dict()
 
 	def run(self):
 		try:
@@ -143,6 +145,9 @@ class BotAna(QtCore.QThread):
 									self.call_command_mod()
 								else:
 									self.call_command_pleb()
+
+								if self.message in self.sounds.keys():
+									self.call_sound()
 
 				#Prevent Bot to use too much CPU
 				time.sleep(1/self.RATE)
@@ -262,6 +267,13 @@ class BotAna(QtCore.QThread):
 				return True
 		elif command in self.commandsPleb.keys():
 			if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(self.commandsPleb[command].getCooldown())):
+				return False
+			else:
+				return True
+
+	def soundIsInTimeout(self, sound):
+		if sound in self.sounds.keys():
+			if sound not in self.soundCalled or (time.time() - self.soundCalled[sound] >= float(self.sounds[sound].getCooldown())):
 				return False
 			else:
 				return True
@@ -469,4 +481,18 @@ class BotAna(QtCore.QThread):
 
 	#Get sounds list
 	def get_sounds(self):
-		self.send_message(self.username+", i suoni disponibili sono: "+str(list(self.sounds.keys())))
+		self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
+
+	def call_sound(self):
+		pygame.mixer.pre_init(44100, 16, 2, 4096)
+		pygame.mixer.init()
+		sound = pygame.mixer.Sound(self.message + ".wav")
+
+		print(self.message+".wav")
+
+		sound.play(0)
+		clock = pygame.time.Clock()
+		clock.tick(10)
+		while pygame.mixer.music.get_busy():
+			pygame.event.poll()
+			clock.tick(10)
