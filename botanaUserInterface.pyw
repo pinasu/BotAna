@@ -46,7 +46,7 @@ class WindowTwo(QtWidgets.QWidget):
 
     def triggerTestImage(self):
         if not self.isInTest:
-            self.img.setPixmap(QtGui.QPixmap("res/ShowImages/bush.png"))
+            self.img.setPixmap(QtGui.QPixmap("res/ShowImages/test.png"))
             self.setButtonTestImageActive(True)
         else:
             self.img.clear()
