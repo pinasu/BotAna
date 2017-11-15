@@ -275,8 +275,7 @@ class BotAna(QtCore.QThread):
 		if sound in self.sounds.keys():
 			if sound not in self.soundCalled or (time.time() - self.soundCalled[sound] >= float(self.sounds[sound].getCooldown())):
 				return False
-			else:
-				return True
+			return True
 
 	def call_command_mod(self):
 		raffled = ""
