@@ -73,7 +73,7 @@ class Window(QtWidgets.QWidget):
         self.bot.sign.connect(self.printOnTextArea)
         self.bot.sign2.connect(self.showImage)
         self.bot.start()
-        self.show()
+        self.activateWindow()
 
     def init_ui(self):
 
@@ -168,7 +168,7 @@ class Window(QtWidgets.QWidget):
         self.testImageGreenScreen.clicked.connect(self.triggerTestImage)
         self.restartBtn.clicked.connect(self.restart)
 
-        
+        self.show()
 
     def restart(self):
         self.bot.restart()
