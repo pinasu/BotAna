@@ -60,7 +60,8 @@ class WindowTwo(QtWidgets.QWidget):
     def process(self, path):
         self.img.setPixmap(QtGui.QPixmap(path))
         time.sleep(10)
-        self.img.clear()
+        if not self.isInTest:
+            self.img.clear()
 
 class Window(QtWidgets.QWidget):
 
@@ -120,11 +121,17 @@ class Window(QtWidgets.QWidget):
         self.testImageGreenScreen.setIconSize(QtCore.QSize(40,40))
         self.testImageGreenScreen.setCursor (Qt.PointingHandCursor)
         self.testImageGreenScreen.setProperty('class','button gridButton')
+        self.restartBtn = QtWidgets.QPushButton("")
+        self.restartBtn.setIcon(QtGui.QIcon('res/Gui/restart.png'))
+        self.restartBtn.setIconSize(QtCore.QSize(40,40))
+        self.restartBtn.setCursor (Qt.PointingHandCursor)
+        self.restartBtn.setProperty('class','button gridButton')
 
         g_box = QtWidgets.QGridLayout()
         g_box.addWidget(self.greenScreenButton, 0 , 0)
         g_box.addWidget(self.testImageGreenScreen, 0 , 1)
-        g_box.addWidget(self.logErrorButton, 1 , 0, 1, 0)
+        g_box.addWidget(self.logErrorButton, 1 , 0)
+        g_box.addWidget(self.restartBtn, 1 , 1)
 
         v_box = QtWidgets.QVBoxLayout()
         v_box.setContentsMargins(7,7,14,0)
@@ -154,8 +161,12 @@ class Window(QtWidgets.QWidget):
         self.greenScreenButton.clicked.connect(self.openGreenScreen)
         self.logErrorButton.clicked.connect(self.openErrorLog)
         self.testImageGreenScreen.clicked.connect(self.triggerTestImage)
+        self.restartBtn.clicked.connect(self.restart)
 
         self.show()
+
+    def restart(self):
+        self.bot.restart()
 
     def setButtonTestImage(self, active):
         if active:

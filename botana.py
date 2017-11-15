@@ -276,6 +276,10 @@ class BotAna(QtCore.QThread):
 			if sound not in self.timeSoundCalled or (time.time() - self.timeSoundCalled[sound] >= float(self.sounds[sound].getCooldown())):
 				return False
 			return True
+                
+	def restart(self):
+		subprocess.Popen("botanaUserInterface.pyw", shell=True)
+		os._exit(0)
 
 	def call_command_mod(self):
 		raffled = ""
@@ -488,7 +492,7 @@ class BotAna(QtCore.QThread):
 			self.addInTimeout("!suoni")
 			self.get_sounds()
 
-		elif self.message == "!bush" and not self.isInTimeout("images"):
+		elif self.message == "!bush" and not self.isInTimeout("!bush"):
 			self.addInTimeout("!bush")
 			self.showImage("res/ShowImages/bush.png")
 
