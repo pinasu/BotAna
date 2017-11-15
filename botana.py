@@ -269,13 +269,11 @@ class BotAna(QtCore.QThread):
         if command in self.commandsMod.keys():
             if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(self.commandsMod[command].getCooldown())):
                 return False
-            else:
-                return True
+            return True
         elif command in self.commandsPleb.keys():
             if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(self.commandsPleb[command].getCooldown())):
                 return False
-            else:
-                return True
+            return True
 
     def soundAddInTimeout(self, sound):
         if sound in self.sounds.keys():
