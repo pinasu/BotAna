@@ -611,6 +611,9 @@ class BotAna(QtCore.QThread):
     def call_sound(self, name):
         if name[:1] == "!":
                 sname = name[1:]
-        if not self.soundIsInTimeout(name):
+        if name == "!gg":
+            self.soundAddInTimeout(name)
+            self.play_sound(sname)
+        elif not self.soundIsInTimeout(name):
             self.soundAddInTimeout(name)
             self.play_sound(sname)
