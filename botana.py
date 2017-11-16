@@ -179,7 +179,7 @@ class BotAna(QtCore.QThread):
             self.play_sound("crash")
             self.printMessage("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
             file = open("LogError.txt", "a")
-            file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
 
     def __del__(self):
@@ -432,7 +432,7 @@ class BotAna(QtCore.QThread):
         params = dict(user = "na")
 
         try:
-            resp = requests.get(url=url, params=params, timeout=1)
+            resp = requests.get(url=url, params=params, timeout=20)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
             self.send_message("Mi dispiace "+self.username+", ma tu non amerai nessuno oggi FeelsBadMan")
             return
@@ -510,6 +510,9 @@ class BotAna(QtCore.QThread):
             self.send_message(ball)
 
         elif self.message == "!love" and not self.isInTimeout("!love"):
+            if self.username == "lusyoo" and self.arguments.lower() == "dio":
+                self.send_message(self.username+" ama "+self.arguments+" allo 0% FeelsBadMan")
+                return
             self.addInTimeout("!love")
             emote = ""
             rand = randint(0, 100)
