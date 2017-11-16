@@ -427,6 +427,35 @@ class BotAna(QtCore.QThread):
             self.send_message("/timeout "+user+" 60")
             self.send_message(user+" si è suicidato monkaS Press F to pay respect BibleThump")
 
+    def perform_love(self, username, rand, emote):
+        url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
+        params = dict(user = "na")
+
+        try:
+            resp = requests.get(url=url, params=params, timeout=1)
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
+            self.send_message("Mi dispiace "+self.username+", ma tu non amerai nessuno oggi FeelsBadMan")
+            return
+
+        json_str = json.loads(resp.text)
+
+        ret_list = []
+        rand_mod = username
+        if json_str['chatters']['moderators']:
+            while rand_mod == username:
+                rand_mod = random.choice(json_str['chatters']['moderators'])
+
+        ret_list.append(rand_mod)
+
+        rand_user = username
+        if json_str['chatters']['viewers']:
+            while rand_user == username:
+                rand_user = random.choice(json_str['chatters']['viewers'])
+
+        ret_list.append(rand_user)
+
+        self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
+
     #Function to answer pleb command
     def call_command_pleb(self):
         if self.message == "!roulette" and not self.isInTimeout("!roulette"):
@@ -494,27 +523,7 @@ class BotAna(QtCore.QThread):
             if self.arguments:
                 self.send_message(self.username+" ama "+self.arguments+" al "+str(rand)+"% "+emote)
             else:
-                url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
-                params = dict(user = "na")
-                resp = requests.get(url=url, params=params)
-                json_str = json.loads(resp.text)
-
-                ret_list = []
-                rand_mod = self.username
-                if json_str['chatters']['moderators']:
-                    while rand_mod == self.username:
-                        rand_mod = random.choice(json_str['chatters']['moderators'])
-
-                ret_list.append(rand_mod)
-
-                rand_user = self.username
-                if json_str['chatters']['viewers']:
-                    while rand_user == self.username:
-                        rand_user = random.choice(json_str['chatters']['viewers'])
-
-                ret_list.append(rand_user)
-
-                self.send_message(self.username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
+                threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
         elif self.message == "!ban" and not self.isInTimeout("!ban"):
             self.addInTimeout("!ban")
@@ -534,6 +543,7 @@ class BotAna(QtCore.QThread):
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
+
 
     def loadCommands(self):
         #try:
