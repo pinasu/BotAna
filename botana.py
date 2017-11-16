@@ -116,17 +116,14 @@ class BotAna(QtCore.QThread):
             while True: #"while 1" if you prefere *lennyface*
 
                 #Get Twitch chat current message
-                rec = str(self.sock.recv(1024)).split("\\r\\n")
-
-                #da sistemare
-                #rec = rec.decode('utf-8')
+                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
                 
                 if rec:
                     #Parse received message
                     for line in rec:
                         #Response to Twitch, checking if the Bot is still woke
                         if "PING" in line:
-                            self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+                            self.send_message("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
                             #Get actual message and chatter username
                             parts = line.split(':')
@@ -217,8 +214,8 @@ class BotAna(QtCore.QThread):
 
     #Function to send given message to the chat
     def send_message(self, message):
-        self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n","UTF-8"))
-        self.printMessage(self.botName + ": " + message)
+        self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n", 'utf-8'))
+        self.printMessage(self.botName + ": " + str(message))
 
     #Function to send whisper to user
     #Watch out, if you abuse using whispers Twitch will ban your Bot's account
@@ -291,8 +288,6 @@ class BotAna(QtCore.QThread):
 
     def soundIsInTimeout(self, sound):
         if sound in self.sounds.keys():
-            #print(sound+": "+self.sounds[sound].getCooldown())
-            #if sound not in self.timeSoundCalled or (time.time() - self.timeSoundCalled[sound] >= float(self.sounds[sound].getCooldown())):
             if self.timeLastSoundCalled == None or (time.time() - self.timeLastSoundCalled >= float(self.cooldownSound)):
                 return False
         return True
@@ -347,7 +342,6 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!comandi":
             self.send_message(self.username+", i tuoi comandi sono " + str(set(self.commandsPleb.keys())))
-            #time.sleep(2)
             self.send_whisper(self.username+", essendo un mod hai anche: " + str(set(self.commandsMod.keys())))
 
         elif self.message == "!suoni":
@@ -356,7 +350,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!addcommand":
             tmp = self.arguments.split(";")
             if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
-                self.send_message("Comando già esistente")
+                self.send_message("Comando già esistente, stupido babbuino LUL")
                 return
             if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
                 fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
@@ -368,36 +362,51 @@ class BotAna(QtCore.QThread):
                     self.commandsMod[tmp[0]] = newComm
                 elif tmp[3] == "pleb":
                     self.commandsPleb[tmp[0]] = newComm
-                self.send_message("Comando " + tmp[0] + " aggiunto")
+                self.send_message("Comando " + tmp[0] + " aggiunto FeelsGoodMan")
             else:
-                self.send_message("impossibile aggiungere il comando " + tmp[0])
+                self.send_message("Impossibile aggiungere il comando " + tmp[0] + " FeelsBadMan")
 
         elif self.message == "!removecommand":
             args = self.arguments.split(" ")
-            if len(args) != 2:
-                self.send_message("Comando errato")
+            if len(args) == 1 and args[0]== "":
+                self.send_message("Devi specificarmi quale comando eliminare, stupido babbuino LUL")
                 return
-            exist=False
-            if args[1] == "mod" and args[0] in self.commandsMod.keys():
-                del self.commandsMod[args[0]]
-                exist=True
-            elif args[1] == "pleb" and args[0] in self.commandsPleb.keys():
-                del self.commandsPleb[args[0]]
-                exist=True
-            if exist:
-                #SAREBBE BUONO PRIMA COPIARSI TUTTO IL CONTENUTO DEL FILE CSV IN UNA VARIABILE, E IN CASO DI ECCEZIONI (CHE LASCIEREBBERO IL FILE VUOTO) RISCRIVERE IL CONTENUTO DELLA VARIABILE NEL FILE
-                #OPPURE TROVARE UN'ALTRO METODO PER ELIMINARE UNA RIGA DAL FILE IN MANIERA SAFE
-                f = open('commands.csv', "w+")
-                f.close()
+
+            if len(args) == 1 or args[1] == "pleb":
+                if args[0] in self.commandsPleb.keys(): #Pleb command
+                    del self.commandsPleb[args[0]]
+                else:
+                    self.send_message("Il comando " + args[0] + " (pleb) non esiste, scrivi bene stupido babbuino LUL")
+                    return
+
+            elif len(args) == 2 and  args[1] == "mod":
+                if args[0] in self.commandsMod.keys(): #Mod command
+                    del self.commandsMod[args[0]]
+                else:
+                    self.send_message("Il comando " + args[0] + " (mod) non esiste, scrivi bene stupido babbuino LUL")
+                    return
+
+            else:
+                self.send_message("Comando errato, scrivi bene stupido babbuino LUL")
+                return
+
+            subprocess.run("copy commands.csv commands_bkp.csv", shell=True)
+            #os.system("copy commands.csv commands_bkp.csv")
+            f = open('commands.csv', "w+")
+            f.close()
+            try:
                 with open('commands.csv', 'a', encoding='utf-8') as f:
                     writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
                     for p in self.commandsPleb.values():
                         writer.writerow([p.getName(), p.getResponse(), p.getCooldown(), p.getTipo()])
                     for m in self.commandsMod.values():
                         writer.writerow([m.getName(), m.getResponse(), m.getCooldown(), m.getTipo()])
-                self.send_message("Comando " + self.arguments + " eliminato")
-            else:
-                self.send_message("Comando " + self.arguments + " inesistente")
+                self.send_message("Comando " + self.arguments + " eliminato FeelsGoodMan")
+            except:
+                subprocess.run("del commands.csv", shell=True)
+                subprocess.run("ren commands_bkp.csv commands.csv", shell=True)
+                self.send_message("Impossibile eliminare il comando " + self.arguments+" FeelsBadMan")
+            subprocess.run("del commands_bkp.csv", shell=True)
                 
         else:
             for com in self.commandsMod.values():
@@ -432,13 +441,12 @@ class BotAna(QtCore.QThread):
         params = dict(user = "na")
 
         try:
-            resp = requests.get(url=url, params=params, timeout=20)
+            resp = requests.get(url=url, params=params, timeout=10)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
             self.send_message("Mi dispiace "+self.username+", ma tu non amerai nessuno oggi FeelsBadMan")
             return
 
         json_str = json.loads(resp.text)
-
         ret_list = []
         rand_mod = username
         if json_str['chatters']['moderators']:
@@ -547,9 +555,7 @@ class BotAna(QtCore.QThread):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
 
-
     def loadCommands(self):
-        #try:
         with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
@@ -559,33 +565,22 @@ class BotAna(QtCore.QThread):
                 elif row[3] == "pleb":
                     self.commandsPleb[row[0]] = current
         self.printMessage("commands.csv was read correctly.")
-        #except:
-            #self.printMessage("Error reading commands.csv")
 
     def loadImage(self):
-        #try:
         with open('images.csv', encoding='utf-8') as imgs:
             reader = csv.reader(imgs, delimiter=';', quotechar='|')
             for row in reader:
                 current = Image(row[0], row[1], row[2])
                 self.images[row[0]] = current
         self.printMessage("images.csv was read correctly.")
-        #except:
-            #self.printMessage("Error reading images.csv")
 
     def loadSounds(self):
-        #try:
         with open('sounds.csv', encoding='utf-8') as sounds:
             reader = csv.reader(sounds, delimiter=';', quotechar='|')
             for row in reader:
                 current = Sound(row[0])
                 self.sounds[row[0]] = current
         self.printMessage("sounds.csv was read correctly.")
-        #except:
-            #self.printMessage("Error reading sounds.csv")
-            #file = open("LogError.txt", "a")
-            #file.write(time.strftime("[%d/%m/%Y - %I:%M:%S] ") + traceback.format_exc() + "\n")
-            #traceback.print_exc()
 
     #Get sounds list
     def get_sounds(self):

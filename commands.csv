@@ -14,6 +14,8 @@
 !maledizione;;20;pleb
 !play;;0;pleb
 !players;;20;pleb
+!salta;;0;pleb
+!bush;;20;pleb
 !comandi;;0;mod
 !restart;;0;mod
 !stop;;0;mod
@@ -22,5 +24,3 @@
 !pickone;;0;mod
 !addcommand;;0;mod
 !removecommand;;0;mod
-!salta;;0;pleb
-!bush;;20;pleb
