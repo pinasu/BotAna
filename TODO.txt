@@ -1,0 +1,16 @@
+        Easy ones (already working in BotAna 1.0):
+
+1) Add song skip counter and skippers list re-initialization (to 0 and empty list) after 1 minute;
+
+2) Add message spam every x minutes and every n chatter's (not mods) messages;
+3) Add new followers check every x minutes;
+4) Add "ANA" at the end of user's name when he writes "ciao"/"buonasera"/etc in chat AND he's been in chat from x minutes;
+
+        Medium ones (working in BotAna 1.0, but bugged af):
+5) Fix Vodcast/Offline/Online BotAna status;
+
+        Hard ones (make you wanna kill yourself instead):
+6) Add new subscribers check;
+7) Add new host check;
+8) Add command (mod) to set stream title;
+9) Add command (mod) to set stream current game;

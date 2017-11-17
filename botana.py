@@ -79,6 +79,8 @@ class BotAna(QtCore.QThread):
         self.skippers = []
         self.skip_count = 0
 
+        self.words_cooldown = dict()
+
     def run(self):
         try:
             #Bot OAuth
@@ -111,7 +113,7 @@ class BotAna(QtCore.QThread):
 
             #Send first bot message to the chat it's connected to
             self.send_message("Don't even worry guys, Bottana is here anaLove")
-        
+
             #Bot main while loop
             while True: #"while 1" if you prefere *lennyface*
 
@@ -136,7 +138,6 @@ class BotAna(QtCore.QThread):
 
                             #Print to stdout user's nick and message
                             self.printMessage(self.username+": "+self.message)
-
                             
                             #Check user message, if he's screaming he'll be warned by bot or banned
                             if sum(1 for c in self.message if c.isupper()) > 15:
@@ -144,16 +145,14 @@ class BotAna(QtCore.QThread):
                             
                             #Message is a command
                             elif self.message.startswith('!'):
-
                                 message_list = self.message.split(' ');
 
-                                #Get command from message
+                                #Get command from messages
                                 self.message = message_list[0]
                             
                                 #Get message arguments, if there are any
                                 self.arguments = ' '.join(message_list[1:])
 
-                                    
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
                                 else:
@@ -164,12 +163,8 @@ class BotAna(QtCore.QThread):
                                 elif self.message in self.images.keys():
                                     self.call_image(self.message)
 
-                            elif "classic" in self.message.lower():
-                                self.send_message("CLASSIC LUL")
-
-                            elif "anche io" in self.message.lower():
-                                self.send_message("Anche io KappaPride")
-
+                            self.check_words(self.message)
+                            
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
@@ -188,7 +183,7 @@ class BotAna(QtCore.QThread):
 
     def printMessage(self, msg):
         print(msg)
-        self.sign.emit(msg)
+        self.sign.emit(time.strftime("[%H:%M]: ")+msg)
 
     def readConfigFile(self, path):
         if os.path.exists(path):
@@ -470,17 +465,25 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.startRoulette, args=(self.username)).start()
 
         elif self.message == "!salta":
-            if self.username not in self.skippers:
+            if self.skip_count == 0:
+                self.timeSkip = time.time()
+                
+            if time.time() - self.timeSkip >= 60:
+                self.skip_count = 1
+                self.timeSkip = time.time()
+                self.skippers.append(self.username)
+                if len(self.skippers) == 1:
+                    self.send_message(self.username+" vuole saltare questa canzone LUL")
+
+            elif self.username not in self.skippers:
                 self.skip_count += 1
                 self.skippers.append(self.username)
                 if self.skip_count >= 3:
                     self.skip_count = 0
+                    self.skippers = []
                     self.send_message("!songs skip")
                 else:
-                    if len(self.skippers) == 1:
-                        self.send_message(self.username+" vuole saltare questa canzone LUL")
-                    else:
-                        self.send_message("Anche "+self.username+" assieme ad altri "+str(self.skip_count-1)+" vuole saltare questa canzone LUL")
+                    self.send_message("Anche "+self.username+" assieme ad altri "+str(self.skip_count-1)+" vuole saltare questa canzone LUL")
 
         elif self.message == "!play":
             if self.username not in self.players:
@@ -554,6 +557,23 @@ class BotAna(QtCore.QThread):
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
+
+    def wordInTimeout(self, word):
+        self.words_cooldown[word] = time.time()
+
+    def isWordInTimeout(self, word):
+        if word not in self.words_cooldown.keys() or (time.time() - self.words_cooldown[word] >= 15):
+            return False
+        return True
+
+    def check_words(self, message):
+        if "classic" in message.lower() and not self.isWordInTimeout("classic"):
+            self.wordInTimeout("classic")
+            self.send_message("CLASSIC LUL")
+
+        elif "anche io" in message.lower() and not self.isWordInTimeout("anche io"):
+            self.wordInTimeout("anche io")
+            self.send_message("Anche io KappaPride")
 
     def loadCommands(self):
         with open('commands.csv', encoding='utf-8') as commands:
