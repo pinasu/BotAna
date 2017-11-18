@@ -77,7 +77,7 @@ class BotAna(QtCore.QThread):
         #self.timeImageCalled = dict()
 
         self.skippers = []
-        self.skip_count = 0
+        self.timeSkip = 0
 
         self.words_cooldown = dict()
 
@@ -116,7 +116,6 @@ class BotAna(QtCore.QThread):
 
             #Bot main while loop
             while True: #"while 1" if you prefere *lennyface*
-
                 #Get Twitch chat current message
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
                 
@@ -125,7 +124,7 @@ class BotAna(QtCore.QThread):
                     for line in rec:
                         #Response to Twitch, checking if the Bot is still woke
                         if "PING" in line:
-                            self.send_message("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+                            self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
                             #Get actual message and chatter username
                             parts = line.split(':')
@@ -183,7 +182,7 @@ class BotAna(QtCore.QThread):
 
     def printMessage(self, msg):
         print(msg)
-        self.sign.emit(time.strftime("[%H:%M]: ")+msg)
+        self.sign.emit(time.strftime("%H:%M  ")+msg)
 
     def readConfigFile(self, path):
         if os.path.exists(path):
@@ -345,7 +344,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!addcommand":
             tmp = self.arguments.split(";")
             if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
-                self.send_message("Comando già esistente, stupido babbuino LUL")
+                self.send_message("Non posso aggiungere un comando uguale a uno che esiste già, stupido babbuino LUL")
                 return
             if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
                 fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
@@ -357,9 +356,9 @@ class BotAna(QtCore.QThread):
                     self.commandsMod[tmp[0]] = newComm
                 elif tmp[3] == "pleb":
                     self.commandsPleb[tmp[0]] = newComm
-                self.send_message("Comando " + tmp[0] + " aggiunto FeelsGoodMan")
+                self.send_message("Ho aggiunto il comando " + tmp[0] + " FeelsGoodMan")
             else:
-                self.send_message("Impossibile aggiungere il comando " + tmp[0] + " FeelsBadMan")
+                self.send_message("Uso: !comando;risposta;cooldown;permessi(pleb/mod)")
 
         elif self.message == "!removecommand":
             args = self.arguments.split(" ")
@@ -382,11 +381,10 @@ class BotAna(QtCore.QThread):
                     return
 
             else:
-                self.send_message("Comando errato, scrivi bene stupido babbuino LUL")
+                self.send_message("Uso: !removecommand !comando mod(opzionale)")
                 return
 
             subprocess.run("copy commands.csv commands_bkp.csv", shell=True)
-            #os.system("copy commands.csv commands_bkp.csv")
             f = open('commands.csv', "w+")
             f.close()
             try:
@@ -465,25 +463,31 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.startRoulette, args=(self.username)).start()
 
         elif self.message == "!salta":
-            if self.skip_count == 0:
+            #E' la prima volta che viene chiamato il comando !salta, setto l'inizio del timer
+            if len(self.skippers) == 0:
                 self.timeSkip = time.time()
-                
-            if time.time() - self.timeSkip >= 60:
-                self.skip_count = 1
-                self.timeSkip = time.time()
-                self.skippers.append(self.username)
-                if len(self.skippers) == 1:
+
+            #Il comando può essere chiamato, vedo se è la prima volta o no
+            if time.time() - self.timeSkip <= 60:
+                if len(self.skippers) == 0:
+                    self.skippers.append(self.username)
                     self.send_message(self.username+" vuole saltare questa canzone LUL")
 
-            elif self.username not in self.skippers:
-                self.skip_count += 1
+                if self.username not in self.skippers:
+                    self.skippers.append(self.username)
+                    if len(self.skippers) == 3:
+                        self.send_message(str(len(self.skippers))+" persone vogliono saltare questa canzone PogChamp")
+                        self.send_message("!songs skip")
+                        self.skippers[:] = []
+                    else:
+                        self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
+            
+            #Il comando non può essere chiamato, resetto tutto e considero il primo
+            else:
+                self.skippers = []
+                self.timeSkip = time.time()
                 self.skippers.append(self.username)
-                if self.skip_count >= 3:
-                    self.skip_count = 0
-                    self.skippers = []
-                    self.send_message("!songs skip")
-                else:
-                    self.send_message("Anche "+self.username+" assieme ad altri "+str(self.skip_count-1)+" vuole saltare questa canzone LUL")
+                self.send_message(self.username+" vuole saltare questa canzone LUL")
 
         elif self.message == "!play":
             if self.username not in self.players:
