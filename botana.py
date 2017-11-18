@@ -10,7 +10,7 @@ from sound import Sound
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 import threading
-
+#test
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
     sign2 = pyqtSignal(str)
@@ -94,7 +94,7 @@ class BotAna(QtCore.QThread):
             self.loadCommands()
             self.loadSounds()
             self.loadImage()
-            
+
             #Chat connection
             self.sock.connect((self.HOST, self.PORT))
 
@@ -119,7 +119,7 @@ class BotAna(QtCore.QThread):
 
                 #Get Twitch chat current message
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if rec:
                     #Parse received message
                     for line in rec:
@@ -138,18 +138,18 @@ class BotAna(QtCore.QThread):
 
                             #Print to stdout user's nick and message
                             self.printMessage(self.username+": "+self.message)
-                            
+
                             #Check user message, if he's screaming he'll be warned by bot or banned
                             if sum(1 for c in self.message if c.isupper()) > 15:
                                 self.check_ban()
-                            
+
                             #Message is a command
                             elif self.message.startswith('!'):
                                 message_list = self.message.split(' ');
 
                                 #Get command from messages
                                 self.message = message_list[0]
-                            
+
                                 #Get message arguments, if there are any
                                 self.arguments = ' '.join(message_list[1:])
 
@@ -164,7 +164,7 @@ class BotAna(QtCore.QThread):
                                     self.call_image(self.message)
 
                             self.check_words(self.message)
-                            
+
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
@@ -247,7 +247,7 @@ class BotAna(QtCore.QThread):
     ##                        if len(parts) < 3: continue
     ##                        if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
     ##                            self.message = parts[2]
-    ##                        
+    ##
     ##                        usernamesplit = parts[1].split("!")
     ##                        self.username = usernamesplit[0]
     ##
@@ -296,14 +296,14 @@ class BotAna(QtCore.QThread):
             if self.timeLastImageCalled == None or (time.time() - self.timeLastImageCalled >= float(self.cooldownImage)):
                 return False
         return True
-                
+
     def restart(self):
         subprocess.Popen("botanaUserInterface.pyw", shell=True)
         os._exit(0)
 
     def call_command_mod(self):
         raffled = ""
-            
+
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
@@ -326,7 +326,7 @@ class BotAna(QtCore.QThread):
                 raffled = ', '.join(self.players)
                 self.players = []
             self.send_message("Ho scelto "+raffled+" PogChamp")
-            
+
         elif self.message == "!pickone":
             if len(self.players) > 0:
                 raffle = random.sample(self.players, 1)
@@ -402,14 +402,14 @@ class BotAna(QtCore.QThread):
                 subprocess.run("ren commands_bkp.csv commands.csv", shell=True)
                 self.send_message("Impossibile eliminare il comando " + self.arguments+" FeelsBadMan")
             subprocess.run("del commands_bkp.csv", shell=True)
-                
+
         else:
             for com in self.commandsMod.values():
                 if com.isSimpleCommand() and self.message == com.getName():
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
-                    
+
     def startRoulette(self, user):
         self.addInTimeout("!roulette")
         self.send_message("Punto la pistola nella testa di "+user+"... monkaS")
@@ -467,7 +467,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!salta":
             if self.skip_count == 0:
                 self.timeSkip = time.time()
-                
+
             if time.time() - self.timeSkip >= 60:
                 self.skip_count = 1
                 self.timeSkip = time.time()
