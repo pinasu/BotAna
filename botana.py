@@ -224,7 +224,7 @@ class BotAna(QtCore.QThread):
                 self.send_message("/timeout "+self.username+" 5")
             else:
                 to_ban = self.username
-                self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
+                self.send_message(self.username+", hai davvero bisogno di tutti quei caps? <warning>")
 
     #Function to check if channel is online
     def check_online(self):
