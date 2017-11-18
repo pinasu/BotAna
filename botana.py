@@ -10,7 +10,7 @@ from sound import Sound
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 import threading
-#test
+#dio caro
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
     sign2 = pyqtSignal(str)
