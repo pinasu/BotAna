@@ -69,17 +69,20 @@ class BotAna(QtCore.QThread):
         self.sounds = dict()
         self.timeLastSoundCalled = None
         self.cooldownSound = 20
-        #self.timeSoundCalled = dict()
 
         self.images = dict()
         self.timeLastImageCalled = None
         self.cooldownImage = 20
-        #self.timeImageCalled = dict()
 
         self.skippers = []
         self.timeSkip = 0
 
+        self.greetings = ["ciao", "buonasera", "buongiono", "salve"]
+        self.greeted = []
+
         self.words_cooldown = dict()
+
+        self.msg_count = 0
 
     def run(self):
         try:
@@ -112,13 +115,14 @@ class BotAna(QtCore.QThread):
             self.check_online()
 
             #Send first bot message to the chat it's connected to
-            self.send_message("Don't even worry guys, Bottana is here anaLove")
+            self.send_message("Don't even worry guys, BotAna is here anaLove")
+
+            threading.Thread(target=self.check_spam, args=()).start()
 
             #Bot main while loop
             while True: #"while 1" if you prefere *lennyface*
                 #Get Twitch chat current message
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
                 if rec:
                     #Parse received message
                     for line in rec:
@@ -141,6 +145,11 @@ class BotAna(QtCore.QThread):
                             #Check user message, if he's screaming he'll be warned by bot or banned
                             if sum(1 for c in self.message if c.isupper()) > 15:
                                 self.check_ban()
+
+                            if set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
+                                if self.username not in self.greeted:
+                                    self.greeted.append(self.username)
+                                    self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
 
                             #Message is a command
                             elif self.message.startswith('!'):
@@ -209,6 +218,7 @@ class BotAna(QtCore.QThread):
     #Function to send given message to the chat
     def send_message(self, message):
         self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n", 'utf-8'))
+        self.msg_count += 1
         self.printMessage(self.botName + ": " + str(message))
 
     #Function to send whisper to user
@@ -259,6 +269,16 @@ class BotAna(QtCore.QThread):
     ##        resp = requests.get(url=url, headers=params)
     ##        online = json.loads(resp.text)
         '''
+
+    def check_spam(self):
+        tempo = time.time()
+        while True:
+            print("a")
+            if time.time() - tempo > 7: #and self.msg_count > 15:
+                self.send_message("AHAH")
+                tempo = time.time()
+                self.msg_count = 0
+            time.sleep(1)
 
     def addInTimeout(self, command):
         if command in self.commandsMod.keys():
@@ -463,12 +483,14 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.startRoulette, args=(self.username)).start()
 
         elif self.message == "!salta":
+
             #Se è il primo a voler skippare oppure se sono passati 60 secondi dall'ultimo skip
             if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
                 del self.skippers[:]
                 self.timeSkip = time.time()
                 self.skippers.append(self.username)
                 self.send_message(self.username+" vuole saltare questa canzone LUL")
+
             #L'utente non ha già chiamato skip
             elif self.username not in self.skippers:
                 self.skippers.append(self.username)
@@ -478,34 +500,6 @@ class BotAna(QtCore.QThread):
                     del self.skippers[:]
                 else:
                     self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
-
-            '''
-            #E' la prima volta che viene chiamato il comando !salta, setto l'inizio del timer
-            if len(self.skippers) == 0:
-                self.timeSkip = time.time()
-
-            #Il comando può essere chiamato, vedo se è la prima volta o no
-            if time.time() - self.timeSkip <= 60:
-                if len(self.skippers) == 0:
-                    self.skippers.append(self.username)
-                    self.send_message(self.username+" vuole saltare questa canzone LUL")
-
-                if self.username not in self.skippers:
-                    self.skippers.append(self.username)
-                    if len(self.skippers) == 3:
-                        self.send_message(str(len(self.skippers))+" persone vogliono saltare questa canzone PogChamp")
-                        self.send_message("!songs skip")
-                        self.skippers[:] = []
-                    else:
-                        self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
-
-            #Il comando non può essere chiamato, resetto tutto e considero il primo
-            else:
-                self.skippers = []
-                self.timeSkip = time.time()
-                self.skippers.append(self.username)
-                self.send_message(self.username+" vuole saltare questa canzone LUL")
-                '''
 
         elif self.message == "!play":
             if self.username not in self.players:
@@ -579,6 +573,25 @@ class BotAna(QtCore.QThread):
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
+
+    def ana(self, user):
+        new = ""
+
+        if user.endswith("ana"):
+            new = user[:-3]
+        else:
+            #Pinasu
+            lun = (len(user))-1
+            last = user[lun]
+            while last not in "bcdfghjklmnpqrstvwxyz":
+                lun = lun -1
+                last = user[lun]
+                print(last)
+
+            new = user[:lun+1]
+            print(new)
+
+        return new + "ANA";
 
     def wordInTimeout(self, word):
         self.words_cooldown[word] = time.time()

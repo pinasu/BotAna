@@ -6,7 +6,6 @@ Already working in BotAna 1.0:
 
 1) Add message spam every x minutes and every n chatter's (not mods) messages;
 2) Add new followers check every x minutes;
-3) Add "ANA" at the end of user's name when he writes "ciao"/"buonasera"/etc in chat AND he's been in chat from x minutes;
 
 Not implemented in BotAna 1.0, but still easy:
 
