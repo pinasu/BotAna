@@ -273,8 +273,7 @@ class BotAna(QtCore.QThread):
     def check_spam(self):
         tempo = time.time()
         while True:
-            print("a")
-            if time.time() - tempo > 7: #and self.msg_count > 15:
+            if time.time() - tempo > 15 and self.msg_count > 15:
                 self.send_message("AHAH")
                 tempo = time.time()
                 self.msg_count = 0
