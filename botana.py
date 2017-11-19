@@ -135,7 +135,8 @@ class BotAna(QtCore.QThread):
                             if len(parts) < 3: continue
                             if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
                                 self.message = parts[2]
-
+                            #messo qui il counter conta anche messaggi iniziali (di handshake) che non sono di un utente...
+                            #... che in teoria non dovrebbero essere tenuti in conto qui...
                             self.msg_count += 1
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
