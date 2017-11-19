@@ -136,6 +136,7 @@ class BotAna(QtCore.QThread):
                             if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
                                 self.message = parts[2]
 
+                            self.msg_count += 1
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
 
@@ -218,7 +219,6 @@ class BotAna(QtCore.QThread):
     #Function to send given message to the chat
     def send_message(self, message):
         self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n", 'utf-8'))
-        self.msg_count += 1
         self.printMessage(self.botName + ": " + str(message))
 
     #Function to send whisper to user
@@ -273,6 +273,7 @@ class BotAna(QtCore.QThread):
     def check_spam(self):
         tempo = time.time()
         while True:
+            print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
             if time.time() - tempo > 15 and self.msg_count > 15:
                 self.send_message("AHAH")
                 tempo = time.time()
