@@ -94,7 +94,7 @@ class BotAna(QtCore.QThread):
             self.loadCommands()
             self.loadSounds()
             self.loadImage()
-            
+
             #Chat connection
             self.sock.connect((self.HOST, self.PORT))
 
@@ -118,7 +118,7 @@ class BotAna(QtCore.QThread):
             while True: #"while 1" if you prefere *lennyface*
                 #Get Twitch chat current message
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if rec:
                     #Parse received message
                     for line in rec:
@@ -137,18 +137,18 @@ class BotAna(QtCore.QThread):
 
                             #Print to stdout user's nick and message
                             self.printMessage(self.username+": "+self.message)
-                            
+
                             #Check user message, if he's screaming he'll be warned by bot or banned
                             if sum(1 for c in self.message if c.isupper()) > 15:
                                 self.check_ban()
-                            
+
                             #Message is a command
                             elif self.message.startswith('!'):
                                 message_list = self.message.split(' ');
 
                                 #Get command from messages
                                 self.message = message_list[0]
-                            
+
                                 #Get message arguments, if there are any
                                 self.arguments = ' '.join(message_list[1:])
 
@@ -163,7 +163,7 @@ class BotAna(QtCore.QThread):
                                     self.call_image(self.message)
 
                             self.check_words(self.message)
-                            
+
                 #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
@@ -246,7 +246,7 @@ class BotAna(QtCore.QThread):
     ##                        if len(parts) < 3: continue
     ##                        if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
     ##                            self.message = parts[2]
-    ##                        
+    ##
     ##                        usernamesplit = parts[1].split("!")
     ##                        self.username = usernamesplit[0]
     ##
@@ -295,14 +295,14 @@ class BotAna(QtCore.QThread):
             if self.timeLastImageCalled == None or (time.time() - self.timeLastImageCalled >= float(self.cooldownImage)):
                 return False
         return True
-                
+
     def restart(self):
         subprocess.Popen("botanaUserInterface.pyw", shell=True)
         os._exit(0)
 
     def call_command_mod(self):
         raffled = ""
-            
+
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
@@ -325,7 +325,7 @@ class BotAna(QtCore.QThread):
                 raffled = ', '.join(self.players)
                 self.players = []
             self.send_message("Ho scelto "+raffled+" PogChamp")
-            
+
         elif self.message == "!pickone":
             if len(self.players) > 0:
                 raffle = random.sample(self.players, 1)
@@ -400,14 +400,14 @@ class BotAna(QtCore.QThread):
                 subprocess.run("ren commands_bkp.csv commands.csv", shell=True)
                 self.send_message("Impossibile eliminare il comando " + self.arguments+" FeelsBadMan")
             subprocess.run("del commands_bkp.csv", shell=True)
-                
+
         else:
             for com in self.commandsMod.values():
                 if com.isSimpleCommand() and self.message == com.getName():
                     if not self.isInTimeout(com.getName()):
                         self.addInTimeout(com.getName())
                         self.send_message(com.getResponse())
-                    
+
     def startRoulette(self, user):
         self.addInTimeout("!roulette")
         self.send_message("Punto la pistola nella testa di "+user+"... monkaS")
@@ -463,6 +463,23 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.startRoulette, args=(self.username)).start()
 
         elif self.message == "!salta":
+            #Se è il primo a voler skippare oppure se sono passati 60 secondi dall'ultimo skip
+            if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
+                del self.skippers[:]
+                self.timeSkip = time.time()
+                self.skippers.append(self.username)
+                self.send_message(self.username+" vuole saltare questa canzone LUL")
+            #L'utente non ha già chiamato skip
+            elif self.username not in self.skippers:
+                self.skippers.append(self.username)
+                if len(self.skippers) == 3:
+                    self.send_message(str(len(self.skippers))+" persone vogliono saltare questa canzone PogChamp")
+                    self.send_message("!songs skip")
+                    del self.skippers[:]
+                else:
+                    self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
+
+            '''
             #E' la prima volta che viene chiamato il comando !salta, setto l'inizio del timer
             if len(self.skippers) == 0:
                 self.timeSkip = time.time()
@@ -481,13 +498,14 @@ class BotAna(QtCore.QThread):
                         self.skippers[:] = []
                     else:
                         self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
-            
+
             #Il comando non può essere chiamato, resetto tutto e considero il primo
             else:
                 self.skippers = []
                 self.timeSkip = time.time()
                 self.skippers.append(self.username)
                 self.send_message(self.username+" vuole saltare questa canzone LUL")
+                '''
 
         elif self.message == "!play":
             if self.username not in self.players:
