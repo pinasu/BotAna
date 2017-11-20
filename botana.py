@@ -84,6 +84,13 @@ class BotAna(QtCore.QThread):
 
         self.msg_count = 0
 
+        self.msg_spam = ["Attaccate a StoDiscord https://goo.gl/2QSx3V KappaPride",
+        				"Se vuoi supportare il canale... Attaccate a Stockhausen, clicca sul Follow. CLASSIC PogChamp",
+        				"Io sono BotAna, per i miei comandi digita !comandi PogChamp",
+			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
+        				"Vuoi giocare con noi? Usa il comando !play! KappaPride"
+    					]
+
     def run(self):
         try:
             #Bot OAuth
@@ -273,12 +280,17 @@ class BotAna(QtCore.QThread):
 
     def check_spam(self):
         tempo = time.time()
+        index = 0
         while True:
             print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
-            if time.time() - tempo > 15 and self.msg_count > 15:
-                self.send_message("AHAH")
+            if time.time() - tempo > 900 and self.msg_count > 15:
+                self.send_message(self.msg_spam[index])
                 tempo = time.time()
                 self.msg_count = 0
+                if index == len(self.msg_spam):
+                    index = 0
+                else:
+                    index += 1
             time.sleep(1)
 
     def addInTimeout(self, command):
