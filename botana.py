@@ -287,10 +287,12 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
                 self.msg_count = 0
+                index = (index + 1) % len(self.msg_spam)
+                '''
                 if index == len(self.msg_spam):
                     index = 0
                 else:
-                    index += 1
+                    index += 1'''
             time.sleep(1)
 
     def addInTimeout(self, command):
