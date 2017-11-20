@@ -4,13 +4,12 @@
 ------------------------------------------------------------------------------------------------------------------------------------------
 Already working in BotAna 1.0:
 
-1) Add message spam every x minutes and every n chatter's (not mods) messages;
-2) Add new followers check every x minutes;
+1) Add new followers check every x minutes;
 
 Not implemented in BotAna 1.0, but still easy:
 
-4) Add !wins command to return Fortnite useful wins stats
-5) Make different commands files for differents games
+2) Add !wins command to return Fortnite useful wins stats
+3) Make different commands files for differents games
 
 ******************************************************************************************************************************************
 
@@ -20,7 +19,7 @@ Not implemented in BotAna 1.0, but still easy:
 ------------------------------------------------------------------------------------------------------------------------------------------
         Medium ones (working in BotAna 1.0, but bugged af):
 ------------------------------------------------------------------------------------------------------------------------------------------
-6) Fix Vodcast/Offline/Online BotAna status;
+4) Fix Vodcast/Offline/Online BotAna status;
 
 ******************************************************************************************************************************************
 
@@ -30,9 +29,9 @@ Not implemented in BotAna 1.0, but still easy:
 ------------------------------------------------------------------------------------------------------------------------------------------
         Hard ones (make you wanna kill yourself instead):
 ------------------------------------------------------------------------------------------------------------------------------------------
-7) Add new subscribers check;
-8) Add new host check;
-9) Add command (mod) to set stream title;
-10) Add command (mod) to set stream current game;
+5) Add new subscribers check;
+6) Add new host check;
+7) Add command (mod) to set stream title;
+8) Add command (mod) to set stream current game;
 
 ******************************************************************************************************************************************
