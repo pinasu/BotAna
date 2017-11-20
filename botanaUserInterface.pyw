@@ -11,12 +11,12 @@ class WindowTwo(QtWidgets.QWidget):
         super().__init__()
         self.isInTest = False
         self.parent = parent
-        self.parent.activateGreenScreenButton(False)
+        self.parent.activate_green_screen_button(False)
         self.init_ui()
 
     def init_ui(self):
         self.setFixedSize(450,450)
-        self.setPosition()
+        self.set_position()
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.setStyleSheet("WindowTwo{background-color:#0f0;}")
         self.setWindowTitle('BotAnaImage')
@@ -29,31 +29,31 @@ class WindowTwo(QtWidgets.QWidget):
         self.setLayout(v_box)
         self.show()
 
-    def setPosition(self):
+    def set_position(self):
         if (self.parent.pos().x() - self.width()) >= 0:
             self.move(self.parent.pos().x() - 450,self.parent.pos().y())
         else:
             self.move(0,0)
 
     def closeEvent(self, event):
-        self.parent.activateGreenScreenButton(True)
-        self.setButtonTestImageActive(False)
+        self.parent.activate_green_screen_button(True)
+        self.set_button_test_image_active(False)
         event.accept()
 
-    def setButtonTestImageActive(self, bo):
+    def set_button_test_image_active(self, bo):
         self.isInTest = bo
-        self.parent.setButtonTestImage(bo)
+        self.parent.set_button_test_image(bo)
 
-    def triggerTestImage(self):
+    def trigger_test_image(self):
         if not self.isInTest:
             self.img.setPixmap(QtGui.QPixmap("res/ShowImages/test.png"))
-            self.setButtonTestImageActive(True)
+            self.set_button_test_image_active(True)
         else:
             self.img.clear()
-            self.setButtonTestImageActive(False)
+            self.set_button_test_image_active(False)
 
 
-    def showImage(self, path):
+    def show_image(self, path):
         if self.isVisible() and not self.isInTest:
             threading.Thread(target=self.process, args=[path]).start()
 
@@ -70,8 +70,8 @@ class Window(QtWidgets.QWidget):
         self.init_ui()
         self.secondWind = WindowTwo(self)
         self.bot = BotAna()
-        self.bot.sign.connect(self.printOnTextArea)
-        self.bot.sign2.connect(self.showImage)
+        self.bot.sign.connect(self.print_on_text_area)
+        self.bot.sign2.connect(self.show_image)
         self.bot.start()
         self.activateWindow()
 
@@ -163,9 +163,9 @@ class Window(QtWidgets.QWidget):
         self.setWindowTitle('BotAna')
 
         self.sendButton.clicked.connect(self.btn_click)
-        self.greenScreenButton.clicked.connect(self.openGreenScreen)
-        self.logErrorButton.clicked.connect(self.openErrorLog)
-        self.testImageGreenScreen.clicked.connect(self.triggerTestImage)
+        self.greenScreenButton.clicked.connect(self.open_green_screen)
+        self.logErrorButton.clicked.connect(self.open_error_log)
+        self.testImageGreenScreen.clicked.connect(self.trigger_test_image)
         self.restartBtn.clicked.connect(self.restart)
 
         self.show()
@@ -173,36 +173,36 @@ class Window(QtWidgets.QWidget):
     def restart(self):
         self.bot.restart()
 
-    def setButtonTestImage(self, active):
+    def set_button_test_image(self, active):
         if active:
             self.testImageGreenScreen.setIcon(QtGui.QIcon('res/Gui/testImageGreenScreenX.png'))
         else:
             self.testImageGreenScreen.setIcon(QtGui.QIcon('res/Gui/testImageGreenScreen.png'))
 
-    def triggerTestImage(self):
-        self.secondWind.triggerTestImage()
+    def trigger_test_image(self):
+        self.secondWind.trigger_test_image()
 
-    def openErrorLog(self):
+    def open_error_log(self):
         if os.path.exists('LogError.txt'):
             os.startfile('LogError.txt')
         else:
             self.msgLog.exec_()
 
-    def activateGreenScreenButton(self, bo):
+    def activate_green_screen_button(self, bo):
         self.greenScreenButton.setEnabled(bo)
         self.testImageGreenScreen.setEnabled(not bo)
 
-    def openGreenScreen(self):
+    def open_green_screen(self):
         self.secondWind = WindowTwo(self)
 
-    def showImage(self, path):
-        self.secondWind.showImage(path)
+    def show_image(self, path):
+        self.secondWind.show_image(path)
 
     def closeEvent(self, event):
         self.secondWind.close()
         event.accept()
 
-    def printOnTextArea(self, msg):
+    def print_on_text_area(self, msg):
         if(msg != ""):
             self.textarea.append(msg)
 
