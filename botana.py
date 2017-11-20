@@ -286,7 +286,7 @@ class BotAna(QtCore.QThread):
         tempo = time.time()
         index = 0
         while True:
-            print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
+            #print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
             if time.time() - tempo > 900 and self.msg_count > 15:
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
