@@ -1,15 +1,12 @@
 ******************************************************************************************************************************************
 ------------------------------------------------------------------------------------------------------------------------------------------
-        Easy ones 
+        Easy ones
 ------------------------------------------------------------------------------------------------------------------------------------------
-Already working in BotAna 1.0:
-
-1) Add new followers check every x minutes;
 
 Not implemented in BotAna 1.0, but still easy:
 
-2) Add !wins command to return Fortnite useful wins stats
-3) Make different commands files for differents games
+1) Add !wins command to return Fortnite useful wins stats
+2) Make different commands files for differents games
 
 ******************************************************************************************************************************************
 
@@ -19,7 +16,7 @@ Not implemented in BotAna 1.0, but still easy:
 ------------------------------------------------------------------------------------------------------------------------------------------
         Medium ones (working in BotAna 1.0, but bugged af):
 ------------------------------------------------------------------------------------------------------------------------------------------
-4) Fix Vodcast/Offline/Online BotAna status;
+3) Fix Vodcast/Offline/Online BotAna status;
 
 ******************************************************************************************************************************************
 
@@ -29,9 +26,9 @@ Not implemented in BotAna 1.0, but still easy:
 ------------------------------------------------------------------------------------------------------------------------------------------
         Hard ones (make you wanna kill yourself instead):
 ------------------------------------------------------------------------------------------------------------------------------------------
-5) Add new subscribers check;
-6) Add new host check;
-7) Add command (mod) to set stream title;
-8) Add command (mod) to set stream current game;
+4) Add new subscribers check;
+5) Add new host check;
+6) Add command (mod) to set stream title;
+7) Add command (mod) to set stream current game;
 
 ******************************************************************************************************************************************
