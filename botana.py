@@ -144,7 +144,9 @@ class BotAna(QtCore.QThread):
                                 self.message = parts[2]
                             #messo qui il counter conta anche messaggi iniziali (di handshake) che non sono di un utente...
                             #... che in teoria non dovrebbero essere tenuti in conto qui...
-                            self.msg_count += 1
+                            if "tmi.twitch.tv" not in self.username:
+                                self.msg_count += 1
+
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
 
@@ -199,8 +201,9 @@ class BotAna(QtCore.QThread):
         self.sign2.emit(path)
 
     def printMessage(self, msg):
-        print(msg)
-        self.sign.emit(time.strftime("%H:%M  ")+msg)
+        if "tmi.twitch.tv" not in self.username:
+            print(msg)
+            self.sign.emit(time.strftime("%H:%M  ")+msg)
 
     def readConfigFile(self, path):
         if os.path.exists(path):
@@ -282,7 +285,6 @@ class BotAna(QtCore.QThread):
         tempo = time.time()
         index = 0
         while True:
-            print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
             if time.time() - tempo > 900 and self.msg_count > 15:
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
