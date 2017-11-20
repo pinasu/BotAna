@@ -22,7 +22,7 @@ class WindowTwo(QtWidgets.QWidget):
         self.setWindowTitle('BotAnaImage')
         self.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
         self.img = QtWidgets.QLabel()
-        
+
         v_box = QtWidgets.QVBoxLayout()
         v_box.setContentsMargins(0,0,0,0)
         v_box.addWidget(self.img)
@@ -51,7 +51,7 @@ class WindowTwo(QtWidgets.QWidget):
         else:
             self.img.clear()
             self.setButtonTestImageActive(False)
-        
+
 
     def showImage(self, path):
         if self.isVisible() and not self.isInTest:
@@ -82,7 +82,7 @@ class Window(QtWidgets.QWidget):
             self.setStyleSheet(fh.read())
 
         self.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
-        
+
         self.setGeometry(0,0,950, 450)
         self.move(600, 200)
         self.setMinimumSize(700,300)
@@ -92,7 +92,7 @@ class Window(QtWidgets.QWidget):
 
         self.creators = QtWidgets.QLabel()
         self.creators.setPixmap(QtGui.QPixmap('res/Gui/creators.png'))
-        
+
         self.textarea = QtWidgets.QTextEdit()
         self.textarea.setReadOnly(True)
         self.textarea.setObjectName("textarea")
@@ -124,7 +124,7 @@ class Window(QtWidgets.QWidget):
         self.testImageGreenScreen.setIconSize(QtCore.QSize(40,40))
         self.testImageGreenScreen.setCursor (Qt.PointingHandCursor)
         self.testImageGreenScreen.setProperty('class','button gridButton')
-        self.testImageGreenScreen.setToolTip("Mostra immagine di test del green screen")
+        self.testImageGreenScreen.setToolTip("Mostra/Nascondi immagine di test del green screen")
         self.restartBtn = QtWidgets.QPushButton("")
         self.restartBtn.setIcon(QtGui.QIcon('res/Gui/restart.png'))
         self.restartBtn.setIconSize(QtCore.QSize(40,40))
@@ -148,12 +148,12 @@ class Window(QtWidgets.QWidget):
         h_box2 = QtWidgets.QHBoxLayout()
         h_box2.addWidget(self.inputText)
         h_box2.addWidget(self.sendButton)
-        
+
 
         v_box2 = QtWidgets.QVBoxLayout()
         v_box2.addWidget(self.textarea)
         v_box2.addLayout(h_box2)
-        
+
 
         h_box = QtWidgets.QHBoxLayout()
         h_box.addLayout(v_box)
@@ -220,4 +220,3 @@ class Window(QtWidgets.QWidget):
 app = QtWidgets.QApplication(sys.argv)
 a_window = Window()
 os._exit(app.exec_())
-
