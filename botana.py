@@ -150,6 +150,9 @@ class BotAna(QtCore.QThread):
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
 
+                            if "tmi.twitch.tv" in self.username:
+                                continue
+
                             #Print to stdout user's nick and message
                             self.printMessage(self.username+": "+self.message)
 
@@ -201,9 +204,9 @@ class BotAna(QtCore.QThread):
         self.sign2.emit(path)
 
     def printMessage(self, msg):
-        if "tmi.twitch.tv" not in self.username:
-            print(msg)
-            self.sign.emit(time.strftime("%H:%M  ")+msg)
+        #print("qqquuuiiii: " + self.username)
+        print(msg)
+        self.sign.emit(time.strftime("%H:%M  ")+msg)
 
     def readConfigFile(self, path):
         if os.path.exists(path):
@@ -285,6 +288,7 @@ class BotAna(QtCore.QThread):
         tempo = time.time()
         index = 0
         while True:
+            #print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
             if time.time() - tempo > 900 and self.msg_count > 15:
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
