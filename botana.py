@@ -239,7 +239,6 @@ class BotAna(QtCore.QThread):
     def send_whisper(self, message):
         self.sock.send(bytes("PRIVMSG #botana__ :/w "+self.username+" "+message+"\r\n", "UTF-8"))
 
-
     #Function to check if user needs to be banned
     def check_ban(self):
         if self.username not in self.mods:
@@ -285,31 +284,34 @@ class BotAna(QtCore.QThread):
         '''
 
     def check_followers(self):
-        first = []
         tempo = time.time()
         url = "https://api.twitch.tv/kraken/channels/"+self.NICK+"/follows"
         params = {"Client-ID" : ""+ self.CLIENT_ID +""}
 
         #First followers list pull
         resp = requests.get(url = url, headers = params)
-        json_follows = json.loads(resp.text)
-        #For every json user object, I put the user ID in a list
-        for f in json_follows["follows"]:
-        	first.append(f["user"]["_id"])
+        first = json.loads(resp.text)
 
         while True:
-            if time.time() - tempo > 30:
-                self.printMessage("Checking for new followers...")
-                resp = requests.get(url=url, headers=params)
-                new_followers = json.loads(resp.text)
+            self.printMessage("Checking for new followers...")
+            resp = requests.get(url=url, headers=params)
+            new = json.loads(resp.text)
 
-                if new_followers: #A volte Twitch impazzisce e non manda i dati correttamente, evito di far esplodere BotAna
-                    if new_followers["follows"][0]["user"]["_id"] not in first:
-                        self.send_message(new_followers["follows"][0]["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Mucho appreciato FeelsAmazingMan")
-                        first.append(new_followers["follows"][0]["user"]["_id"])
+            #Ora ho due liste di oggetti "follows"
+            inter = set(set(first).difference(set(new)))
+            for i in inter:
+                self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
+                new.append(inter["user"])
 
-                tempo = time.time()
-        time.sleep(1)
+            '''
+            if new_followers: #A volte Twitch impazzisce e non manda i dati correttamente, evito di far esplodere BotAna
+                if new_followers["follows"][0]["user"]["_id"] not in first:
+                    self.send_message(new_followers["follows"][0]["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
+                    first.append(new_followers["follows"][0]["user"]["_id"])
+
+            tempo = time.time()
+            '''
+            time.sleep(30)
 
     def check_spam(self):
         tempo = time.time()
