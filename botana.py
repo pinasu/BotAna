@@ -16,42 +16,32 @@ class BotAna(QtCore.QThread):
     sign2 = pyqtSignal(str)
     def __init__(self):
         super().__init__()
-        #First, we need to create the socket to connect to the chat
+
         self.sock = socket.socket()
-        #Twitch Host, always this
         self.HOST = "irc.twitch.tv"
-        #Twitch port, always this
         self.PORT = 6667
-        #name of Bot
         self.botName = "BotAna__"
-        #Bot OAuth
         self.BOT_OAUTH = ""
-        #NICK and CHAN are basically the same, but CHAN comes with a "#" before the channel name
-        #Channel name
         self.NICK = ""
-        #Channel to join
         self.CHAN = ""
-        #Appliation Client ID
         self.CLIENT_ID = ""
-        #Chatter's name
+
         self.username = ""
-        #Current message
         self.message = ""
-        #Current message arguments
         self.arguments = ""
-        #Bot message rate to prevent excessive CPU usage
+
         self.RATE = 20/30
-        #Mods list
+
         self.mods = ["lusyoo", "boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "nightbot", "pinasu", "stockhausen_l2p", "tubbablubbah", "urza2k", "xuneera"]
-        #Chatter to ban, he's screaming too much.
+
         self.to_ban = ""
-        #List of players that want to play
+
         self.players = []
-        #Used commands
+
         self.used = {}
-        #Users that want to play
+
         self.players = []
-        #8ball choices
+
         self.ball_choices = ["Non pensarci nemmeno LUL",
                         "Ma in che pianeta vivi LUL",
                         "Ma proprio no DansGame",
@@ -59,7 +49,7 @@ class BotAna(QtCore.QThread):
                         "Ma ovviamente PogChamp",
                         "Vai tranqui Kreygasm"
         ]
-        #Collect times of lasts commands calls
+
         self.timeCommandsModCalled = dict()
         self.timeCommandsPlebCalled = dict()
 
@@ -93,52 +83,37 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            #Bot OAuth
             self.BOT_OAUTH = self.get_bot_oauth()
-            #NICK and CHAN are basically the same, but CHAN comes with a "#" before the channel name
-            #Channel name
             self.NICK = self.get_nick()
-            #Channel to join
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID()
+
             self.loadCommands()
             self.loadSounds()
             self.loadImage()
 
-            #Chat connection
             self.sock.connect((self.HOST, self.PORT))
-
-            #Send to Twitch some useful informations
-            #Bot OAuth, so he can write in chat
             self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
-
-            #Channel to join
             self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
             self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
 
-            #Write to stdout to check if bot is connected
             self.printMessage("I'm now connected to "+ self.NICK + ".")
 
             self.check_online()
 
-            #Send first bot message to the chat it's connected to
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=()).start()
 
-            #Bot main while loop
-            while True: #"while 1" if you prefere *lennyface*
-                #Get Twitch chat current message
+            while True:
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
                 if rec:
-                    #Parse received message
+
                     for line in rec:
-                        #Response to Twitch, checking if the Bot is still woke
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
-                            #Get actual message and chatter username
                             parts = line.split(':')
                             if len(parts) < 3: continue
                             if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
@@ -152,10 +127,8 @@ class BotAna(QtCore.QThread):
 
                             self.msg_count += 1
 
-                            #Print to stdout user's nick and message
                             self.printMessage(self.username+": "+self.message)
 
-                            #Check user message, if he's screaming he'll be warned by bot or banned
                             if sum(1 for c in self.message if c.isupper()) > 15:
                                 self.check_ban()
 
@@ -164,14 +137,11 @@ class BotAna(QtCore.QThread):
                                     self.greeted.append(self.username)
                                     self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
 
-                            #Message is a command
                             elif self.message.startswith('!'):
                                 message_list = self.message.split(' ');
 
-                                #Get command from messages
                                 self.message = message_list[0]
 
-                                #Get message arguments, if there are any
                                 self.arguments = ' '.join(message_list[1:])
 
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
@@ -186,7 +156,6 @@ class BotAna(QtCore.QThread):
 
                             self.check_words(self.message)
 
-                #Prevent Bot to use too much CPU
                 time.sleep(1/self.RATE)
         except:
             self.play_sound("crash")
@@ -203,7 +172,6 @@ class BotAna(QtCore.QThread):
         self.sign2.emit(path)
 
     def printMessage(self, msg):
-        #print("qqquuuiiii: " + self.username)
         print(msg)
         self.sign.emit(time.strftime("%H:%M  ")+msg)
 
@@ -214,7 +182,7 @@ class BotAna(QtCore.QThread):
                     tmp = f.read()
                     self.printMessage(path + " was read correctly.")
                     return tmp
-            except: # whatever reader errors you care about
+            except:
                 self.printMessage("Error reading " + path + "\n")
         else:
             self.printMessage("Error reading " + path + "\n")
@@ -222,24 +190,19 @@ class BotAna(QtCore.QThread):
     def get_bot_oauth(self):
         return self.readConfigFile("bot_OAuth.txt")
 
-    #Function to read from tile "username" user's nickname
     def get_nick(self):
         return self.readConfigFile("username.txt")
 
     def get_clientID(self):
         return self.readConfigFile("clientID.txt")
 
-    #Function to send given message to the chat
     def send_message(self, message):
         self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n", 'utf-8'))
         self.printMessage(self.botName + ": " + str(message))
 
-    #Function to send whisper to user
-    #Watch out, if you abuse using whispers Twitch will ban your Bot's account
     def send_whisper(self, message):
         self.sock.send(bytes("PRIVMSG #botana__ :/w "+self.username+" "+message+"\r\n", "UTF-8"))
 
-    #Function to check if user needs to be banned
     def check_ban(self):
         if self.username not in self.mods:
             if self.username == to_ban:
@@ -248,39 +211,39 @@ class BotAna(QtCore.QThread):
                 to_ban = self.username
                 self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
 
-    #Function to check if channel is online
     def check_online(self):
-        '''Momentaneamente commentata per far credere al bot che il canale è live
-    ##    offline = True
-    ##    url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
-    ##    params = {"Client-ID" : ""+self.CLIENT_ID+""}
-    ##    resp = requests.get(url=url, headers=params)
-    ##    online = json.loads(resp.text)
-    ##    #Check if stream is offline or is a Vodcast
-    ##    while online["stream"] == None or online["stream"]["stream_type"] == "watch_party":
-    ##        #It's a vodcast
-    ##        if online["stream"]:
-    ##            if online["stream"]["stream_type"] == "watch_party":
-    ##                #Get user message
-    ##                rec = str(self.sock.recv(1024)).split("\\r\\n")
-    ##                if rec:
-    ##                    for line in rec:
-    ##                        parts = line.split(':')
-    ##                        if len(parts) < 3: continue
-    ##                        if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-    ##                            self.message = parts[2]
-    ##
-    ##                        usernamesplit = parts[1].split("!")
-    ##                        self.username = usernamesplit[0]
-    ##
-    ##                        if "tmi.twitch.tv" not in self.username:
-    ##                            self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
-    ##                            time.sleep(1)
-    ##                            self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
-    ##        time.sleep(10)
-    ##
-    ##        resp = requests.get(url=url, headers=params)
-    ##        online = json.loads(resp.text)
+        #Momentaneamente commentata per far credere al bot che il canale è live
+        '''
+        offline = True
+        url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
+        params = {"Client-ID" : ""+self.CLIENT_ID+""}
+        resp = requests.get(url=url, headers=params)
+        online = json.loads(resp.text)
+        #Check if stream is offline or is a Vodcast
+        while online["stream"] == None or online["stream"]["stream_type"] == "watch_party":
+            #It's a vodcast
+            if online["stream"]:
+                if online["stream"]["stream_type"] == "watch_party":
+                    #Get user message
+                    rec = str(self.sock.recv(1024)).split("\\r\\n")
+                    if rec:
+                        for line in rec:
+                            parts = line.split(':')
+                            if len(parts) < 3: continue
+                            if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
+                                self.message = parts[2]
+
+                            usernamesplit = parts[1].split("!")
+                            self.username = usernamesplit[0]
+
+                            if "tmi.twitch.tv" not in self.username:
+                                self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
+                                time.sleep(1)
+                                self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
+            time.sleep(10)
+
+            resp = requests.get(url=url, headers=params)
+            online = json.loads(resp.text)
         '''
 
     def check_followers(self):
@@ -303,14 +266,6 @@ class BotAna(QtCore.QThread):
                 self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
                 new.append(inter["user"])
 
-            '''
-            if new_followers: #A volte Twitch impazzisce e non manda i dati correttamente, evito di far esplodere BotAna
-                if new_followers["follows"][0]["user"]["_id"] not in first:
-                    self.send_message(new_followers["follows"][0]["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
-                    first.append(new_followers["follows"][0]["user"]["_id"])
-
-            tempo = time.time()
-            '''
             time.sleep(30)
 
     def check_spam(self):
@@ -321,7 +276,6 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
                 self.msg_count = 0
-                #Very nice
                 index = (index + 1) % len(self.msg_spam)
 
             time.sleep(1)
@@ -523,21 +477,18 @@ class BotAna(QtCore.QThread):
 
         self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
 
-    #Function to answer pleb command
     def call_command_pleb(self):
         if self.message == "!roulette" and not self.isInTimeout("!roulette"):
             threading.Thread(target=self.startRoulette, args=(self.username)).start()
 
         elif self.message == "!salta":
 
-            #Se è il primo a voler skippare oppure se sono passati 60 secondi dall'ultimo skip
             if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
                 del self.skippers[:]
                 self.timeSkip = time.time()
                 self.skippers.append(self.username)
                 self.send_message(self.username+" vuole saltare questa canzone LUL")
 
-            #L'utente non ha già chiamato skip
             elif self.username not in self.skippers:
                 self.skippers.append(self.username)
                 if len(self.skippers) == 3:
@@ -626,7 +577,6 @@ class BotAna(QtCore.QThread):
         if user.endswith("ana"):
             new = user[:-3]
         else:
-            #Pinasu
             lun = (len(user))-1
             last = user[lun]
             while last not in "bcdfghjklmnpqrstvwxyz":
@@ -683,7 +633,6 @@ class BotAna(QtCore.QThread):
                 self.sounds[row[0]] = current
         self.printMessage("sounds.csv was read correctly.")
 
-    #Get sounds list
     def get_sounds(self):
         self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
 
