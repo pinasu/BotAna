@@ -88,16 +88,16 @@ class BotAna(QtCore.QThread):
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID()
 
-            self.loadCommands()
-            self.loadSounds()
-            self.loadImage()
+            self.load_commands()
+            self.load_sounds()
+            self.load_image()
 
             self.sock.connect((self.HOST, self.PORT))
             self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
             self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
             self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
 
-            self.printMessage("I'm now connected to "+ self.NICK + ".")
+            self.print_message("I'm now connected to "+ self.NICK + ".")
 
             self.check_online()
 
@@ -127,7 +127,7 @@ class BotAna(QtCore.QThread):
 
                             self.msg_count += 1
 
-                            self.printMessage(self.username+": "+self.message)
+                            self.print_message(self.username+": "+self.message)
 
                             if sum(1 for c in self.message if c.isupper()) > 15:
                                 self.check_ban()
@@ -159,7 +159,7 @@ class BotAna(QtCore.QThread):
                 time.sleep(1/self.RATE)
         except:
             self.play_sound("crash")
-            self.printMessage("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
+            self.print_message("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
@@ -168,37 +168,37 @@ class BotAna(QtCore.QThread):
         self.exiting = True
         self.wait()
 
-    def showImage(self, path):
+    def show_image(self, path):
         self.sign2.emit(path)
 
-    def printMessage(self, msg):
+    def print_message(self, msg):
         print(msg)
         self.sign.emit(time.strftime("%H:%M  ")+msg)
 
-    def readConfigFile(self, path):
+    def read_config_file(self, path):
         if os.path.exists(path):
             try:
                 with open(path,"r") as f:
                     tmp = f.read()
-                    self.printMessage(path + " was read correctly.")
+                    self.print_message(path + " was read correctly.")
                     return tmp
             except:
-                self.printMessage("Error reading " + path + "\n")
+                self.print_message("Error reading " + path + "\n")
         else:
-            self.printMessage("Error reading " + path + "\n")
+            self.print_message("Error reading " + path + "\n")
 
     def get_bot_oauth(self):
-        return self.readConfigFile("bot_OAuth.txt")
+        return self.read_config_file("bot_OAuth.txt")
 
     def get_nick(self):
-        return self.readConfigFile("username.txt")
+        return self.read_config_file("username.txt")
 
     def get_clientID(self):
-        return self.readConfigFile("clientID.txt")
+        return self.read_config_file("clientID.txt")
 
     def send_message(self, message):
         self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n", 'utf-8'))
-        self.printMessage(self.botName + ": " + str(message))
+        self.print_message(self.botName + ": " + str(message))
 
     def send_whisper(self, message):
         self.sock.send(bytes("PRIVMSG #botana__ :/w "+self.username+" "+message+"\r\n", "UTF-8"))
@@ -256,7 +256,7 @@ class BotAna(QtCore.QThread):
         first = json.loads(resp.text)
 
         while True:
-            self.printMessage("Checking for new followers...")
+            self.print_message("Checking for new followers...")
             resp = requests.get(url=url, headers=params)
             new = json.loads(resp.text)
 
@@ -280,13 +280,13 @@ class BotAna(QtCore.QThread):
 
             time.sleep(1)
 
-    def addInTimeout(self, command):
+    def add_in_timeout(self, command):
         if command in self.commandsMod.keys():
             self.timeCommandsModCalled[command] = time.time()
         elif command in self.commandsPleb.keys():
             self.timeCommandsPlebCalled[command] = time.time()
 
-    def isInTimeout(self, command):
+    def is_in_timeout(self, command):
         if command in self.commandsMod.keys():
             if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(self.commandsMod[command].getCooldown())):
                 return False
@@ -296,21 +296,21 @@ class BotAna(QtCore.QThread):
                 return False
             return True
 
-    def soundAddInTimeout(self, sound):
+    def sound_add_in_timeout(self, sound):
         if sound in self.sounds.keys():
             self.timeLastSoundCalled = time.time()
 
-    def soundIsInTimeout(self, sound):
+    def sound_is_in_timeout(self, sound):
         if sound in self.sounds.keys():
             if self.timeLastSoundCalled == None or (time.time() - self.timeLastSoundCalled >= float(self.cooldownSound)):
                 return False
         return True
 
-    def imageAddInTimeout(self, img):
+    def image_add_in_timeout(self, img):
         if img in self.images.keys():
             self.timeLastImageCalled = time.time()
 
-    def imageIsInTimeout(self, img):
+    def image_is_in_timeout(self, img):
         if img in self.images.keys():
             if self.timeLastImageCalled == None or (time.time() - self.timeLastImageCalled >= float(self.cooldownImage)):
                 return False
@@ -424,12 +424,12 @@ class BotAna(QtCore.QThread):
         else:
             for com in self.commandsMod.values():
                 if com.isSimpleCommand() and self.message == com.getName():
-                    if not self.isInTimeout(com.getName()):
-                        self.addInTimeout(com.getName())
+                    if not self.is_in_timeout(com.getName()):
+                        self.add_in_timeout(com.getName())
                         self.send_message(com.getResponse())
 
-    def startRoulette(self, user):
-        self.addInTimeout("!roulette")
+    def start_roulette(self, user):
+        self.add_in_timeout("!roulette")
         self.send_message("Punto la pistola nella testa di "+user+"... monkaS")
         time.sleep(5)
         dead_or_alive = randint(1, 10)
@@ -438,7 +438,7 @@ class BotAna(QtCore.QThread):
         else:
             self.send_message("La pistola si è inceppata! PogChamp "+user+" è sopravvissuto Kreygasm")
 
-    def startSuicidio(self, user):
+    def start_suicidio(self, user):
         if user == self.NICK:
             self.send_message("Imperatore mio Imperatore, non posso permetterti di farlo! BibleThump")
             time.sleep(2)
@@ -478,8 +478,8 @@ class BotAna(QtCore.QThread):
         self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
 
     def call_command_pleb(self):
-        if self.message == "!roulette" and not self.isInTimeout("!roulette"):
-            threading.Thread(target=self.startRoulette, args=(self.username)).start()
+        if self.message == "!roulette" and not self.is_in_timeout("!roulette"):
+            threading.Thread(target=self.start_roulette, args=(self.username)).start()
 
         elif self.message == "!salta":
 
@@ -503,8 +503,8 @@ class BotAna(QtCore.QThread):
                 self.players.append(self.username)
                 self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
 
-        elif self.message == "!players" and not self.isInTimeout("!players"):
-            self.addInTimeout("!players")
+        elif self.message == "!players" and not self.is_in_timeout("!players"):
+            self.add_in_timeout("!players")
             if self.players:
                 pl = ', '.join(self.players)
                 self.send_message(pl+" vogliono giocare!")
@@ -513,8 +513,8 @@ class BotAna(QtCore.QThread):
             else:
                 self.send_message("Non vuole giocare nessuno BibleThump")
 
-        elif self.message == "!maledizione" and not self.isInTimeout("!maledizione"):
-            self.addInTimeout("!maledizione")
+        elif self.message == "!maledizione" and not self.is_in_timeout("!maledizione"):
+            self.add_in_timeout("!maledizione")
             file = open("maledizioni.txt", "r")
             maled = file.read()
             count = int(maled) + 1
@@ -526,18 +526,18 @@ class BotAna(QtCore.QThread):
             file.write(str(count))
 
         elif self.message == "!suicidio":
-            threading.Thread(target=self.startSuicidio, args=([self.username])).start()
+            threading.Thread(target=self.start_suicidio, args=([self.username])).start()
 
-        elif self.message == "!8ball" and not self.isInTimeout("!8ball"):
-            self.addInTimeout("!8ball")
+        elif self.message == "!8ball" and not self.is_in_timeout("!8ball"):
+            self.add_in_timeout("!8ball")
             ball = random.choice(self.ball_choices)
             self.send_message(ball)
 
-        elif self.message == "!love" and not self.isInTimeout("!love"):
+        elif self.message == "!love" and not self.is_in_timeout("!love"):
             if self.username == "lusyoo" and self.arguments.lower() == "dio":
                 self.send_message(self.username+" ama "+self.arguments+" allo 0% FeelsBadMan")
                 return
-            self.addInTimeout("!love")
+            self.add_in_timeout("!love")
             emote = ""
             rand = randint(0, 100)
             if rand < 50:
@@ -552,23 +552,23 @@ class BotAna(QtCore.QThread):
             else:
                 threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
-        elif self.message == "!ban" and not self.isInTimeout("!ban"):
-            self.addInTimeout("!ban")
+        elif self.message == "!ban" and not self.is_in_timeout("!ban"):
+            self.add_in_timeout("!ban")
             self.send_message(self.username+" ha bandito "+self.arguments+" dalla chat PogChamp")
 
-        elif self.message == "!comandi" and not self.isInTimeout("!comandi"):
-            self.addInTimeout("!comandi")
+        elif self.message == "!comandi" and not self.is_in_timeout("!comandi"):
+            self.add_in_timeout("!comandi")
             self.send_message(str(set(self.commandsPleb.keys())))
 
-        elif self.message == "!suoni" and not self.isInTimeout("!suoni"):
-            self.addInTimeout("!suoni")
+        elif self.message == "!suoni" and not self.is_in_timeout("!suoni"):
+            self.add_in_timeout("!suoni")
             self.get_sounds()
 
         else:
             for com in self.commandsPleb.values():
                 if com.isSimpleCommand() and self.message == com.getName():
-                    if not self.isInTimeout(com.getName()):
-                        self.addInTimeout(com.getName())
+                    if not self.is_in_timeout(com.getName()):
+                        self.add_n_timeout(com.getName())
                         self.send_message(com.getResponse())
 
     def ana(self, user):
@@ -589,24 +589,24 @@ class BotAna(QtCore.QThread):
 
         return new + "ANA";
 
-    def wordInTimeout(self, word):
+    def word_in_timeout(self, word):
         self.words_cooldown[word] = time.time()
 
-    def isWordInTimeout(self, word):
+    def is_word_in_timeout(self, word):
         if word not in self.words_cooldown.keys() or (time.time() - self.words_cooldown[word] >= 15):
             return False
         return True
 
     def check_words(self, message):
-        if "classic" in message.lower() and not self.isWordInTimeout("classic"):
-            self.wordInTimeout("classic")
+        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
+            self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
-        elif "anche io" in message.lower() and not self.isWordInTimeout("anche io"):
-            self.wordInTimeout("anche io")
+        elif "anche io" in message.lower() and not self.is_word_in_timeout("anche io"):
+            self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
 
-    def loadCommands(self):
+    def load_commands(self):
         with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
@@ -615,33 +615,33 @@ class BotAna(QtCore.QThread):
                     self.commandsMod[row[0]] = current
                 elif row[3] == "pleb":
                     self.commandsPleb[row[0]] = current
-        self.printMessage("commands.csv was read correctly.")
+        self.print_message("commands.csv was read correctly.")
 
-    def loadImage(self):
+    def load_image(self):
         with open('images.csv', encoding='utf-8') as imgs:
             reader = csv.reader(imgs, delimiter=';', quotechar='|')
             for row in reader:
                 current = Image(row[0], row[1], row[2])
                 self.images[row[0]] = current
-        self.printMessage("images.csv was read correctly.")
+        self.print_message("images.csv was read correctly.")
 
-    def loadSounds(self):
+    def load_sounds(self):
         with open('sounds.csv', encoding='utf-8') as sounds:
             reader = csv.reader(sounds, delimiter=';', quotechar='|')
             for row in reader:
                 current = Sound(row[0])
                 self.sounds[row[0]] = current
-        self.printMessage("sounds.csv was read correctly.")
+        self.print_message("sounds.csv was read correctly.")
 
     def get_sounds(self):
         self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
 
     def call_image(self, name):
         for img in self.images.values():
-            if name == img.getName() and not self.imageIsInTimeout(name):
-                self.imageAddInTimeout(name)
+            if name == img.getName() and not self.image_is_in_timeout(name):
+                self.image_add_in_timeout(name)
                 self.send_message("Pro strats PogChamp")
-                self.showImage(img.getMessage())
+                self.show_image(img.getMessage())
 
     def play_sound(self, name):
         pygame.mixer.pre_init(44100, 16, 2, 4096)
@@ -660,8 +660,8 @@ class BotAna(QtCore.QThread):
         if name[:1] == "!":
                 sname = name[1:]
         if name == "!gg":
-            self.soundAddInTimeout(name)
+            self.sound_add_in_timeout(name)
             self.play_sound(sname)
-        elif not self.soundIsInTimeout(name):
-            self.soundAddInTimeout(name)
+        elif not self.sound_is_in_timeout(name):
+            self.sound_add_in_timeout(name)
             self.play_sound(sname)
