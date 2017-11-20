@@ -142,16 +142,14 @@ class BotAna(QtCore.QThread):
                             if len(parts) < 3: continue
                             if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
                                 self.message = parts[2]
-                            #messo qui il counter conta anche messaggi iniziali (di handshake) che non sono di un utente...
-                            #... che in teoria non dovrebbero essere tenuti in conto qui...
-                            if "tmi.twitch.tv" not in self.username:
-                                self.msg_count += 1
 
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
 
                             if "tmi.twitch.tv" in self.username:
                                 continue
+
+                            self.msg_count += 1
 
                             #Print to stdout user's nick and message
                             self.printMessage(self.username+": "+self.message)
@@ -288,7 +286,7 @@ class BotAna(QtCore.QThread):
         tempo = time.time()
         index = 0
         while True:
-            #print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
+            print(str(int(time.time() - tempo)) + " - " + str(self.msg_count))
             if time.time() - tempo > 900 and self.msg_count > 15:
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
