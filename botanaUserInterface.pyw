@@ -1,10 +1,33 @@
 import sys, os, time
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QMainWindow, QDesktopWidget
 from PyQt5.QtGui import QTextCursor
 from botana import BotAna
 import threading
+
+class Window_changelog(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
+
+    def init_ui(self):
+        self.setFixedSize(670,600)
+        self.set_position()
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.setWindowTitle('BotAna 2.0')
+        self.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
+        self.img = QtWidgets.QLabel()
+        self.img.setPixmap(QtGui.QPixmap('res/Gui/changelog.png'))
+
+        v_box = QtWidgets.QVBoxLayout()
+        v_box.setContentsMargins(0,0,0,0)
+        v_box.addWidget(self.img)
+        self.setLayout(v_box)
+
+    def set_position(self):
+        #resolution = QDesktopWidget().screenGeometry()
+        self.move((QDesktopWidget().availableGeometry().width()/2) - (self.width()/2), (QDesktopWidget().availableGeometry().height()/2) - (self.height()/2))
 
 class WindowTwo(QtWidgets.QWidget):
     def __init__(self, parent):
@@ -69,11 +92,13 @@ class Window(QtWidgets.QWidget):
         super().__init__()
         self.init_ui()
         self.secondWind = WindowTwo(self)
+        self.changelog = Window_changelog()
         self.bot = BotAna()
         self.bot.sign.connect(self.print_on_text_area)
         self.bot.sign2.connect(self.show_image)
         self.bot.start()
         self.activateWindow()
+        self.changelog.show()
 
     def init_ui(self):
 
