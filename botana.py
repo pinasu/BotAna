@@ -256,11 +256,9 @@ class BotAna(QtCore.QThread):
         first = json.loads(resp.text)
 
         while True:
-            self.print_message("Checking for new followers...")
             resp = requests.get(url=url, headers=params)
             new = json.loads(resp.text)
 
-            #Ora ho due liste di oggetti "follows"
             inter = set(set(first).difference(set(new)))
             for i in inter:
                 self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
@@ -494,7 +492,6 @@ class BotAna(QtCore.QThread):
         except ValueError:
             self.send_message("Utente <"+user+"> non trovato. Scrivi bene, stupido babbuino LUL")
 
-    #Copiato brutalmente, cerca nella pagina
     def find(self, s, first, last):
         start = s.index( first ) + len( first )
         end = s.index( last, start )
@@ -506,6 +503,31 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.get_stats, args=([self.arguments])).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["lidfrid"])).start()
+
+        elif self.message == "!play":
+            if self.username not in self.players:
+                self.players.append(self.username)
+                self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
+
+        elif self.message == "!players" and not self.is_in_timeout("!players"):
+                if self.players:
+                    pl = ', '.join(self.players)
+                    self.send_message(pl+" vogliono giocare!")
+                    if self.username in self.mods:
+                        self.players = []
+                    else:
+                        self.send_message("Non vuole giocare nessuno BibleThump")
+
+        elif self.message == "!maledizione" and not self.is_in_timeout("!maledizione"):
+                        file = open("maledizioni.txt", "r")
+                        maled = file.read()
+                        count = int(maled) + 1
+                        file.close()
+
+                        self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
+
+                        file = open("maledizioni.txt", "w")
+                        file.write(str(count))
 
         elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
             threading.Thread(target=self.start_roulette, args=(self.username)).start()
@@ -525,31 +547,6 @@ class BotAna(QtCore.QThread):
                     del self.skippers[:]
                 else:
                     self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
-
-        elif self.message == "!play":
-            if self.username not in self.players:
-                self.players.append(self.username)
-                self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
-
-        elif self.message == "!players" and not self.is_in_timeout("!players"):
-            if self.players:
-                pl = ', '.join(self.players)
-                self.send_message(pl+" vogliono giocare!")
-                if self.username in self.mods:
-                    self.players = []
-            else:
-                self.send_message("Non vuole giocare nessuno BibleThump")
-
-        elif self.message == "!maledizione" and not self.is_in_timeout("!maledizione"):
-            file = open("maledizioni.txt", "r")
-            maled = file.read()
-            count = int(maled) + 1
-            file.close()
-
-            self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
-
-            file = open("maledizioni.txt", "w")
-            file.write(str(count))
 
         elif self.message == "!suicidio":
             threading.Thread(target=self.start_suicidio, args=([self.username])).start()
@@ -696,7 +693,19 @@ class BotAna(QtCore.QThread):
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
             return True
-        curr_game = "va visto come fare"
+        #Stockhausen is 51313426
+        #Lusyo is 30180708
+        user_id = "133174210"
+        try:
+            url = 'https://api.twitch.tv/kraken/channels/'+user_id
+            headers = {'Client-ID': self.CLIENT_ID, 'Accept': 'application/vnd.twitchtv.v5+json'}
+            resp = requests.get(url, headers=headers).json()
+        except:
+            self.print_message("Error getting stream title.")
+            return
+
+        curr_game = resp["game"]
+
         if command.get_game() == curr_game:
             return True
         return False
