@@ -288,11 +288,11 @@ class BotAna(QtCore.QThread):
 
     def is_in_timeout(self, command):
         if command in self.commandsMod.keys():
-            if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(self.commandsMod[command].getCooldown())):
+            if command not in self.timeCommandsModCalled or (time.time() - self.timeCommandsModCalled[command] >= float(self.commandsMod[command].get_cooldown())):
                 return False
             return True
         elif command in self.commandsPleb.keys():
-            if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(self.commandsPleb[command].getCooldown())):
+            if command not in self.timeCommandsPlebCalled or (time.time() - self.timeCommandsPlebCalled[command] >= float(self.commandsPleb[command].get_cooldown())):
                 return False
             return True
 
@@ -366,19 +366,23 @@ class BotAna(QtCore.QThread):
             if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
                 self.send_message("Non posso aggiungere un comando uguale a uno che esiste già, stupido babbuino LUL")
                 return
-            if (len(tmp) == 4 and len(tmp[0].split(" ")) == 1):
-                fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
+            if ((len(tmp) == 4 or len(tmp) == 5) and len(tmp[0].split(" ")) == 1):
+                if len(tmp) == 4:
+                    fields=[tmp[0], tmp[1], tmp[2], tmp[3]]
+                    newComm = Command(tmp[0], tmp[1], tmp[2], tmp[3])
+                elif len(tmp) == 5:
+                    fields=[tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]]
+                    newComm = Command(tmp[0], tmp[1], tmp[2], tmp[3], tmp[4])
                 with open('commands.csv', 'a') as f:
                     writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
                     writer.writerow(fields)
-                newComm = Command(tmp[0], tmp[1], tmp[2], tmp[3])
                 if tmp[3] == "mod":
                     self.commandsMod[tmp[0]] = newComm
                 elif tmp[3] == "pleb":
                     self.commandsPleb[tmp[0]] = newComm
                 self.send_message("Ho aggiunto il comando " + tmp[0] + " FeelsGoodMan")
             else:
-                self.send_message("Uso: !comando;risposta;cooldown;permessi(pleb/mod)")
+                self.send_message("Uso: !comando;risposta;cooldown;permessi(pleb/mod);gioco(opzionale)")
 
         elif self.message == "!removecommand":
             args = self.arguments.split(" ")
@@ -411,9 +415,9 @@ class BotAna(QtCore.QThread):
                 with open('commands.csv', 'a', encoding='utf-8') as f:
                     writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
                     for p in self.commandsPleb.values():
-                        writer.writerow([p.getName(), p.getResponse(), p.getCooldown(), p.getTipo()])
+                        writer.writerow([p.get_name(), p.get_response(), p.get_cooldown(), p.get_tipo()])
                     for m in self.commandsMod.values():
-                        writer.writerow([m.getName(), m.getResponse(), m.getCooldown(), m.getTipo()])
+                        writer.writerow([m.get_name(), m.get_response(), m.get_cooldown(), m.get_tipo()])
                 self.send_message("Comando " + self.arguments + " eliminato FeelsGoodMan")
             except:
                 subprocess.run("del commands.csv", shell=True)
@@ -423,10 +427,10 @@ class BotAna(QtCore.QThread):
 
         else:
             for com in self.commandsMod.values():
-                if com.isSimpleCommand() and self.message == com.getName():
-                    if not self.is_in_timeout(com.getName()):
-                        self.add_in_timeout(com.getName())
-                        self.send_message(com.getResponse())
+                if com.is_simple_command() and self.message == com.get_name():
+                    if not self.is_in_timeout(com.get_name()):
+                        self.add_in_timeout(com.get_name())
+                        self.send_message(com.get_response())
 
     def start_roulette(self, user):
         self.add_in_timeout("!roulette")
@@ -566,10 +570,10 @@ class BotAna(QtCore.QThread):
 
         else:
             for com in self.commandsPleb.values():
-                if com.isSimpleCommand() and self.message == com.getName():
-                    if not self.is_in_timeout(com.getName()):
-                        self.add_n_timeout(com.getName())
-                        self.send_message(com.getResponse())
+                if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
+                    if not self.is_in_timeout(com.get_name()):
+                        self.add_in_timeout(com.get_name())
+                        self.send_message(com.get_response())
 
     def ana(self, user):
         new = ""
@@ -610,7 +614,10 @@ class BotAna(QtCore.QThread):
         with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
-                current = Command(row[0], row[1], row[2], row[3])
+                if len(row) == 5:
+                    current = Command(row[0], row[1], row[2], row[3], row[4])
+                else:
+                    current = Command(row[0], row[1], row[2], row[3])
                 if row[3] == "mod":
                     self.commandsMod[row[0]] = current
                 elif row[3] == "pleb":
@@ -621,7 +628,10 @@ class BotAna(QtCore.QThread):
         with open('images.csv', encoding='utf-8') as imgs:
             reader = csv.reader(imgs, delimiter=';', quotechar='|')
             for row in reader:
-                current = Image(row[0], row[1], row[2])
+                if len(row) == 4:
+                    current = Image(row[0], row[1], row[2], row[3])
+                else:
+                    current = Image(row[0], row[1], row[2])
                 self.images[row[0]] = current
         self.print_message("images.csv was read correctly.")
 
@@ -629,7 +639,10 @@ class BotAna(QtCore.QThread):
         with open('sounds.csv', encoding='utf-8') as sounds:
             reader = csv.reader(sounds, delimiter=';', quotechar='|')
             for row in reader:
-                current = Sound(row[0])
+                if len(row) == 2:
+                    current = Sound(row[0], row[1])
+                else:
+                    current = Sound(row[0])
                 self.sounds[row[0]] = current
         self.print_message("sounds.csv was read correctly.")
 
@@ -638,10 +651,10 @@ class BotAna(QtCore.QThread):
 
     def call_image(self, name):
         for img in self.images.values():
-            if name == img.getName() and not self.image_is_in_timeout(name):
+            if name == img.get_name() and not self.image_is_in_timeout(name) and self.is_for_current_game(self.images[name]):
                 self.image_add_in_timeout(name)
                 self.send_message("Pro strats PogChamp")
-                self.show_image(img.getMessage())
+                self.show_image(img.get_message())
 
     def play_sound(self, name):
         pygame.mixer.pre_init(44100, 16, 2, 4096)
@@ -662,6 +675,14 @@ class BotAna(QtCore.QThread):
         if name == "!gg":
             self.sound_add_in_timeout(name)
             self.play_sound(sname)
-        elif not self.sound_is_in_timeout(name):
+        elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[sname]):
             self.sound_add_in_timeout(name)
             self.play_sound(sname)
+
+    def is_for_current_game(self, command):
+        if not command.is_for_specific_game():
+            return True
+        curr_game = "va visto come fare"
+        if command.get_game() == curr_game:
+            return True
+        return False
