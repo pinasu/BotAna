@@ -477,8 +477,24 @@ class BotAna(QtCore.QThread):
 
         self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
 
+    def get_stats(self, user):
+        PLATFORM = "pc"
+        URL = "https://fortnitetracker.com/profile/"+PLATFORM+"/"+user
+        resp = requests.get(URL)
+
+        player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
+        self.print_message(player_data)
+
+    def find(self, s, first, last):
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+
     def call_command_pleb(self):
-        if self.message == "!roulette" and not self.is_in_timeout("!roulette"):
+        if self.message == "!wins":
+            threading.Thread(target=self.get_stats, args=(["pinasu"])).start()
+
+        elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
             threading.Thread(target=self.start_roulette, args=(self.username)).start()
 
         elif self.message == "!salta":
