@@ -183,7 +183,7 @@ class BotAna(QtCore.QThread):
                     self.print_message(path + " was read correctly.")
                     return tmp
             except:
-                self.print_message("Error reading " + path + "\n")
+                self.print_message("Error opening " + path + "\n")
         else:
             self.print_message("Error reading " + path + "\n")
 
@@ -484,25 +484,30 @@ class BotAna(QtCore.QThread):
     def get_stats(self, user):
         PLATFORM = "pc"
         URL = "https://fortnitetracker.com/profile/"+PLATFORM+"/"+user
-        resp = requests.get(URL)
+        try:
+            resp = requests.get(URL)
+            player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
+            self.send_message("["+user+"] Solo: "+player_data['p2'][0]['value']+", Duo: "+player_data['p10'][0]['value']+", Squad: "+player_data['p9'][0]['value']+" KappaPride")
+        except:
+            self.send_message("Utente <"+user+"> non trovato. Scrivi bene, stupido babbuino LUL")
 
-        player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-        self.print_message(player_data)
-
+    #Copiato brutalmente, cerca nella pagina
     def find(self, s, first, last):
         start = s.index( first ) + len( first )
         end = s.index( last, start )
         return s[start:end]
 
     def call_command_pleb(self):
-        if self.message == "!wins":
-            threading.Thread(target=self.get_stats, args=(["pinasu"])).start()
+        if self.message == "!wins" and not self.is_in_timeout("!wins"):
+            if self.arguments:
+                threading.Thread(target=self.get_stats, args=([self.arguments])).start()
+            else:
+                threading.Thread(target=self.get_stats, args=(["lidfrid"])).start()
 
         elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
             threading.Thread(target=self.start_roulette, args=(self.username)).start()
 
         elif self.message == "!salta":
-
             if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
                 del self.skippers[:]
                 self.timeSkip = time.time()

@@ -5,8 +5,7 @@
 
 Not implemented in BotAna 1.0, but still easy:
 
-1) Add !wins command to return Fortnite useful wins stats
-2) Make different commands files for differents games
+1) Make different commands files for differents games
 
 ******************************************************************************************************************************************
 
