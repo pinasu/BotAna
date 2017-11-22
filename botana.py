@@ -502,26 +502,30 @@ class BotAna(QtCore.QThread):
         return s[start:end]
 
     def get_rand_quote(self):
-        rand = randint(1, len(self.quotes))
-        for q in self.quotes:
-            if int(q.get_index()) == rand:
-                self.send_message("#"+q.get_index()+": '"+q.get_quote()+"' da "+q.get_author()+" il "+q.get_date())
+        rand = randint(0, len(self.quotes)-1)
+        q = self.quotes[rand]
+        self.send_message("#"+q.get_index()+": ''"+q.get_quote()+"'' - "+q.get_author()+" "+q.get_date())
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
             self.send_message("Non ho tutte quelle citazioni HotPokket")
         else:
             if args.isdigit():
-                for q in self.quotes:
-                    if int(q.get_index()) == int(args):
-                        self.send_message("#"+str(q.get_index())+": '"+q.get_quote()+"' da "+q.get_author()+" il "+q.get_date())
+                q = self.quotes[int(args)-1]
+                self.send_message("#"+str(q.get_index())+": ''"+q.get_quote()+"'' - "+q.get_author()+" "+q.get_date())
             else:
                 self.send_message("Errore, mi devi specificare il numero della citazione.")
 
     def add_quote(self, args):
-        self.quotes.append(Quote(len(self.quotes)+1, args, self.username, time.strftime("%d/%m/%Y")))
+        args = str(args)
+        args = args.split('-')
+        if len(args) != 2:
+            self.send_message("A questa citazione manca l'autore: aggiungilo alla fine dopo un trattino!")
 
-        fields = [len(self.quotes), args, self.username, time.strftime("%d/%m/%Y")]
+        self.quotes.append(Quote(len(self.quotes)+1, args[0], args[1], time.strftime("[%d/%m/%Y]")))
+
+        fields = [len(self.quotes), args[0], args[1], time.strftime("[%d/%m/%Y]")]
+
         with open('quotes.csv', 'a') as f:
             writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
             writer.writerow(fields)
@@ -532,11 +536,11 @@ class BotAna(QtCore.QThread):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
             if self.arguments:
                 if self.arguments.isdigit():
-                    threading.Thread(target=self.get_quote, args=([self.arguments])).start()
+                    self.get_quote(self.arguments)
                 else:
-                    threading.Thread(target=self.add_quote, args=([self.arguments])).start()
+                    self.add_quote(self.arguments)
             else:
-                threading.Thread(target=self.get_rand_quote, args=()).start()
+                self.get_rand_quote()
 
         elif self.message == "!wins" and not self.is_in_timeout("!wins"):
             if self.arguments:
