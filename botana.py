@@ -523,7 +523,7 @@ class BotAna(QtCore.QThread):
 
         fields = [len(self.quotes), args, self.username, time.strftime("%d/%m/%Y")]
         with open('quotes.csv', 'a') as f:
-            writer = csv.writer(f, delimiter=',', quotechar='|', lineterminator='\n')
+            writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
             writer.writerow(fields)
 
         self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes)))
@@ -665,7 +665,7 @@ class BotAna(QtCore.QThread):
 
     def load_quotes(self):
         with open('quotes.csv', encoding='utf-8') as quotes:
-            reader = csv.reader(quotes, delimiter=',', quotechar='|')
+            reader = csv.reader(quotes, delimiter=';', quotechar='|')
             for row in reader:
                 self.quotes.append(Quote(row[0], row[1], row[2], row[3]))
 
