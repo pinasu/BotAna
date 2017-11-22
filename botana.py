@@ -84,6 +84,8 @@ class BotAna(QtCore.QThread):
 
         self.quotes = []
 
+        self.online = None
+
     def run(self):
         try:
             self.BOT_OAUTH = self.get_bot_oauth()
@@ -105,10 +107,9 @@ class BotAna(QtCore.QThread):
 
             #threading.Thread(target=self.check_online, args=()).start()
 
-            url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
-            params = {"Client-ID" : ""+self.CLIENT_ID+""}
-            resp = requests.get(url=url, headers=params)
-            online = json.loads(resp.text)
+            self.check_online()
+
+            threading.Thread(target=self.check_online_cicle, args=()).start()
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
@@ -117,31 +118,30 @@ class BotAna(QtCore.QThread):
 
             while True:
                 #Vodcast o offline
-                while online["stream"] == None or online["stream"]["stream_type"] == "watch_party":
-                    if online["stream"]:
-                        if online["stream"]["stream_type"] == "watch_party":
-                            rec = str(self.sock.recv(1024)).split("\\r\\n")
-                            if rec:
-                                for line in rec:
-                                    if "PING" in line:
-                                        self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-                                    else:
-                                        parts = line.split(':')
-                                        if len(parts) < 3: continue
-                                        if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                                            self.message = parts[2]
-                                            usernamesplit = parts[1].split("!")
-                                            self.username = usernamesplit[0]
+                if self.online["stream"] == None:
+                    continue
 
-                                            if "tmi.twitch.tv" not in self.username:
-                                                self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
-                                                self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
+                elif self.online["stream"]["stream_type"] == "watch_party":
+                    print("vodcast2")
+                    rec = str(self.sock.recv(1024)).split("\\r\\n")
+                    if rec:
+                        for line in rec:
+                            if "PING" in line:
+                                self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+                            else:
+                                parts = line.split(':')
+                                if len(parts) < 3: continue
+                                if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
+                                    self.message = parts[2]
+                                    usernamesplit = parts[1].split("!")
+                                    self.username = usernamesplit[0]
 
-                    time.sleep(10)
-                    resp = requests.get(url=url, headers=params)
-                    online = json.loads(resp.text)
+                                    if "tmi.twitch.tv" not in self.username:
+                                        self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
+                                        self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                while online["stream"] != None or online["stream"]["stream_type"] == "live":
+                elif self.online["stream"] != None or self.online["stream"]["stream_type"] == "live":
+                    print("live")
                     rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
                     if rec:
                         for line in rec:
@@ -190,9 +190,7 @@ class BotAna(QtCore.QThread):
 
                                 self.check_words(self.message)
 
-                    time.sleep(1/self.RATE)
-
-                time.sleep(1)
+                time.sleep(1/self.RATE)
 
         except:
             self.play_sound("crash")
@@ -200,6 +198,17 @@ class BotAna(QtCore.QThread):
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
+
+    def check_online_cicle(self):
+        while True:
+            self.check_online()
+            time.sleep(10)
+
+    def check_online(self):
+        url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
+        params = {"Client-ID" : ""+self.CLIENT_ID+""}
+        resp = requests.get(url=url, headers=params)
+        self.online = json.loads(resp.text)
 
     def __del__(self):
         self.exiting = True
