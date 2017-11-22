@@ -497,8 +497,33 @@ class BotAna(QtCore.QThread):
         end = s.index( last, start )
         return s[start:end]
 
+    def manage_quote(self, args):
+        #Premessa: ho già letto il file delle citazioni e messo in una lista di oggetti Quotes (forse stringhe) le citazioni
+        #Se ci sono argomenti posso dover aggiungere una citazione o restituirne una
+        if args:
+            #Se l'args è uguale a 1, allora è un numero, cerco e restituisco l'ennesima
+            if len(args) == 1:
+                if args.isdigit():
+                    self.send_message(self.quotes[args])
+                else:
+                    self.send_message("Errore, mi devi specificare il numero della citazione.")
+            #L'args non è uguale a uno, aggiungo la citazione
+            #Esempio !cit "Se ci ammazzano siamo tutti morti" - Alessiana
+            else:
+                fields = [len(self.quotes), args, self.username, time.strftime("[%d/%m/%Y]")]
+                with open('quotes.csv', 'a') as f:
+                    writer = csv.writer(f, delimiter=',', quotechar='|', lineterminator='\n')
+                    writer.writerow(fields)
+
+        else:
+            rand = randint(0, len(self.quotes))
+            self.send_message(self.quotes[rand])
+
     def call_command_pleb(self):
-        if self.message == "!wins" and not self.is_in_timeout("!wins"):
+        if self.message == "!cit" and not self.is_in_timeout("!cit"):
+            threading.Thread(target=self.manage_quote, args=([self.arguments])).start()
+
+        elif self.message == "!wins" and not self.is_in_timeout("!wins"):
             if self.arguments:
                 threading.Thread(target=self.get_stats, args=([self.arguments])).start()
             else:
