@@ -7,6 +7,7 @@ from random import randint
 from command import Command
 from image import Image
 from sound import Sound
+from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 import threading
@@ -81,6 +82,8 @@ class BotAna(QtCore.QThread):
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride"
     					]
 
+        self.quotes = []
+
     def run(self):
         try:
             self.BOT_OAUTH = self.get_bot_oauth()
@@ -91,6 +94,7 @@ class BotAna(QtCore.QThread):
             self.load_commands()
             self.load_sounds()
             self.load_image()
+            self.load_quotes()
 
             self.sock.connect((self.HOST, self.PORT))
             self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
@@ -497,31 +501,42 @@ class BotAna(QtCore.QThread):
         end = s.index( last, start )
         return s[start:end]
 
-    def manage_quote(self, args):
-        #Premessa: ho già letto il file delle citazioni e messo in una lista di oggetti Quotes (forse stringhe) le citazioni
-        #Se ci sono argomenti posso dover aggiungere una citazione o restituirne una
-        if args:
-            #Se l'args è uguale a 1, allora è un numero, cerco e restituisco l'ennesima
-            if len(args) == 1:
-                if args.isdigit():
-                    self.send_message(self.quotes[args])
-                else:
-                    self.send_message("Errore, mi devi specificare il numero della citazione.")
-            #L'args non è uguale a uno, aggiungo la citazione
-            #Esempio !cit "Se ci ammazzano siamo tutti morti" - Alessiana
-            else:
-                fields = [len(self.quotes), args, self.username, time.strftime("[%d/%m/%Y]")]
-                with open('quotes.csv', 'a') as f:
-                    writer = csv.writer(f, delimiter=',', quotechar='|', lineterminator='\n')
-                    writer.writerow(fields)
+    def get_rand_quote(self):
+        rand = randint(1, len(self.quotes))
+        for q in self.quotes:
+            if int(q.get_index()) == rand:
+                self.send_message("#"+q.get_index()+": '"+q.get_quote()+"' da "+q.get_author()+" il "+q.get_date())
 
+    def get_quote(self, args):
+        if int(args) > len(self.quotes):
+            self.send_message("Non ho tutte quelle citazioni HotPokket")
         else:
-            rand = randint(0, len(self.quotes))
-            self.send_message(self.quotes[rand])
+            if args.isdigit():
+                for q in self.quotes:
+                    if int(q.get_index()) == int(args):
+                        self.send_message("#"+str(q.get_index())+": '"+q.get_quote()+"' da "+q.get_author()+" il "+q.get_date())
+            else:
+                self.send_message("Errore, mi devi specificare il numero della citazione.")
+
+    def add_quote(self, args):
+        self.quotes.append(Quote(len(self.quotes)+1, args, self.username, time.strftime("%d/%m/%Y")))
+
+        fields = [len(self.quotes), args, self.username, time.strftime("%d/%m/%Y")]
+        with open('quotes.csv', 'a') as f:
+            writer = csv.writer(f, delimiter=',', quotechar='|', lineterminator='\n')
+            writer.writerow(fields)
+
+        self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes)))
 
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
-            threading.Thread(target=self.manage_quote, args=([self.arguments])).start()
+            if self.arguments:
+                if self.arguments.isdigit():
+                    threading.Thread(target=self.get_quote, args=([self.arguments])).start()
+                else:
+                    threading.Thread(target=self.add_quote, args=([self.arguments])).start()
+            else:
+                threading.Thread(target=self.get_rand_quote, args=()).start()
 
         elif self.message == "!wins" and not self.is_in_timeout("!wins"):
             if self.arguments:
@@ -647,6 +662,14 @@ class BotAna(QtCore.QThread):
         elif "anche io" in message.lower() and not self.is_word_in_timeout("anche io"):
             self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
+
+    def load_quotes(self):
+        with open('quotes.csv', encoding='utf-8') as quotes:
+            reader = csv.reader(quotes, delimiter=',', quotechar='|')
+            for row in reader:
+                self.quotes.append(Quote(row[0], row[1], row[2], row[3]))
+
+        self.print_message("quotes.csv was read correctly.")
 
     def load_commands(self):
         with open('commands.csv', encoding='utf-8') as commands:
