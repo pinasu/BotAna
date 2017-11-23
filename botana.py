@@ -88,6 +88,8 @@ class BotAna(QtCore.QThread):
 
         self.lock = threading.RLock()
 
+        self.vodded = []
+
     def run(self):
         try:
             self.BOT_OAUTH = self.get_bot_oauth()
@@ -118,10 +120,7 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=()).start()
 
-            #Così non spamma "User is vodcasting etc"
-            check_print = True
             while True:
-                print("dio")
                 self.lock.acquire()
                 tmponline = self.online
                 self.lock.release()
@@ -137,10 +136,6 @@ class BotAna(QtCore.QThread):
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
                 elif tmponline["stream"]["stream_type"] == "watch_party":
-                    if check_print:
-                        check_print = False
-                        self.print_message("User "+self.NICK+" is streaming a Vodcast.")
-
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -153,15 +148,12 @@ class BotAna(QtCore.QThread):
                                     usernamesplit = parts[1].split("!")
                                     self.username = usernamesplit[0]
 
-                                    if "tmi.twitch.tv" not in self.username:
+                                    if "tmi.twitch.tv" not in self.username and self.username not in self.vodded:
+                                        self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                    check_print = True
-                    if check_print:
-                        check_print = False
-                        self.print_message("User "+self.NICK+" is live.")
 
                     if rec:
                         for line in rec:
