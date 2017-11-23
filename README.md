@@ -4,9 +4,10 @@ Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a>
 Info sui comandi
 <table>
   <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
+    <th>Comando</th>
+    <th>Risposta</th>
+    <th>Cooldown</th>
+    <th>Disponibilità</th>
   </tr>
   <tr>
     <td>Alfreds Futterkiste</td>
