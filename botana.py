@@ -121,6 +121,7 @@ class BotAna(QtCore.QThread):
             #Così non spamma "User is vodcasting etc"
             check_print = True
             while True:
+                print("dio")
                 self.lock.acquire()
                 tmponline = self.online
                 self.lock.release()
@@ -128,9 +129,12 @@ class BotAna(QtCore.QThread):
                 rec = str(self.sock.recv(1024)).split("\\r\\n")
 
                 #Vodcast o offline
-                if tmponline["stream"] == None:
+                if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     check_print = True
-                    continue
+                    if rec:
+                        for line in rec:
+                            if "PING" in line:
+                                self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
                 elif tmponline["stream"]["stream_type"] == "watch_party":
                     if check_print:
@@ -153,7 +157,7 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                elif tmponline["stream"] != None or tmponline["stream"]["stream_type"] == "live":
+                elif tmponline["stream"]["stream_type"] == "live":
                     check_print = True
                     if check_print:
                         check_print = False
