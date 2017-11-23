@@ -478,12 +478,12 @@ class BotAna(QtCore.QThread):
         else:
             self.send_message("La pistola si è inceppata! PogChamp "+user+" è sopravvissuto Kreygasm")
 
-    def start_suicidio(self, user):
-        if user == self.NICK:
+    def start_suicidio(self, user, nick, mods):
+        if user == nick:
             self.send_message("Imperatore mio Imperatore, non posso permetterti di farlo! BibleThump")
             time.sleep(2)
             self.send_message("/me si è sacrificata per l'Imperatore Alessiana.")
-        elif user in self.mods:
+        elif user in mods:
             self.send_message(user+", l'Imperatore Alessiana non ha ancora finito con te! anaLove")
         else:
             self.send_message("/timeout "+user+" 60")
@@ -496,7 +496,7 @@ class BotAna(QtCore.QThread):
         try:
             resp = requests.get(url=url, params=params, timeout=10)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
-            self.send_message("Mi dispiace "+self.username+", ma tu non amerai nessuno oggi FeelsBadMan")
+            self.send_message("Mi dispiace "+username+", ma tu non amerai nessuno oggi FeelsBadMan")
             return
 
         json_str = json.loads(resp.text)
@@ -624,7 +624,7 @@ class BotAna(QtCore.QThread):
                     self.send_message("Anche "+self.username+" assieme ad altri "+str(len(self.skippers) - 1)+" vuole saltare questa canzone LUL")
 
         elif self.message == "!suicidio":
-            threading.Thread(target=self.start_suicidio, args=([self.username])).start()
+            threading.Thread(target=self.start_suicidio, args=([self.username, self.NICK, self.mods])).start()
 
         elif self.message == "!8ball" and not self.is_in_timeout("!8ball"):
             ball = random.choice(self.ball_choices)
