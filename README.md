@@ -29,12 +29,12 @@
     <td>10</td>
   </tr>
   <tr>
-    <td>!ban <qualcuno></td>
+    <td>!ban qualcuno </td>
     <td>Banna qualcuno!</td>
     <td>10</td>
   </tr>
   <tr>
-    <td>!love <qualcuno\></td>
+    <td>!love qualcuno </td>
     <td>Quanto ami qualcuno da 1 a 100?</td>
     <td>10</td>
   </tr>
@@ -45,7 +45,7 @@
   </tr>
   <tr>
     <td>!salta</td>
-    <td>Salta la canzone corrente (3 !salta)</td>
+    <td>Salta la canzone corrente (3 !salta necessari)</td>
     <td>0</td>
   </tr>
   <tr>
@@ -54,7 +54,7 @@
     <td>0</td>
   </tr>
   <tr>
-    <td>!cit <numero>/<>/<citazione></td>
+    <td>!cit numero, nulla o citazione</td>
     <td>Restituisce la citazione al numero specificato, una citazione random o aggiunge una nuova citazione</td>
     <td>0</td>
   </tr>
