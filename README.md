@@ -4,7 +4,7 @@
 <table>
   <tr>
     <th>Comando</th>
-    <th>Risposta</th>
+    <th>Risposta o azione</th>
     <th>Cooldown</th>
   </tr>
   <tr>
@@ -19,42 +19,42 @@
   </tr>
   <tr>
     <td>!8ball</td>
-    <td>Fai alla palla domande scomode</td>
+    <td>Domande scomode alle quali solo BotAna può rispondere</td>
     <td>10</td>
   </tr>
   <tr>
     <td>!roulette</td>
-    <td>Sfida la sorte e scopri se vivrai o morirai</td>
+    <td>Una pistola puntata in testa e un proiettile, vivrai o morirai?</td>
     <td>10</td>
   </tr>
   <tr>
-    <td>!ban</td>
-    <td>Banna qualcuno della chat</td>
+    <td>!ban <qualcuno></td>
+    <td>Banna qualcuno!</td>
     <td>10</td>
   </tr>
   <tr>
-    <td>!love</td>
-    <td>Scopri quanto ami qualcuno della chat o qualcunodeciso da te</td>
+    <td>!love <qualcuno\></td>
+    <td>Quanto ami qualcuno da 1 a 100?</td>
     <td>10</td>
   </tr>
   <tr>
     <td>!comandi</td>
-    <td></td>
+    <td>Indovina</td>
     <td>20</td>
   </tr>
   <tr>
     <td>!salta</td>
-    <td>Se altri due vogliono saltare questa canzone, usate questo comando!</td>
+    <td>Salta la canzone corrente (3 !salta)</td>
     <td>0</td>
   </tr>
   <tr>
-    <td>!wins</td>
-    <td>Senza paramentri scopri le vincite di Alessiana a Fortnite, altrimenti le tue!</td>
+    <td>!wins <qualcuno></td>
+    <td>Numero delle vincite a Fortnite in solo, duo e squad</td>
     <td>0</td>
   </tr>
   <tr>
-    <td>!cit</td>
-    <td>Senza parametri restituisce una citazione random, con un numero restituisce la citazione con quel numero, altrimenti ne aggiunge una nuova!</td>
+    <td>!cit <numero>/<>/<citazione></td>
+    <td>Restituisce la citazione al numero specificato, una citazione random o aggiunge una nuova citazione</td>
     <td>0</td>
   </tr>
   <tr>
@@ -73,18 +73,13 @@
     <td>20</td>
   </tr>
   <tr>
-    <td>!fortnite</td>
-    <td>[Fortnite] Alessiana</td>
-    <td>20</td>
-  </tr>
-  <tr>
     <td>!discord</td>
     <td>Attaccate a StoDiscord! https://goo.gl/P35L9R KappaPride</td>
     <td>10</td>
   </tr>
    <tr>
     <td>!suoni</td>
-    <td>Restituisce i suoni disponibili</td>
+    <td>Restituisce l'elenco dei suoni disponibili</td>
     <td>20</td>
   </tr>
   <tr>
