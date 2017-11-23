@@ -1,43 +1,41 @@
-<center># BotAna</center>
-Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a>
+<center>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a> 
 
-Info sui comandi
+<h2>Info sui comandi</h2>
 <table>
   <tr>
     <th>Comando</th>
     <th>Risposta</th>
     <th>Cooldown</th>
-    <th>Disponibilità</th>
   </tr>
   <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
+    <td>!alessiana</td>
+    <td>Alessiana is toxic monkaS</td>
+    <td>20</td>
   </tr>
   <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
+    <td>!energia</td>
+    <td>༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
+    <td>0</td>
   </tr>
   <tr>
-    <td>Ernst Handel</td>
-    <td>Roland Mendel</td>
-    <td>Austria</td>
+    <td>!tiltana</td>
+    <td>Quando le cose vanno male Alessiana si trasforma nel suo alterego Tiltana. Partono madonne e non riesce a non tiltare per qualsiasi cosa. Lo spam di LUL alimenta la sua ira che probabilmente lo porterà a ragequittare LUL</td>
+    <td>20</td>
   </tr>
   <tr>
-    <td>Island Trading</td>
-    <td>Helen Bennett</td>
-    <td>UK</td>
+    <td>!aim</td>
+    <td>Nice aim bro LUL</td>
+    <td>20</td>
   </tr>
   <tr>
-    <td>Laughing Bacchus Winecellars</td>
-    <td>Yoshi Tannamuri</td>
-    <td>Canada</td>
+    <td>!battuta</td>
+    <td>haHAA Ha fatto la battuta haHAA Divertentissimo haHAA</td>
+    <td>10</td>
   </tr>
   <tr>
-    <td>Magazzini Alimentari Riuniti</td>
-    <td>Giovanni Rovelli</td>
-    <td>Italy</td>
+    <td>!discord</td>
+    <td>Attaccate a StoDiscord! https://goo.gl/P35L9R KappaPride</td>
+    <td>10</td>
   </tr>
 </table>
-    
+</center>
