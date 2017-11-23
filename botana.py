@@ -404,7 +404,7 @@ class BotAna(QtCore.QThread):
                 elif len(tmp) == 5:
                     fields=[tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]]
                     newComm = Command(tmp[0], tmp[1], tmp[2], tmp[3], tmp[4])
-                with open('commands.csv', 'a') as f:
+                with open('commands.csv', 'a',  encoding='utf-8') as f:
                     writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
                     writer.writerow(fields)
                 if tmp[3] == "mod":
