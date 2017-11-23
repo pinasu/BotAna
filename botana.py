@@ -86,6 +86,8 @@ class BotAna(QtCore.QThread):
 
         self.online = None
 
+        self.lock = threading.RLock()
+
     def run(self):
         try:
             self.BOT_OAUTH = self.get_bot_oauth()
@@ -107,7 +109,7 @@ class BotAna(QtCore.QThread):
 
             #threading.Thread(target=self.check_online, args=()).start()
 
-            self.check_online()
+            self.online = self.check_online()
 
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
@@ -117,13 +119,18 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.check_followers, args=()).start()
 
             while True:
+                self.lock.acquire()
+                tmponline = self.online
+                self.lock.release()
                 #Vodcast o offline
-                if self.online["stream"] == None:
+
+                rec = str(self.sock.recv(1024)).split("\\r\\n")
+
+                if tmponline["stream"] == None:
                     continue
 
-                elif self.online["stream"]["stream_type"] == "watch_party":
+                elif tmponline["stream"]["stream_type"] == "watch_party":
                     print("vodcast2")
-                    rec = str(self.sock.recv(1024)).split("\\r\\n")
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -140,9 +147,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                elif self.online["stream"] != None or self.online["stream"]["stream_type"] == "live":
+                elif tmponline["stream"] != None or tmponline["stream"]["stream_type"] == "live":
                     print("live")
-                    rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -201,14 +207,17 @@ class BotAna(QtCore.QThread):
 
     def check_online_cicle(self):
         while True:
-            self.check_online()
+            tmp = self.check_online()
+            self.lock.acquire()
+            self.online = tmp
+            self.lock.release()
             time.sleep(10)
 
     def check_online(self):
         url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
         params = {"Client-ID" : ""+self.CLIENT_ID+""}
         resp = requests.get(url=url, headers=params)
-        self.online = json.loads(resp.text)
+        return json.loads(resp.text)
 
     def __del__(self):
         self.exiting = True
