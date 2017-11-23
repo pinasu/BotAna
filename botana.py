@@ -109,8 +109,6 @@ class BotAna(QtCore.QThread):
 
             self.print_message("I'm now connected to "+ self.NICK + ".")
 
-            #threading.Thread(target=self.check_online, args=()).start()
-
             self.online = self.check_online()
 
             threading.Thread(target=self.check_online_cicle, args=()).start()
@@ -129,7 +127,8 @@ class BotAna(QtCore.QThread):
 
                 #Vodcast o offline
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
-                    check_print = True
+                    if self.vodded:
+                        self.vodded = []
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -154,7 +153,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-
+                    if self.vodded:
+                        self.vodded = []
                     if rec:
                         for line in rec:
                             if "PING" in line:
