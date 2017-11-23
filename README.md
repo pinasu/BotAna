@@ -105,6 +105,7 @@
     </table>
   </center>
 </div>
+
 <div>
   <center>
     <h2>Info sui suoni</h2>
