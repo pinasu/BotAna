@@ -13,10 +13,10 @@
       <td>0</td>
     </tr>
     <tr>
-      <td>!wins <qualcuno></td>
-        <td>Numero delle vincite a Fortnite in solo, duo e squad</td>
-        <td>0</td>
-      </tr>
+      <td>!wins</td>
+      <td>Numero delle vincite a Fortnite in solo, duo e squad</td>
+      <td>0</td>
+    </tr>
     <tr>
       <td>!energia</td>
       <td>༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
