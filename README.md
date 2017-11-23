@@ -78,7 +78,7 @@
     <td>Attaccate a StoDiscord! https://goo.gl/P35L9R KappaPride</td>
     <td>10</td>
   </tr>
-   <tr>
+  <tr>
     <td>!suoni</td>
     <td>Restituisce l'elenco dei suoni disponibili</td>
     <td>20</td>
