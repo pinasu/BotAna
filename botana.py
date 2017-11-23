@@ -116,13 +116,19 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=()).start()
 
+            #Così non spamma "User is vodcasting etc"
+            check_print = True
             while True:
                 #Vodcast o offline
                 if self.online["stream"] == None:
+                    check_print = True
                     continue
 
                 elif self.online["stream"]["stream_type"] == "watch_party":
-                    print("vodcast2")
+                    if check_print:
+                        check_print = False
+                        self.print_message("User "+self.NICK+" is streaming a Vodcast.")
+
                     rec = str(self.sock.recv(1024)).split("\\r\\n")
                     if rec:
                         for line in rec:
@@ -141,7 +147,11 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif self.online["stream"] != None or self.online["stream"]["stream_type"] == "live":
-                    print("live")
+                    check_print = True
+                    if check_print:
+                        check_print = False
+                        self.print_message("User "+self.NICK+" is live.")
+
                     rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
                     if rec:
                         for line in rec:
