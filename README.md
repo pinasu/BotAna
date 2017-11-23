@@ -1,2 +1,2 @@
-# Bottana
-The Stockhausen_l2p Twitch chatbot
+# BotAna
+Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a>
