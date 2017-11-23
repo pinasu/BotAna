@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-</head>
 <body>
   <center>
     <h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1>
@@ -108,9 +104,7 @@
       </tr>
     </table>
   </center>
-</div>
-
-<div>
+  
   <center>
     <h2>Info sui suoni</h2>
   </center>
@@ -155,4 +149,3 @@
     </table>
   </center>
 </body>
-</html>
