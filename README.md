@@ -104,7 +104,7 @@
       </tr>
     </table>
   </center>
-  
+
   <center>
     <h2>Info sui suoni</h2>
   </center>
