@@ -1,5 +1,7 @@
 <center><h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1></center>
-
+<h2>Alcune info su BotAna</h2>
+<div>BotAna è stata sviluppata inizialmente da Pinasu l'anno scorso. Alcuni di voi ricorderanno i problemi che ci sono stati (crash, spam di messaggi etc) essendo una versione molto rudimentale di un chatbot per Twitch, ed essendo stata la mia prima volta a interagire con le API. Nonostante tutto, ad oggi 24/11/2017 posso definite BotAna 1.0 come affidabile e funzionante nel 90% dei casi.<br>Tuttavia, da quando Lusyoo mi è venuto incontro in questa battaglia contro Python, le API di Twitch fatte male nel 70% dei casi e la mia cattiva programmazione, BotAna ha raggiunto un nuovo stadio. Oggi BotAna 2.0 è molto più affidabile e stabile di prima, sono stati risolti tantissimi degli errori e malfunzionamenti di BotAna 1.0 ma soprattutto è molto più leggera e reattiva di prima, e questo è dovuto soprattutto all'esperienza di Lusyoo in Python e nella programmazione.</div>
+  
 <h2>Comandi</h2>
 <table>
   <tr>
