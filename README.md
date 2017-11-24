@@ -5,7 +5,7 @@
 
 <div style="float:left; width:65%; margin-right:5%;">
   <h2>Comandi</h2>
-  <table>
+  <table style="width:30%;">
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
