@@ -157,3 +157,4 @@
   </tr>
   </table>
 </div>
+<div style="clear:both;"></div>
