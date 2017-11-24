@@ -370,8 +370,13 @@ class BotAna(QtCore.QThread):
             file = open("players.txt", "w")
             file.write("")
             self.players = []
+            self.send_message("Grazie a "+self.username+" non ci sono più utenti che vogliono giocare FeelsBadMan")
 
         elif self.message == "!raffle":
+            if len(self.players) == 0:
+                self.send_message("Non vuole giocare nessuno BibleThump ")
+                return
+
             if len(self.players) > 3:
                 raffle = random.sample(self.players, 3)
                 raffled = ', '.join(raffle)
@@ -417,7 +422,7 @@ class BotAna(QtCore.QThread):
                     self.commandsPleb[tmp[0]] = newComm
                 self.send_message("Ho aggiunto il comando " + tmp[0] + " FeelsGoodMan")
             else:
-                self.send_message("Uso: !comando;risposta;cooldown;permessi(pleb/mod);gioco(opzionale)")
+                self.send_message("Errore. Usa: !comando;risposta;cooldown;permessi(pleb/mod);gioco(opzionale)")
 
         elif self.message == "!removecommand":
             args = self.arguments.split(" ")
@@ -440,7 +445,7 @@ class BotAna(QtCore.QThread):
                     return
 
             else:
-                self.send_message("Uso: !removecommand !comando mod(opzionale)")
+                self.send_message("Errore. Usa: !removecommand !comando mod(opzionale)")
                 return
 
             subprocess.run("copy commands.csv commands_bkp.csv", shell=True)
@@ -585,11 +590,12 @@ class BotAna(QtCore.QThread):
         elif self.message == "!players" and not self.is_in_timeout("!players"):
             if self.players:
                 pl = ', '.join(self.players)
-                self.send_message(pl+" vogliono giocare!")
-                if self.username in self.mods:
-                    self.players = []
+                if len(self.players) == 1:
+                    self.send_message(pl+" vuole giocare! KappaPride")
                 else:
-                    self.send_message("Non vuole giocare nessuno BibleThump")
+                    self.send_message(pl+" vogliono giocare! KappaPride")
+            else:
+                self.send_message("Non vuole giocare nessuno BibleThump")
 
         elif self.message == "!maledizione" and not self.is_in_timeout("!maledizione"):
             file = open("maledizioni.txt", "r")
@@ -603,7 +609,7 @@ class BotAna(QtCore.QThread):
             file.write(str(count))
 
         elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
-            threading.Thread(target=self.start_roulette, args=(self.username)).start()
+            threading.Thread(target=self.start_roulette, args=([self.username])).start()
 
         elif self.message == "!salta":
             if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
@@ -629,7 +635,7 @@ class BotAna(QtCore.QThread):
                 ball = random.choice(self.ball_choices)
                 self.send_message(ball)
             else:
-                self.send_message("Utilizzo: !8ball <domanda>.")
+                self.send_message("Errore. Usa: !8ball <domanda>.")
 
         elif self.message == "!love" and not self.is_in_timeout("!love"):
             if self.username == "lusyoo" and self.arguments.lower() == "dio":
