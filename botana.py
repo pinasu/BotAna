@@ -87,6 +87,7 @@ class BotAna(QtCore.QThread):
         self.online = None
 
         self.lock = threading.RLock()
+        self.lock2 = threading.RLock()
 
         self.vodded = []
 
@@ -116,7 +117,7 @@ class BotAna(QtCore.QThread):
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
-            threading.Thread(target=self.check_followers, args=()).start()
+            threading.Thread(target=self.check_followers, args=(self.NICK, self.CLIENT_ID,)).start()
 
             while True:
                 self.lock.acquire()
@@ -172,8 +173,10 @@ class BotAna(QtCore.QThread):
 
                                 if "tmi.twitch.tv" in self.username:
                                     continue
-
+                                
+                                self.lock2.acquire()
                                 self.msg_count += 1
+                                self.lock2.release()
 
                                 self.print_message(self.username+": "+self.message)
 
@@ -275,10 +278,10 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
 
 
-    def check_followers(self):
+    def check_followers(self, nick, client_id):
         tempo = time.time()
-        url = "https://api.twitch.tv/kraken/channels/"+self.NICK+"/follows"
-        params = {"Client-ID" : ""+ self.CLIENT_ID +""}
+        url = "https://api.twitch.tv/kraken/channels/"+nick+"/follows"
+        params = {"Client-ID" : ""+ client_id +""}
 
         #First followers list pull
         resp = requests.get(url = url, headers = params)
@@ -299,10 +302,15 @@ class BotAna(QtCore.QThread):
         tempo = time.time()
         index = 0
         while True:
-            if time.time() - tempo > 900 and self.msg_count > 15:
+            self.lock2.acquire()
+            count = self.msg_count
+            self.lock2.release()
+            if time.time() - tempo > 900 and count > 15:
                 self.send_message(self.msg_spam[index])
                 tempo = time.time()
+                self.lock2.acquire()
                 self.msg_count = 0
+                self.lock2.release()
                 index = (index + 1) % len(self.msg_spam)
 
             time.sleep(1)
