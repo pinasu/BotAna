@@ -33,7 +33,7 @@
       <td>10</td>
     </tr>
     <tr>
-      <td>!8ball</td>
+      <td>!8ball domanda</td>
       <td>Domande scomode alle quali solo BotAna può rispondere</td>
       <td>10</td>
     </tr>
