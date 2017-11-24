@@ -48,32 +48,6 @@
   </tr>
 
   <tr>
-  
-  <tr>
-    <td>!energia</td>
-    <td>༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
-    <td>0</td>
-  </tr>
-
-  <tr>
-    <td>!cit numero, nulla o citazione</td>
-    <td>Restituisce la citazione al numero specificato, una citazione random o aggiunge una nuova citazione</td>
-    <td>0</td>
-  </tr>
-
-  <tr>
-    <td>!battuta</td>
-    <td>haHAA Ha fatto la battuta haHAA Divertentissimo haHAA</td>
-    <td>10</td>
-  </tr>
-
-  <tr>
-    <td>!8ball domanda</td>
-    <td>Domande scomode alle quali solo BotAna può rispondere</td>
-    <td>10</td>
-  </tr>
-
-  <tr>
     <td>!roulette</td>
     <td>Una pistola puntata in testa e un proiettile, vivrai o morirai?</td>
     <td>10</td>
