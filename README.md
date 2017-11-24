@@ -1,13 +1,14 @@
 <h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1>
-
-<iframe frameborder=""
-        scrolling="no"
-        id="stockhausen_l2p"
-        src="http://www.twitch.tv/stockhausen_l2p/chat"
-        height="500"
-        width="350">
-</iframe>
-
+<div>
+        <h2>Stockhausen live chat</h2>
+        <iframe frameborder=""
+                scrolling="no"
+                id="stockhausen_l2p"
+                src="http://www.twitch.tv/stockhausen_l2p/chat"
+                height="500"
+                width="350">
+        </iframe>
+<div>
 <h2>Info sui comandi</h2>
 <table>
   <tr>
