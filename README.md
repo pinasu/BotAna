@@ -1,9 +1,5 @@
 <center><h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1></center>
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> 3f50b856beb3e934925a2c412fb2500df40e5dcb
 <h2>Comandi</h2>
 <table>
   <tr>
@@ -23,8 +19,7 @@
     <td>Numero delle vincite a Fortnite in solo, duo e squad</td>
     <td>0</td>
   </tr>
-
-<<<<<<< HEAD
+  
   <tr>
     <td>!energia</td>
     <td>༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
@@ -50,7 +45,7 @@
   </tr>
 
   <tr>
-=======
+  
   <tr>
     <td>!energia</td>
     <td>༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
@@ -76,7 +71,6 @@
   </tr>
 
   <tr>
->>>>>>> 3f50b856beb3e934925a2c412fb2500df40e5dcb
     <td>!roulette</td>
     <td>Una pistola puntata in testa e un proiettile, vivrai o morirai?</td>
     <td>10</td>
@@ -142,7 +136,6 @@
     <td>20</td>
   </tr>
 
-<<<<<<< HEAD
 </table>
 
 <h2>Suoni</h2>
@@ -183,8 +176,6 @@
   <td>!beat</td>
   <td>20</td>
 </tr>
-=======
->>>>>>> 3f50b856beb3e934925a2c412fb2500df40e5dcb
 </table>
 
 <h2>Suoni</h2>
