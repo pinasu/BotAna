@@ -1,7 +1,7 @@
 <center><h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1></center>
 
   <h2>Comandi</h2>
-  <table style="widht:70%;">
+  <table style="widht:10%;">
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
