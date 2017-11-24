@@ -15,7 +15,7 @@
     </tr>
 
     <tr>
-       <td>!wins nomeutente</td>
+      <td>!wins nomeutente</td>
       <td>Numero delle vincite a Fortnite in solo, duo e squad</td>
       <td>0</td>
     </tr>
@@ -39,7 +39,7 @@
     </tr>
 
     <tr>
-       <td>!8ball domanda</td>
+      <td>!8ball domanda</td>
       <td>Domande scomode alle quali solo BotAna può rispondere</td>
       <td>10</td>
     </tr>
