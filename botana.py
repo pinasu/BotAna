@@ -625,8 +625,11 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.start_suicidio, args=([self.username, self.NICK, self.mods])).start()
 
         elif self.message == "!8ball" and not self.is_in_timeout("!8ball"):
-            ball = random.choice(self.ball_choices)
-            self.send_message(ball)
+            if self.arguments != "":
+                ball = random.choice(self.ball_choices)
+                self.send_message(ball)
+            else:
+                self.send_message("Utilizzo: !8ball domanda.")
 
         elif self.message == "!love" and not self.is_in_timeout("!love"):
             if self.username == "lusyoo" and self.arguments.lower() == "dio":
@@ -647,7 +650,10 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
         elif self.message == "!ban" and not self.is_in_timeout("!ban"):
-            self.send_message(self.username+" ha bandito "+self.arguments+" dalla chat PogChamp")
+            if self.arguments != "":
+                self.send_message(self.username+" ha bandito "+self.arguments+" dalla chat PogChamp")
+            else:
+                self.send_message(self.username+" non posso bandire il nulla,  stupido babbuino LUL")
 
         elif self.message == "!comandi" and not self.is_in_timeout("!comandi"):
             self.send_message(str(set(self.commandsPleb.keys())))
