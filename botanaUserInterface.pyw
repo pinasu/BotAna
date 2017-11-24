@@ -212,6 +212,7 @@ class Window(QtWidgets.QWidget):
 
     def open_green_screen(self):
         self.secondWind = WindowTwo(self)
+        self.move_green_screen_wind()
 
     def show_image(self, path):
         self.secondWind.show_image(path)
@@ -235,14 +236,17 @@ class Window(QtWidgets.QWidget):
             self.bot.send_message(msg)
             self.inputText.setText("")
 
+    def move_green_screen_wind(self):
+        if (self.pos().x() - self.secondWind.width()) >= 0:
+            self.secondWind.move(self.pos().x() - self.secondWind.width(), self.pos().y())
+        else:
+            self.secondWind.move(0,0)
+
     def move_center(self):
         width = ((QDesktopWidget().availableGeometry().width()/2) - (self.width()/2)) + self.secondWind.width()/2
         height = (QDesktopWidget().availableGeometry().height()/2) - (self.height()/2)
         self.move(width, height)
-        if (self.pos().x() - self.secondWind.width()) >= 0:
-            self.secondWind.move(width - self.secondWind.width(), height)
-        else:
-            self.secondWind.move(0,0)
+        self.move_green_screen_wind()
 
 app = QtWidgets.QApplication(sys.argv)
 a_window = Window()
