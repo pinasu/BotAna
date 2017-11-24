@@ -10,13 +10,11 @@
       <th>Risposta o azione</th>
       <th>Cooldown</th>
     </tr>
-  
     <tr>
       <td>!aim</td>
       <td>Nice aim bro LUL</td>
       <td>20</td>
     </tr>
-
   </table>
   
   <h2>Suoni</h2>
