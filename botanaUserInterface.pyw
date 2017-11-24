@@ -225,6 +225,7 @@ class Window(QtWidgets.QWidget):
 
     def closeEvent(self, event):
         self.secondWind.close()
+        self.changelog.close()
         event.accept()
 
     def print_on_text_area(self, msg):

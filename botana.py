@@ -123,7 +123,7 @@ class BotAna(QtCore.QThread):
                 tmponline = self.online
                 self.lock.release()
 
-                rec = str(self.sock.recv(1024)).split("\\r\\n")
+                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 #Vodcast o offline
                 '''
@@ -551,7 +551,7 @@ class BotAna(QtCore.QThread):
 
         fields = [len(self.quotes), args[0], args[1], time.strftime("[%d/%m/%Y]")]
 
-        with open('quotes.csv', 'a') as f:
+        with open('quotes.csv', 'a', encoding='utf-8') as f:
             writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
             writer.writerow(fields)
 
@@ -579,24 +579,24 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.username+", ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp")
 
         elif self.message == "!players" and not self.is_in_timeout("!players"):
-                if self.players:
-                    pl = ', '.join(self.players)
-                    self.send_message(pl+" vogliono giocare!")
-                    if self.username in self.mods:
-                        self.players = []
-                    else:
-                        self.send_message("Non vuole giocare nessuno BibleThump")
+            if self.players:
+                pl = ', '.join(self.players)
+                self.send_message(pl+" vogliono giocare!")
+                if self.username in self.mods:
+                    self.players = []
+                else:
+                    self.send_message("Non vuole giocare nessuno BibleThump")
 
         elif self.message == "!maledizione" and not self.is_in_timeout("!maledizione"):
-                        file = open("maledizioni.txt", "r")
-                        maled = file.read()
-                        count = int(maled) + 1
-                        file.close()
+            file = open("maledizioni.txt", "r")
+            maled = file.read()
+            count = int(maled) + 1
+            file.close()
 
-                        self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
+            self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
 
-                        file = open("maledizioni.txt", "w")
-                        file.write(str(count))
+            file = open("maledizioni.txt", "w")
+            file.write(str(count))
 
         elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
             threading.Thread(target=self.start_roulette, args=(self.username)).start()
