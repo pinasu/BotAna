@@ -13,7 +13,7 @@
       <td>0</td>
     </tr>
     <tr>
-      <td>!wins</td>
+      <td>!wins nomeutenre</td>
       <td>Numero delle vincite a Fortnite in solo, duo e squad</td>
       <td>0</td>
     </tr>
