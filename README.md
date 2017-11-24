@@ -3,7 +3,7 @@
 <h2>Alcune info su BotAna</h2>
 <p>BotAna è stata sviluppata inizialmente da me (Pinasu) a cavallo del 2016/2017. Alcuni di voi ricorderanno i problemi che questa prima versione presentava (crash, spam di messaggi etc), essendo molto rudimentale, ed essendo stata la mia prima volta a interagire con le API di Twitch. <br>Nonostante tutto, ad oggi 24/11/2017 posso definite BotAna 1.0 come affidabile e funzionante nel 90% dei casi. Tuttavia, da quando Lusyoo mi è venuto incontro in questa battaglia contro Python, le API di Twitch fatte male nel 70% dei casi e soprattutto la mia incapacità nella programmazione, BotAna ha raggiunto un nuovo stadio. Oggi BotAna 2.0 è molto più affidabile e stabile di prima, sono stati risolti tantissimi degli errori e malfunzionamenti di BotAna 1.0 ma soprattutto è molto più leggera e reattiva di prima, e questo è dovuto soprattutto all'esperienza di Lusyoo in Python e nella programmazione.<br>Continuerò sicuramente a lavorare su BotAna con il massimo impegno come ho sempre fatto, sperando che Lusyoo, che ringrazio tanto per il contributo, possa essermi ancora d'aiuto. Qua sotto trovate delle info sui comandi e i suoni disponibili, come anche il link al progetto su GitHub per chi fosse interessato.<br>Non esistate ovviamente a contattarmi per suggerirmi features/problemi :)<br><br>Pinasu</p>
 
-<div style="float:left; width:65%;">
+<div style="float:left; width:10%;">
   <h2 style="display:inline-block;">Comandi</h2>
   
 </div>
