@@ -232,16 +232,16 @@ class BotAna(QtCore.QThread):
             time.sleep(10)
 
     def read_config_file(self, path):
-    if os.path.exists(path):
-        try:
-            with open(path,"r") as f:
-                tmp = f.read()
-                self.print_message(path + " was read correctly.")
-                return tmp
-        except:
-            self.print_message("Error opening " + path + "\n")
-        else:
-            self.print_message("Error reading " + path + "\n")
+        if os.path.exists(path):
+            try:
+                with open(path,"r") as f:
+                    tmp = f.read()
+                    self.print_message(path + " was read correctly.")
+                    return tmp
+            except:
+                self.print_message("Error opening " + path + "\n")
+            else:
+                self.print_message("Error reading " + path + "\n")
 
     def get_bot_oauth(self):
         return self.read_config_file("bot_OAuth.txt")
@@ -597,7 +597,7 @@ class BotAna(QtCore.QThread):
             count = int(maled) + 1
             file.close()
 
-            self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL) Never lucky BabyRage")
+            self.send_message("Ovviamente la safe zone è dall'altra parte (x"+str(count)+" LUL ) Never lucky BabyRage")
 
             file = open("maledizioni.txt", "w")
             file.write(str(count))
@@ -629,7 +629,7 @@ class BotAna(QtCore.QThread):
                 ball = random.choice(self.ball_choices)
                 self.send_message(ball)
             else:
-                self.send_message("Utilizzo: !8ball domanda.")
+                self.send_message("Utilizzo: !8ball <domanda>.")
 
         elif self.message == "!love" and not self.is_in_timeout("!love"):
             if self.username == "lusyoo" and self.arguments.lower() == "dio":
