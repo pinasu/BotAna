@@ -1,7 +1,4 @@
-#Main application file
-
-#Useful imports
-import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame
+import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame, threading
 from pygame import mixer
 from random import randint
 from command import Command
@@ -10,11 +7,11 @@ from sound import Sound
 from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-import threading
 
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
     sign2 = pyqtSignal(str)
+
     def __init__(self):
         super().__init__()
 
@@ -173,7 +170,7 @@ class BotAna(QtCore.QThread):
 
                                 if "tmi.twitch.tv" in self.username:
                                     continue
-                                
+
                                 self.lock2.acquire()
                                 self.msg_count += 1
                                 self.lock2.release()
@@ -216,6 +213,16 @@ class BotAna(QtCore.QThread):
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
 
+    def __del__(self):
+        self.exiting = True
+        self.wait()
+
+    def check_online(self):
+        url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
+        params = {"Client-ID" : ""+self.CLIENT_ID+""}
+        resp = requests.get(url=url, headers=params)
+        return json.loads(resp.text)
+
     def check_online_cicle(self):
         while True:
             tmp = self.check_online()
@@ -224,32 +231,15 @@ class BotAna(QtCore.QThread):
             self.lock.release()
             time.sleep(10)
 
-    def check_online(self):
-        url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
-        params = {"Client-ID" : ""+self.CLIENT_ID+""}
-        resp = requests.get(url=url, headers=params)
-        return json.loads(resp.text)
-
-    def __del__(self):
-        self.exiting = True
-        self.wait()
-
-    def show_image(self, path):
-        self.sign2.emit(path)
-
-    def print_message(self, msg):
-        print(msg)
-        self.sign.emit(time.strftime("%H:%M  ")+msg)
-
     def read_config_file(self, path):
-        if os.path.exists(path):
-            try:
-                with open(path,"r") as f:
-                    tmp = f.read()
-                    self.print_message(path + " was read correctly.")
-                    return tmp
-            except:
-                self.print_message("Error opening " + path + "\n")
+    if os.path.exists(path):
+        try:
+            with open(path,"r") as f:
+                tmp = f.read()
+                self.print_message(path + " was read correctly.")
+                return tmp
+        except:
+            self.print_message("Error opening " + path + "\n")
         else:
             self.print_message("Error reading " + path + "\n")
 
@@ -260,7 +250,14 @@ class BotAna(QtCore.QThread):
         return self.read_config_file("username.txt")
 
     def get_clientID(self):
-        return self.read_config_file("clientID.txt")
+                return self.read_config_file("clientID.txt")
+
+    def print_message(self, msg):
+        print(msg)
+        self.sign.emit(time.strftime("%H:%M  ")+msg)
+
+    def show_image(self, path):
+        self.sign2.emit(path)
 
     def send_message(self, message):
         self.sock.send(bytes("PRIVMSG "+self.CHAN+" :"+str(message)+"\r\n", 'utf-8'))
@@ -276,7 +273,6 @@ class BotAna(QtCore.QThread):
             else:
                 to_ban = self.username
                 self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
-
 
     def check_followers(self, nick, client_id):
         tempo = time.time()
