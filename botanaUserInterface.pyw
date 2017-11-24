@@ -39,7 +39,6 @@ class WindowTwo(QtWidgets.QWidget):
 
     def init_ui(self):
         self.setFixedSize(450,450)
-        self.set_position()
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.setStyleSheet("WindowTwo{background-color:#0f0;}")
         self.setWindowTitle('BotAnaImage')
@@ -51,12 +50,6 @@ class WindowTwo(QtWidgets.QWidget):
         v_box.addWidget(self.img)
         self.setLayout(v_box)
         self.show()
-
-    def set_position(self):
-        if (self.parent.pos().x() - self.width()) >= 0:
-            self.move(self.parent.pos().x() - 450,self.parent.pos().y())
-        else:
-            self.move(0,0)
 
     def closeEvent(self, event):
         self.parent.activate_green_screen_button(True)
@@ -92,6 +85,7 @@ class Window(QtWidgets.QWidget):
         super().__init__()
         self.init_ui()
         self.secondWind = WindowTwo(self)
+        self.move_center()
         self.changelog = Window_changelog()
         self.bot = BotAna()
         self.bot.sign.connect(self.print_on_text_area)
@@ -109,7 +103,6 @@ class Window(QtWidgets.QWidget):
         self.setWindowIcon(QtGui.QIcon('res/Gui/icon.ico'))
 
         self.setGeometry(0,0,950, 450)
-        self.move(600, 200)
         self.setMinimumSize(700,300)
         self.logo = QtWidgets.QLabel()
         self.logo.setObjectName("logo")
@@ -242,6 +235,14 @@ class Window(QtWidgets.QWidget):
             self.bot.send_message(msg)
             self.inputText.setText("")
 
+    def move_center(self):
+        width = ((QDesktopWidget().availableGeometry().width()/2) - (self.width()/2)) + self.secondWind.width()/2
+        height = (QDesktopWidget().availableGeometry().height()/2) - (self.height()/2)
+        self.move(width, height)
+        if (self.pos().x() - self.secondWind.width()) >= 0:
+            self.secondWind.move(width - self.secondWind.width(), height)
+        else:
+            self.secondWind.move(0,0)
 
 app = QtWidgets.QApplication(sys.argv)
 a_window = Window()
