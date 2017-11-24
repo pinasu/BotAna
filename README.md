@@ -155,5 +155,4 @@
     <td>!beat</td>
     <td>20</td>
   </tr>
-</table>
-</table>
+</table
