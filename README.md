@@ -60,6 +60,12 @@
     <td>Quanto ami qualcuno da 1 a 100?</td>
     <td>10</td>
   </tr>
+  
+  <tr>
+    <td>!discord</td>
+    <td>Attaccate a StoDiscord! https://goo.gl/P35L9R KappaPride</td>
+    <td>10</td>
+  </tr>
 
   <tr>
     <td>!suoni</td>
@@ -83,12 +89,6 @@
     <td>!bush</td>
     <td>Alessiana usa la pozione per diventare un cespuglio!</td>
     <td>20</td>
-  </tr>
-
-  <tr>
-    <td>!discord</td>
-    <td>Attaccate a StoDiscord! https://goo.gl/P35L9R KappaPride</td>
-    <td>10</td>
   </tr>
 
   <tr>
