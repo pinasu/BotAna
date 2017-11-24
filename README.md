@@ -1,5 +1,5 @@
 <center><h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1></center>
-<h2>Info sui comandi</h2>
+<h2>Comandi</h2>
 <table>
   <tr>
     <th>Comando</th>
@@ -117,7 +117,7 @@
 
 </table>
 
-<h2>Info sui suoni</h2>
+<h2>Suoni</h2>
 <table>
   <tr>
     <th>Suono</th>
