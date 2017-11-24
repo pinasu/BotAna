@@ -2,15 +2,3 @@
 ---
 
 @import "{{ jekyll-theme-cayman }}";
-
-.project-name{
-    display:none;
-}
-.project-tagline::before{
-    content:"";
-    width:305px;
-    display:inline-block;
-    height:62px;
-    background-image:url('https://raw.githubusercontent.com/pinasu/BotAna/master/res/Gui/botana.png');
-    background-repeat:no-repeat;
-}
