@@ -115,7 +115,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=(self.NICK, self.CLIENT_ID,)).start()
-            #threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID,)).start()
+            #threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID, "c6v67bxzx33c717grjq5lgdpfos3fi",)).start()
 
             while True:
                 self.lock.acquire()
@@ -293,21 +293,27 @@ class BotAna(QtCore.QThread):
                 new.append(inter["user"])
 
             time.sleep(30)
-    '''
-    def check_sub(self, nick, client_id):
+
+    def check_sub(self, nick, client_id, client_secret):
         tempo = time.time()
-        url = "https://api.twitch.tv/kraken/channels/"+nick+"/subscriptions"
-        params = {"Client-ID" : ""+ client_id +""}
+        #First we need an access token
+        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+client_id+"&client_secret="+client_secret+"&grant_type=client_credentials&scope=channel_subscriptions"
+        resp = requests.post(URL)
+        access_token = (json.loads(resp.text))["access_token"]
+
+        #Send access token in my request
+        URL = "https://api.twitch.tv/kraken/channels/"+"133174210"+"/subscriptions"
+        params = {"Client-ID" : ""+ client_id +"",
+                "Authorization" : "OAuth "+access_token+""}
+        resp = requests.get(url=URL, headers=params)
 
         #First sub list pull
-        resp = requests.get(url = url, headers = params)
         self.print_message(resp.text)
 
         first = json.loads(resp.text)
-        #self.print_message(first)
 
         while True:
-            resp = requests.get(url=url, headers=params)
+            resp = requests.get(url=URL, headers=params)
             new = json.loads(resp.text)
 
             inter = set(set(first).difference(set(new)))
@@ -316,7 +322,7 @@ class BotAna(QtCore.QThread):
                 new.append(inter["user"])
 
             time.sleep(30)
-    '''
+
     def check_spam(self):
         tempo = time.time()
         index = 0
@@ -543,15 +549,14 @@ class BotAna(QtCore.QThread):
 
         self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
 
-    def get_stats(self, user):
-        PLATFORM = "pc"
-        URL = "https://fortnitetracker.com/profile/"+PLATFORM+"/"+user
+    def get_stats(self, user, platform):
+        URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
         try:
             resp = requests.get(URL)
             player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
             self.send_message("["+user+"] Solo: "+player_data['p2'][0]['value']+", Duo: "+player_data['p10'][0]['value']+", Squad: "+player_data['p9'][0]['value']+" KappaPride")
         except ValueError:
-            self.send_message("Utente <"+user+"> non trovato. Scrivi bene, stupido babbuino LUL")
+            self.send_message("Utente <"+user+"> non trovato. Scrivi bene, stupido babbuino LUL ")
 
     def find(self, s, first, last):
         start = s.index( first ) + len( first )
@@ -601,9 +606,15 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!wins" and not self.is_in_timeout("!wins"):
             if self.arguments:
-                threading.Thread(target=self.get_stats, args=([self.arguments])).start()
+                args = self.arguments.split(' ')
+                self.print_message(str(args))
+                self.print_message(str(len(args)))
+                if len(args) == 2:
+                    threading.Thread(target=self.get_stats, args=([args[0], args[1]])).start()
+                else:
+                    self.send_message("Errore. Usa: !wins <nomeutente> <piattaforma>")
             else:
-                threading.Thread(target=self.get_stats, args=(["lidfrid"])).start()
+                threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
 
         elif self.message == "!play":
             if self.username not in self.players:
