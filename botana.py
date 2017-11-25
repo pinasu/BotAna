@@ -115,7 +115,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=(self.NICK, self.CLIENT_ID,)).start()
-            threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID,)).start()
+            #threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID,)).start()
 
             while True:
                 self.lock.acquire()
@@ -283,7 +283,6 @@ class BotAna(QtCore.QThread):
         #First followers list pull
         resp = requests.get(url = url, headers = params)
         first = json.loads(resp.text)
-
         while True:
             resp = requests.get(url=url, headers=params)
             new = json.loads(resp.text)
@@ -294,7 +293,7 @@ class BotAna(QtCore.QThread):
                 new.append(inter["user"])
 
             time.sleep(30)
-
+    '''
     def check_sub(self, nick, client_id):
         tempo = time.time()
         url = "https://api.twitch.tv/kraken/channels/"+nick+"/subscriptions"
@@ -314,7 +313,7 @@ class BotAna(QtCore.QThread):
                 new.append(inter["user"])
 
             time.sleep(30)
-
+    '''
     def check_spam(self):
         tempo = time.time()
         index = 0
