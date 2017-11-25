@@ -302,7 +302,10 @@ class BotAna(QtCore.QThread):
 
         #First sub list pull
         resp = requests.get(url = url, headers = params)
+        self.print_message(resp.text)
+
         first = json.loads(resp.text)
+        #self.print_message(first)
 
         while True:
             resp = requests.get(url=url, headers=params)
