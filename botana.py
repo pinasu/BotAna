@@ -115,6 +115,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=(self.NICK, self.CLIENT_ID,)).start()
+            threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID,)).start()
 
             while True:
                 self.lock.acquire()
@@ -290,6 +291,26 @@ class BotAna(QtCore.QThread):
             inter = set(set(first).difference(set(new)))
             for i in inter:
                 self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
+                new.append(inter["user"])
+
+            time.sleep(30)
+
+    def check_sub(self, nick, client_id):
+        tempo = time.time()
+        url = "https://api.twitch.tv/kraken/channels/"+nick+"/subscriptions"
+        params = {"Client-ID" : ""+ client_id +""}
+
+        #First sub list pull
+        resp = requests.get(url = url, headers = params)
+        first = json.loads(resp.text)
+
+        while True:
+            resp = requests.get(url=url, headers=params)
+            new = json.loads(resp.text)
+
+            inter = set(set(first).difference(set(new)))
+            for i in inter:
+                self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del sub anaLove Mucho appreciato FeelsAmazingMan")
                 new.append(inter["user"])
 
             time.sleep(30)
