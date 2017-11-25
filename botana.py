@@ -23,6 +23,7 @@ class BotAna(QtCore.QThread):
         self.NICK = ""
         self.CHAN = ""
         self.CLIENT_ID = ""
+        self.USER_ID = ""
 
         self.username = ""
         self.message = ""
@@ -94,6 +95,7 @@ class BotAna(QtCore.QThread):
             self.NICK = self.get_nick()
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID()
+            self.USER_ID = self.get_userID()
 
             self.load_commands()
             self.load_sounds()
@@ -125,7 +127,6 @@ class BotAna(QtCore.QThread):
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 #Vodcast o offline
-                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.vodded:
                         self.vodded = []
@@ -151,9 +152,9 @@ class BotAna(QtCore.QThread):
                                         self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
-                '''
-                #if tmponline["stream"]["stream_type"] == "live":
-                if True:
+
+                elif tmponline["stream"]["stream_type"] == "live":
+                #if True:
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -243,6 +244,9 @@ class BotAna(QtCore.QThread):
                 self.print_message("Error opening " + path + "\n")
             else:
                 self.print_message("Error reading " + path + "\n")
+
+    def get_userID(self):
+        return self.read_config_file("userID.txt")
 
     def get_bot_oauth(self):
         return self.read_config_file("bot_OAuth.txt")
@@ -818,9 +822,8 @@ class BotAna(QtCore.QThread):
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
             return True
-        #Stockhausen is 51313426
-        #Lusyo is 30180708
-        user_id = "133174210"
+
+        user_id = self.USER_ID
         try:
             url = 'https://api.twitch.tv/kraken/channels/'+user_id
             headers = {'Client-ID': self.CLIENT_ID, 'Accept': 'application/vnd.twitchtv.v5+json'}
@@ -828,7 +831,6 @@ class BotAna(QtCore.QThread):
         except:
             self.print_message("Error getting stream title.")
             return
-
         curr_game = resp["game"]
 
         if command.get_game() == curr_game:
