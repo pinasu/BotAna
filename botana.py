@@ -31,7 +31,7 @@ class BotAna(QtCore.QThread):
 
         self.RATE = 20/30
 
-        self.mods = ["lusyoo", "boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "nightbot", "pinasu", "stockhausen_l2p", "tubbablubbah", "urza2k", "xuneera"]
+        self.mods = ["lusyoo", "boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "moobot", "nightbot", "pinasu", "revlobot", "stockazzobot", "stockhausen_l2p", "tubbablubbah", "urza2k", "vivbot", "xuneera"]
 
         self.to_ban = ""
 
