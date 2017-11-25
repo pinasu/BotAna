@@ -607,8 +607,6 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and not self.is_in_timeout("!wins"):
             if self.arguments:
                 args = self.arguments.split(' ')
-                self.print_message(str(args))
-                self.print_message(str(len(args)))
                 if len(args) == 2:
                     threading.Thread(target=self.get_stats, args=([args[0], args[1]])).start()
                 else:
