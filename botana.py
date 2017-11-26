@@ -99,6 +99,7 @@ class BotAna(QtCore.QThread):
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID()
             self.USER_ID = self.get_userID()
+            self.CLIENT_SECRET = self.get_client_secret()
 
             self.load_commands()
             self.load_sounds()
@@ -114,15 +115,13 @@ class BotAna(QtCore.QThread):
 
             self.online = self.check_online()
 
-            print(str(self.online))
-
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=(self.NICK, self.CLIENT_ID,)).start()
-            #threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID, "c6v67bxzx33c717grjq5lgdpfos3fi",)).start()
+            threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID, self.CLIENT_SECRET,)).start()
 
             while True:
                 self.lock.acquire()
@@ -132,7 +131,7 @@ class BotAna(QtCore.QThread):
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 #Vodcast o offline
-                if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
+                '''if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -140,7 +139,7 @@ class BotAna(QtCore.QThread):
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
-                elif tmponline["stream"]["stream_type"] == "watch_party":
+                #elif tmponline["stream"]["stream_type"] == "watch_party":
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -158,8 +157,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                elif tmponline["stream"]["stream_type"] == "live":
-                #if True:
+                #if tmponline["stream"]["stream_type"] == "live":'''
+                if True:
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -266,6 +265,9 @@ class BotAna(QtCore.QThread):
             else:
                 self.print_message("Error reading " + path + "\n")
 
+    def get_client_secret():
+        self.read_config_file("clientsecret.txt")
+
     def get_userID(self):
         return self.read_config_file("userID.txt")
 
@@ -283,6 +285,7 @@ class BotAna(QtCore.QThread):
         self.sign.emit(time.strftime("%H:%M  ")+msg)
 
     def show_image(self, path):
+
         self.sign2.emit(path)
 
     def send_message(self, message):
@@ -327,9 +330,10 @@ class BotAna(QtCore.QThread):
         access_token = (json.loads(resp.text))["access_token"]
 
         #Send access token in my request
-        URL = "https://api.twitch.tv/kraken/channels/"+"133174210"+"/subscriptions"
+        URL = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/subscriptions"
         params = {"Client-ID" : ""+ client_id +"",
-                "Authorization" : "OAuth "+access_token+""}
+                "Authorization" : "OAuth <"+access_token+">"
+                }
         resp = requests.get(url=URL, headers=params)
 
         #First sub list pull
@@ -594,7 +598,7 @@ class BotAna(QtCore.QThread):
     def get_rand_quote(self):
         rand = randint(0, len(self.quotes)-1)
         q = self.quotes[rand]
-        self.send_message("#"+q.get_index()+": ''"+q.get_quote()+"'' - "+q.get_author()+" "+q.get_date())
+        self.send_message("#"+q.get_index()+": ''"+q.get_quote()+" '' - "+q.get_author()+" "+q.get_date())
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
@@ -602,7 +606,7 @@ class BotAna(QtCore.QThread):
         else:
             if args.isdigit():
                 q = self.quotes[int(args)-1]
-                self.send_message("#"+str(q.get_index())+": ''"+q.get_quote()+"'' - "+q.get_author()+" "+q.get_date())
+                self.send_message("#"+str(q.get_index())+": ''"+q.get_quote()+" '' - "+q.get_author()+" "+q.get_date())
             else:
                 self.send_message("Errore, mi devi specificare il numero della citazione.")
 
