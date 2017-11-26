@@ -83,6 +83,7 @@ class Window(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
+        self.is_afk = False
         self.init_ui()
         self.secondWind = WindowTwo(self)
         self.move_center()
@@ -149,12 +150,19 @@ class Window(QtWidgets.QWidget):
         self.restartBtn.setCursor (Qt.PointingHandCursor)
         self.restartBtn.setProperty('class','button gridButton')
         self.restartBtn.setToolTip("Riavvia")
+        self.afkBtn = QtWidgets.QPushButton("")
+        self.afkBtn.setIcon(QtGui.QIcon('res/Gui/afk.png'))
+        self.afkBtn.setIconSize(QtCore.QSize(40,40))
+        self.afkBtn.setCursor (Qt.PointingHandCursor)
+        self.afkBtn.setProperty('class','button gridButton')
+        self.afkBtn.setToolTip("Modifica titolo stream")
 
         g_box = QtWidgets.QGridLayout()
         g_box.addWidget(self.greenScreenButton, 0 , 0)
         g_box.addWidget(self.testImageGreenScreen, 0 , 1)
         g_box.addWidget(self.logErrorButton, 1 , 0)
-        g_box.addWidget(self.restartBtn, 1 , 1)
+        g_box.addWidget(self.afkBtn, 1 , 1)
+        g_box.addWidget(self.restartBtn, 2 , 0, 2, 2)
 
         v_box = QtWidgets.QVBoxLayout()
         v_box.setContentsMargins(7,7,14,0)
@@ -185,11 +193,22 @@ class Window(QtWidgets.QWidget):
         self.logErrorButton.clicked.connect(self.open_error_log)
         self.testImageGreenScreen.clicked.connect(self.trigger_test_image)
         self.restartBtn.clicked.connect(self.restart)
+        self.afkBtn.clicked.connect(self.afk)
 
         self.show()
 
     def restart(self):
         self.bot.restart()
+
+    def afk(self):
+        if self.is_afk:
+            self.bot.in_game()
+            self.afkBtn.setIcon(QtGui.QIcon('res/Gui/afk.png'))
+            self.is_afk = False
+        else:
+            self.bot.afk()
+            self.afkBtn.setIcon(QtGui.QIcon('res/Gui/inGame.png'))
+            self.is_afk = True
 
     def set_button_test_image(self, active):
         if active:

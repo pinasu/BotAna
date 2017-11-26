@@ -89,6 +89,9 @@ class BotAna(QtCore.QThread):
 
         self.vodded = []
 
+        self.previus_title = ""
+        self.previus_game = ""
+
     def run(self):
         try:
             self.BOT_OAUTH = self.get_bot_oauth()
@@ -110,6 +113,8 @@ class BotAna(QtCore.QThread):
             self.print_message("I'm now connected to "+ self.NICK + ".")
 
             self.online = self.check_online()
+
+            print(str(self.online))
 
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
@@ -218,6 +223,22 @@ class BotAna(QtCore.QThread):
     def __del__(self):
         self.exiting = True
         self.wait()
+
+    def afk(self):
+        url = "https://api.twitch.tv/kraken/channels/"+self.NICK+""
+        params = {"Client-ID" : ""+self.CLIENT_ID+""}
+        resp = requests.get(url=url, headers=params)
+        j = json.loads(resp.text)
+        self.previus_title = j["status"]
+        self.previus_game = j["game"]
+        self.send_message("!title AFK")
+        self.send_message("!game IRL")
+
+    def in_game(self):
+        self.send_message("!title " + self.previus_title)
+        self.send_message("!game " + self.previus_game)
+        self.previus_title = ""
+        self.previus_game = ""
 
     def check_online(self):
         url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
