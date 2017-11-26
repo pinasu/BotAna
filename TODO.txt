@@ -4,6 +4,7 @@
 ------------------------------------------------------------------------------------------------------------------------------------------
 1) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
 2) Aggiungere tasto per settare il titolo della stream ad afk ed il gioco ad IRL
+3) Aggiungere i file dei suoni merda e pronto
 
 ------------------------------------------------------------------------------------------------------------------------------------------
         Hard ones (make you wanna kill yourself instead):
