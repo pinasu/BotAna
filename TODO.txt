@@ -4,7 +4,7 @@
 ------------------------------------------------------------------------------------------------------------------------------------------
 1) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
 FATTO [2) Aggiungere tasto per settare il titolo della stream ad afk ed il gioco ad IRL]
-
+2) Aggiungere uno spazio nelle citazioni per far vedere le emote
 ------------------------------------------------------------------------------------------------------------------------------------------
         Hard ones (make you wanna kill yourself instead):
 ------------------------------------------------------------------------------------------------------------------------------------------
