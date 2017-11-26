@@ -608,7 +608,7 @@ class BotAna(QtCore.QThread):
             else:
                 self.get_rand_quote()
 
-        elif self.message == "!wins" and not self.is_in_timeout("!wins"):
+        elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
                 if len(args) == 2:
