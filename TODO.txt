@@ -2,10 +2,8 @@
 ------------------------------------------------------------------------------------------------------------------------------------------
         Problem to FIX:
 ------------------------------------------------------------------------------------------------------------------------------------------
-1) Fixare i comandi delle immagini che funzionano anche se si scrive qualcosa dopo il comando tipo: "!bush scrivo qualcosa"
-2) Aggiungere i controlli nel thread in !wins, per verificare se il player ha mai fatto partite in solo/duo/squad (xuneera non ha mai fatto duo)
-3) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
-4) Aggiungere tasto per settare il titolo della stream ad afk ed il gioco ad IRL
+1) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
+2) Aggiungere tasto per settare il titolo della stream ad afk ed il gioco ad IRL
 
 ------------------------------------------------------------------------------------------------------------------------------------------
         Hard ones (make you wanna kill yourself instead):

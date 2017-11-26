@@ -199,9 +199,9 @@ class BotAna(QtCore.QThread):
                                     else:
                                         self.call_command_pleb()
 
-                                    if self.message in self.sounds.keys():
+                                    if len(message_list) == 1 and self.message in self.sounds.keys():
                                         self.call_sound(self.message)
-                                    elif self.message in self.images.keys():
+                                    elif len(message_list) == 1 and self.message in self.images.keys():
                                         self.call_image(self.message)
 
                                 self.check_words(self.message)
@@ -558,7 +558,10 @@ class BotAna(QtCore.QThread):
         try:
             resp = requests.get(URL)
             player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-            self.send_message("["+user+"] Solo: "+player_data['p2'][0]['value']+", Duo: "+player_data['p10'][0]['value']+", Squad: "+player_data['p9'][0]['value']+" KappaPride")
+            p2 = player_data['p2'][0]['value'] if "p2" in player_data else "0"
+            p10 = player_data['p10'][0]['value'] if "p10" in player_data else "0"
+            p9 = player_data['p9'][0]['value'] if "p9" in player_data else "0"
+            self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
         except ValueError:
             self.send_message("Utente <"+user+"> non trovato. Scrivi bene, stupido babbuino LUL ")
 
