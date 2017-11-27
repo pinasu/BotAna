@@ -265,7 +265,7 @@ class BotAna(QtCore.QThread):
             else:
                 self.print_message("Error reading " + path + "\n")
 
-    def get_client_secret():
+    def get_client_secret(self):
         self.read_config_file("clientsecret.txt")
 
     def get_userID(self):
@@ -314,7 +314,7 @@ class BotAna(QtCore.QThread):
         while True:
             resp = requests.get(url=url, headers=params)
             new = json.loads(resp.text)
-
+            self.print_message(str(new))
             inter = set(set(first).difference(set(new)))
             for i in inter:
                 self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
