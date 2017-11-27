@@ -121,7 +121,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_spam, args=()).start()
             threading.Thread(target=self.check_followers, args=(self.NICK, self.CLIENT_ID,)).start()
-            threading.Thread(target=self.check_sub, args=(self.NICK, self.CLIENT_ID, self.CLIENT_SECRET,)).start()
+            #threading.Thread(target=self.check_sub, args=(self.CLIENT_ID, self.CLIENT_SECRET,)).start()
 
             while True:
                 self.lock.acquire()
@@ -266,7 +266,7 @@ class BotAna(QtCore.QThread):
                 self.print_message("Error reading " + path + "\n")
 
     def get_client_secret(self):
-        self.read_config_file("clientsecret.txt")
+        return self.read_config_file("clientsecret.txt")
 
     def get_userID(self):
         return self.read_config_file("userID.txt")
@@ -314,7 +314,7 @@ class BotAna(QtCore.QThread):
         while True:
             resp = requests.get(url=url, headers=params)
             new = json.loads(resp.text)
-            self.print_message(str(new))
+
             inter = set(set(first).difference(set(new)))
             for i in inter:
                 self.send_message(inter["user"]["display_name"]+"! Benvenuto nella FamigliANA PogChamp Grazie del follow anaLove Mucho appreciato FeelsAmazingMan")
@@ -322,17 +322,19 @@ class BotAna(QtCore.QThread):
 
             time.sleep(30)
 
-    def check_sub(self, nick, client_id, client_secret):
+    def check_sub(self, client_id, client_secret):
         tempo = time.time()
         #First we need an access token
-        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+client_id+"&client_secret="+client_secret+"&grant_type=client_credentials&scope=channel_subscriptions"
+        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+str(client_id)+"&client_secret="+str(client_secret)+"&grant_type=client_credentials&scope=channel_subscriptions"
         resp = requests.post(URL)
         access_token = (json.loads(resp.text))["access_token"]
 
         #Send access token in my request
         URL = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/subscriptions"
-        params = {"Client-ID" : ""+ client_id +"",
-                "Authorization" : "OAuth "+access_token+""
+        params = {"Accept" : "application/vnd.twitchtv.v5+json",
+                "Client-ID" : ""+ client_id +"",
+                "Authorization" : "OAuth "+access_token+"",
+                "Content-Type": "application/json"
                 }
         resp = requests.get(url=URL, headers=params)
 
@@ -351,6 +353,24 @@ class BotAna(QtCore.QThread):
                 new.append(inter["user"])
 
             time.sleep(30)
+
+    def set_title(self, client_id, client_secret):
+        #First we need an access token
+        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+str(client_id)+"&client_secret="+str(client_secret)+"&grant_type=client_credentials&scope=channel_editor"
+        resp = requests.post(URL)
+        access_token = (json.loads(resp.text))["access_token"]
+
+        #Send access token in my request
+        URL = "https://api.twitch.tv/kraken/channels/"+self.USER_ID
+        params = {"Accept" : "application/vnd.twitchtv.v5+json",
+                    "Client-ID" : ""+client_id+"",
+                    "Authorization" : "OAuth "+access_token+"",
+                    "Content-Type": "application/json"
+                }
+
+        data = json.dumps({"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": "true"}})
+        resp = requests.put(url=URL, data=data, headers=params)
+        print(resp.text)
 
     def check_spam(self):
         tempo = time.time()
@@ -419,6 +439,9 @@ class BotAna(QtCore.QThread):
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
+
+        elif self.message == "!titolo":
+            threading.Thread(target=self.set_title, args=(self.CLIENT_ID, self.CLIENT_SECRET,)).start()
 
         elif self.message == "!stop":
             self.send_message("HeyGuys")
