@@ -332,7 +332,7 @@ class BotAna(QtCore.QThread):
         #Send access token in my request
         URL = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/subscriptions"
         params = {"Client-ID" : ""+ client_id +"",
-                "Authorization" : "OAuth <"+access_token+">"
+                "Authorization" : "OAuth "+access_token+""
                 }
         resp = requests.get(url=URL, headers=params)
 
