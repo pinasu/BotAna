@@ -274,6 +274,8 @@ class BotAna(QtCore.QThread):
     def get_clientID(self):
                 return self.read_config_file("clientID.txt")
 
+    
+
     def print_message(self, msg):
         print(msg)
         self.sign.emit(time.strftime("%H:%M  ")+msg)
