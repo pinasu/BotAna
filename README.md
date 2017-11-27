@@ -1,5 +1,9 @@
 <center><h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1></center>
 
+<h2>
+  <a href="https://clips.twitch.tv/TalentedEnticingVultureImGlitch">La nuova BotAna è qui</a>
+</h2>
+
 <div style="float:left; width:65%; margin-right:5%;">
   <h2>Comandi</h2>
   <table>
