@@ -303,10 +303,10 @@ class BotAna(QtCore.QThread):
 
     def check_ban(self):
         if self.username not in self.mods:
-            if self.username == to_ban:
+            if self.username == self.to_ban:
                 self.send_message("/timeout "+self.username+" 5")
             else:
-                to_ban = self.username
+                self.to_ban = self.username
                 self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
 
     def check_spam(self):
