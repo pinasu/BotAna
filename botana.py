@@ -154,7 +154,7 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                if tmponline["stream"]["stream_type"] == "live":
+                elif tmponline["stream"]["stream_type"] == "live":
                     if self.vodded:
                         self.vodded = []
                     if rec:
