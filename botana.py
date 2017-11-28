@@ -89,8 +89,10 @@ class BotAna(QtCore.QThread):
 
         self.vodded = []
 
-        self.previus_title = ""
-        self.previus_game = ""
+        self.previous_title = ""
+        self.previous_game = ""
+
+        self.state_string = ""
 
     def run(self):
         try:
@@ -129,6 +131,10 @@ class BotAna(QtCore.QThread):
 
                 #Vodcast o offline
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
+                    if self.state_string != "offline":
+                        self.state_string = "offline"
+                        self.send_message(self.NICK+" is offline.")
+
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -137,6 +143,9 @@ class BotAna(QtCore.QThread):
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
                 elif tmponline["stream"]["stream_type"] == "watch_party":
+                    if self.state_string != "vodcast":
+                        self.state_string = "vodcast"
+                        self.send_message(self.NICK+" started a vodcast.")
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -154,7 +163,11 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                if tmponline["stream"]["stream_type"] == "live":
+                elif tmponline["stream"]["stream_type"] == "live":
+                    if self.state_string != "live":
+                        self.state_string = "live"
+                        self.send_message(self.NICK+" is now live.")
+
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -224,16 +237,16 @@ class BotAna(QtCore.QThread):
         params = {"Client-ID" : ""+self.CLIENT_ID+""}
         resp = requests.get(url=url, headers=params)
         j = json.loads(resp.text)
-        self.previus_title = j["status"]
-        self.previus_game = j["game"]
+        self.previous_title = j["status"]
+        self.previous_game = j["game"]
         self.send_message("!title AFK")
         self.send_message("!game IRL")
 
     def in_game(self):
-        self.send_message("!title " + self.previus_title)
-        self.send_message("!game " + self.previus_game)
-        self.previus_title = ""
-        self.previus_game = ""
+        self.send_message("!title " + self.previous_title)
+        self.send_message("!game " + self.previous_game)
+        self.previous_title = ""
+        self.previous_game = ""
 
     def check_online(self):
         url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
