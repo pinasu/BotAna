@@ -743,7 +743,7 @@ class BotAna(QtCore.QThread):
         self.print_message("quotes.csv was read correctly.")
 
     def load_commands(self):
-        with open('commands.csv') as commands:
+        with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
                 if len(row) == 5:
