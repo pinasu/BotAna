@@ -540,12 +540,14 @@ class BotAna(QtCore.QThread):
         try:
             resp = requests.get(URL)
             player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
+
             p2 = player_data['p2'][0]['value'] if "p2" in player_data else "N/A"
             p10 = player_data['p10'][0]['value'] if "p10" in player_data else "N/A"
             p9 = player_data['p9'][0]['value'] if "p9" in player_data else "N/A"
+            print("qui: " + p2)
             self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
         except ValueError:
-            if platform == "ps4" or playform == "xbox":
+            if platform == "ps4" or platform == "xbox":
                 self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
             else:
                 self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
@@ -741,7 +743,7 @@ class BotAna(QtCore.QThread):
         self.print_message("quotes.csv was read correctly.")
 
     def load_commands(self):
-        with open('commands.csv', encoding='utf-8') as commands:
+        with open('commands.csv') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
                 if len(row) == 5:
