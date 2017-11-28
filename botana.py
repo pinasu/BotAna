@@ -274,8 +274,6 @@ class BotAna(QtCore.QThread):
     def get_clientID(self):
                 return self.read_config_file("clientID.txt")
 
-    
-
     def print_message(self, msg):
         print(msg)
         self.sign.emit(time.strftime("%H:%M  ")+msg)
@@ -530,12 +528,15 @@ class BotAna(QtCore.QThread):
         try:
             resp = requests.get(URL)
             player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-            p2 = player_data['p2'][0]['value'] if "p2" in player_data else "0"
-            p10 = player_data['p10'][0]['value'] if "p10" in player_data else "0"
-            p9 = player_data['p9'][0]['value'] if "p9" in player_data else "0"
+            p2 = player_data['p2'][0]['value'] if "p2" in player_data else "N/A"
+            p10 = player_data['p10'][0]['value'] if "p10" in player_data else "N/A"
+            p9 = player_data['p9'][0]['value'] if "p9" in player_data else "N/A"
             self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
         except ValueError:
-            self.send_message("Utente <"+user+"> non trovato BibleThump")
+            if platform == "ps4" or playform == "xbox":
+                self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
+            else:
+                self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
     def find(self, s, first, last):
         start = s.index( first ) + len( first )
