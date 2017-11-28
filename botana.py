@@ -128,7 +128,7 @@ class BotAna(QtCore.QThread):
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 #Vodcast o offline
-                '''if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
+                if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -136,7 +136,7 @@ class BotAna(QtCore.QThread):
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
-                #elif tmponline["stream"]["stream_type"] == "watch_party":
+                elif tmponline["stream"]["stream_type"] == "watch_party":
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -154,8 +154,7 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                #if tmponline["stream"]["stream_type"] == "live":'''
-                if True:
+                if tmponline["stream"]["stream_type"] == "live":
                     if self.vodded:
                         self.vodded = []
                     if rec:
