@@ -163,8 +163,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-
-                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
