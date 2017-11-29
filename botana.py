@@ -128,7 +128,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 #Vodcast o offline
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
@@ -162,8 +162,9 @@ class BotAna(QtCore.QThread):
                                         self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
-
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
@@ -539,10 +540,12 @@ class BotAna(QtCore.QThread):
         URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
         try:
             resp = requests.get(URL)
+            self.print_message(resp)
             player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
             p2 = player_data['p2'][0]['value'] if "p2" in player_data else "N/A"
             p10 = player_data['p10'][0]['value'] if "p10" in player_data else "N/A"
             p9 = player_data['p9'][0]['value'] if "p9" in player_data else "N/A"
+
             self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
         except ValueError:
             if platform == "ps4" or playform == "xbox":
