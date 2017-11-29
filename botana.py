@@ -304,10 +304,10 @@ class BotAna(QtCore.QThread):
 
     def check_ban(self):
         if self.username not in self.mods:
-            if self.username == to_ban:
+            if self.username == self.to_ban:
                 self.send_message("/timeout "+self.username+" 5")
             else:
-                to_ban = self.username
+                self.to_ban = self.username
                 self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
 
     def check_spam(self):
@@ -542,13 +542,18 @@ class BotAna(QtCore.QThread):
             resp = requests.get(URL)
             self.print_message(resp)
             player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
+
             p2 = player_data['p2'][0]['value'] if "p2" in player_data else "N/A"
             p10 = player_data['p10'][0]['value'] if "p10" in player_data else "N/A"
             p9 = player_data['p9'][0]['value'] if "p9" in player_data else "N/A"
+<<<<<<< HEAD
 
+=======
+            print("qui: " + p2)
+>>>>>>> abbff32c28c87271e78819ebedc35da2f2affa1b
             self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
         except ValueError:
-            if platform == "ps4" or playform == "xbox":
+            if platform == "ps4" or platform == "xbox":
                 self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
             else:
                 self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
