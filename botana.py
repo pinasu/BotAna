@@ -586,6 +586,16 @@ class BotAna(QtCore.QThread):
 
         self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes)))
 
+    def get_patch(self):
+        self.add_in_timeout("!patch")
+        try:
+            file = open("patch.txt", "r")
+            patch = file.read()
+            self.send_message(self.username+", ecco l'ulima patch di FortNite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
+            file.close()
+        except:
+            self.print_message("Error reading patch.txt")
+
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
             if self.arguments:
@@ -605,6 +615,10 @@ class BotAna(QtCore.QThread):
                     self.send_message("Errore. Usa: !wins <nomeutente> <piattaforma>")
             else:
                 threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
+
+        elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
+
+            threading.Thread(target=self.get_patch, args=()).start()
 
         elif self.message == "!play":
             if self.username not in self.players:
