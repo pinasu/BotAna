@@ -176,6 +176,7 @@ class BotAna(QtCore.QThread):
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                             else:
                                 parts = line.split(':')
+
                                 if len(parts) < 3: continue
                                 if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
                                     self.message = parts[2]
@@ -204,7 +205,6 @@ class BotAna(QtCore.QThread):
                                     message_list = self.message.split(' ');
 
                                     self.message = message_list[0]
-
                                     self.arguments = ' '.join(message_list[1:])
 
                                     if self.message in self.commandsMod.keys() and self.username in self.mods:
@@ -416,6 +416,9 @@ class BotAna(QtCore.QThread):
         elif self.message == "!suoni":
             self.get_sounds()
 
+        elif self.message == "!newpatch":
+            threading.Thread(target=self.set_patch, args=(self.arguments,)).start()
+
         elif self.message == "!addcommand":
             tmp = self.arguments.split(";")
             if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
@@ -485,6 +488,17 @@ class BotAna(QtCore.QThread):
                 if com.is_simple_command() and self.message == com.get_name():
                     if not self.is_in_timeout(com.get_name()):
                         self.send_message(com.get_response())
+
+    def set_patch(self, args):
+        if args != "":
+            try:
+                file = open("patch.txt", "w")
+                file.write(args)
+                self.send_message("Nuova patch registrata SeemsGood ")
+            except:
+                self.print_message("Error while writing file patch.txt")
+        else:
+            self.send_message("Errore. Usa !newpatch link")
 
     def start_roulette(self, user):
         self.add_in_timeout("!roulette")
