@@ -128,7 +128,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -163,6 +163,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
@@ -556,8 +558,12 @@ class BotAna(QtCore.QThread):
             p2 = player_data['p2'][0]['value'] if "p2" in player_data else "N/A"
             p10 = player_data['p10'][0]['value'] if "p10" in player_data else "N/A"
             p9 = player_data['p9'][0]['value'] if "p9" in player_data else "N/A"
+            if '%20' in user:
+                user = user.replace('%20', '')
             self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
         except ValueError:
+            if '%20' in user:
+                user = user.replace('%20', '')
             if platform == "ps4" or platform == "xbox":
                 self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
             else:
@@ -622,10 +628,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if len(args) == 2:
-                    threading.Thread(target=self.get_stats, args=([args[0], args[1]])).start()
-                else:
-                    self.send_message("Errore. Usa: !wins <nomeutente> <piattaforma>")
+                threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
 
