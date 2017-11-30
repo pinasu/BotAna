@@ -551,7 +551,6 @@ class BotAna(QtCore.QThread):
         self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
 
     def get_stats(self, user, platform):
-        print("user: " + user + " - platform: " + platform + "-")
         if platform != "pc" and platform != "xbox" and platform != "ps4":
             self.send_message("Errore. Usa !wins <utente> <piattaforma> SeemsGood")
         else:
@@ -629,13 +628,9 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
-                print("uno")
-                #Separo la stringa per spazi
                 args = self.arguments.split(' ')
-                #Ricompatto la stringa sostituendo agli spazi il %20, l'ultimo argomento è la piattaforma
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
-                print("due")
                 threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
 
         elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
