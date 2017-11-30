@@ -560,7 +560,6 @@ class BotAna(QtCore.QThread):
             try:
                 resp = requests.get(URL)
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                print("qquuiii: " + str(player_data))
                 p2 = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
                 p10 = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
                 p9 = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
@@ -630,6 +629,9 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
+                if '%20'.join(args[:-1]).lower() == "zizory":
+                    self.send_message("E' inutile vedere le mie stat, sono troppo scarsa StoneLightning ")
+                    return
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
