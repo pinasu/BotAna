@@ -561,9 +561,10 @@ class BotAna(QtCore.QThread):
             try:
                 resp = requests.get(URL)
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                p2 = player_data['p2'][0]['value'] if "p2" in player_data else "N/A"
-                p10 = player_data['p10'][0]['value'] if "p10" in player_data else "N/A"
-                p9 = player_data['p9'][0]['value'] if "p9" in player_data else "N/A"
+                print("qquuiii: " + str(player_data))
+                p2 = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
+                p10 = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
+                p9 = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
                 self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
             except ValueError:
                 if platform == "ps4" or platform == "xbox":
