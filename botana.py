@@ -1,4 +1,6 @@
 import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame, threading
+import win32com.client as wincl
+import pythoncom
 from pygame import mixer
 from random import randint
 from command import Command
@@ -93,6 +95,8 @@ class BotAna(QtCore.QThread):
         self.previous_game = ""
 
         self.state_string = ""
+
+        self.text_to_speech = 0
 
     def run(self):
         try:
@@ -379,7 +383,31 @@ class BotAna(QtCore.QThread):
         #&scope=<space-separated list of scopes>
         #Get token
         URL = "https://api.twitch.tv/kraken/oauth2/authorize?client_id="+self.CLIENT_ID+"&redirect_uri=https://pinasu.github.io/BotAna/&response_type=code&scope=channel_editor"
-        self.print_message(URL)
+        #funuvnh4eo2qlq874lcncgtkzccugr
+        #POST https://api.twitch.tv/kraken/oauth2/token
+        #?client_id=uo6dggojyb8d6soh92zknwmi5ej1q2
+        #&client_secret=nyo51xcdrerl8z9m56w9w6wg
+        #&code=394a8bc98028f39660e53025de824134fb46313
+        #&grant_type=authorization_code
+        #&redirect_uri=http://localhost
+        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+self.CLIENT_ID+"&client_secret="+"su0xa7amlq6rss7r9b7422n9tengdh"+"&code="+"funuvnh4eo2qlq874lcncgtkzccugr"+"&grant_type=authorization_code"+"&redirect_uri=https://pinasu.github.io/BotAna/"
+        resp = requests.post(URL)
+        self.print_message(str(json.loads(resp.text)))
+        #curl -H 'Client-ID: uo6dggojyb8d6soh92zknwmi5ej1q2'
+        #-H 'Accept: application/vnd.twitchtv.v5+json'
+        #-H 'Authorization: OAuth cfabdegwdoklmawdzdo98xt2fo512y'
+        #-H 'Content-Type: application/json'
+        #-d '{"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": true}}' \
+        #-X PUT 'https://api.twitch.tv/kraken/channels/44322889'
+        URL = "https://api.twitch.tv/kraken/channels/"+"133174210"
+        headers = {
+                "Client-ID" : ""+self.CLIENT_ID+"",
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Authorization": "OAuth "+access_token+"",
+                "Content-Type": "application/json"
+        }
+        data = {"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": true}}
+        requests.put(url=URL, headers=headers, data=data)
 
     def call_command_mod(self):
         raffled = ""
@@ -397,9 +425,6 @@ class BotAna(QtCore.QThread):
             file.write("")
             self.players = []
             self.send_message("Grazie a "+self.username+" non ci sono più utenti che vogliono giocare FeelsBadMan")
-
-        elif self.message == "titolo":
-            self.set_title(self)
 
         elif self.message == "!raffle":
             if len(self.players) == 0:
@@ -588,20 +613,27 @@ class BotAna(QtCore.QThread):
         end = s.index( last, start )
         return s[start:end]
 
+    def speak_text(self, text):
+        self.text_to_speech = time.time()
+        pythoncom.CoInitialize()
+        speak = wincl.Dispatch("SAPI.SpVoice")
+        speak.Speak(text)
+
     def get_rand_quote(self):
         rand = randint(0, len(self.quotes)-1)
         q = self.quotes[rand]
         self.send_message("#"+q.get_index()+": ''"+q.get_quote()+" '' - "+q.get_author()+" "+q.get_date())
+        if time.time() - self.text_to_speech > 300:
+            threading.Thread(target=self.speak_text, args=(q.get_quote(),)).start()
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
             self.send_message("Non ho tutte quelle citazioni HotPokket")
         else:
-            if args.isdigit():
-                q = self.quotes[int(args)-1]
-                self.send_message("#"+str(q.get_index())+": ''"+q.get_quote()+" '' - "+q.get_author()+" "+q.get_date())
-            else:
-                self.send_message("Errore, mi devi specificare il numero della citazione.")
+            q = self.quotes[int(args)-1]
+            self.send_message("#"+str(q.get_index())+": ''"+q.get_quote()+" '' - "+q.get_author()+" "+q.get_date())
+            if time.time() - self.text_to_speech > 300:
+                threading.Thread(target=self.speak_text, args=(q.get_quote(),)).start()
 
     def add_quote(self, args):
         args = str(args)
