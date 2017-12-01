@@ -621,7 +621,7 @@ class BotAna(QtCore.QThread):
         q = self.quotes[rand]
         self.send_message("#"+q.get_index()+": ''"+q.get_quote()+" '' - "+q.get_author()+" "+q.get_date())
         if time.time() - self.text_to_speech > 20:
-            threading.Thread(target=self.speak_text, args=(q.get_quote(),)).start()
+            threading.Thread(target=self.speak_text, args=(q.get_author()+" una volta disse: "+q.get_quote(),)).start()
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
