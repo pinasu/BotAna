@@ -62,8 +62,8 @@ class BotAna(QtCore.QThread):
         self.images = dict()
         self.timeLastImageCalled = None
         self.cooldownImage = 20
-
         self.skippers = []
+
         self.timeSkip = 0
 
         self.greetings = ["ciao", "buonasera", "buongiono", "salve"]
@@ -371,6 +371,16 @@ class BotAna(QtCore.QThread):
         subprocess.Popen("botanaUserInterface.pyw", shell=True)
         os._exit(0)
 
+    def set_title(self):
+        #GET https://api.twitch.tv/kraken/oauth2/authorize
+        #?client_id=<your client ID>
+        #&redirect_uri=<your registered redirect URI>
+        #&response_type=code
+        #&scope=<space-separated list of scopes>
+        #Get token
+        URL = "https://api.twitch.tv/kraken/oauth2/authorize?client_id="+self.CLIENT_ID+"&redirect_uri=https://pinasu.github.io/BotAna/&response_type=code&scope=channel_editor"
+        self.print_message(URL)
+
     def call_command_mod(self):
         raffled = ""
 
@@ -387,6 +397,9 @@ class BotAna(QtCore.QThread):
             file.write("")
             self.players = []
             self.send_message("Grazie a "+self.username+" non ci sono più utenti che vogliono giocare FeelsBadMan")
+
+        elif self.message == "titolo":
+            self.set_title(self)
 
         elif self.message == "!raffle":
             if len(self.players) == 0:
