@@ -44,13 +44,24 @@ class BotAna(QtCore.QThread):
 
         self.players = []
 
-        self.ball_choices = ["Non pensarci nemmeno LUL",
-                        "Ma in che pianeta vivi LUL",
-                        "Ma proprio no DansGame",
-                        "Ti piacerebbe Kappa",
-                        "Ma ovviamente PogChamp",
-                        "Vai tranqui Kreygasm"
-        ]
+        #5 positive, 3 ambigue e 5 negative
+        self.ball_choices = [
+                        "Ma certo che si KappaPride",
+                        "Decisamente Kreygasm",
+                        "Molto probabilmente Kappa",
+                        "Diciamo che le prospettive sono buone 4Head",
+                        "Ci puoi contare! SeemsGood",
+
+                        "E' difficile... Riprova più tardi! :thinking:",
+                        "Meglio che non ti risponda ora monkaS",
+                        "Ora non ho proprio voglia di risponderti ResidentSleeper",
+
+                        "Non ci contare LUL",
+                        "Le mie fonti dicono di no FeelsBadMan",
+                        "Diciamo che le prospettive non sono per niente buone :/",
+                        "Molto... Molto... improbabile haHAA"
+                        "Ma proprio no LUL"
+                        ]
 
         self.timeCommandsModCalled = dict()
         self.timeCommandsPlebCalled = dict()
@@ -297,7 +308,6 @@ class BotAna(QtCore.QThread):
         self.sign.emit(time.strftime("%H:%M  ")+msg)
 
     def show_image(self, path):
-
         self.sign2.emit(path)
 
     def send_message(self, message):
@@ -313,7 +323,7 @@ class BotAna(QtCore.QThread):
                 self.send_message("/timeout "+self.username+" 5")
             else:
                 self.to_ban = self.username
-                self.send_message(self.username+", hai davvero bisogno di tutti queli caps? <warning>")
+                self.send_message(self.username+", hai davvero bisogno di tutti quei caps? <warning>")
 
     def check_spam(self):
         tempo = time.time()
@@ -375,40 +385,6 @@ class BotAna(QtCore.QThread):
     def restart(self):
         subprocess.Popen("botanaUserInterface.pyw", shell=True)
         os._exit(0)
-
-    def set_title(self):
-        #GET https://api.twitch.tv/kraken/oauth2/authorize
-        #?client_id=<your client ID>
-        #&redirect_uri=<your registered redirect URI>
-        #&response_type=code
-        #&scope=<space-separated list of scopes>
-        #Get token
-        URL = "https://api.twitch.tv/kraken/oauth2/authorize?client_id="+self.CLIENT_ID+"&redirect_uri=https://pinasu.github.io/BotAna/&response_type=code&scope=channel_editor"
-        #funuvnh4eo2qlq874lcncgtkzccugr
-        #POST https://api.twitch.tv/kraken/oauth2/token
-        #?client_id=uo6dggojyb8d6soh92zknwmi5ej1q2
-        #&client_secret=nyo51xcdrerl8z9m56w9w6wg
-        #&code=394a8bc98028f39660e53025de824134fb46313
-        #&grant_type=authorization_code
-        #&redirect_uri=http://localhost
-        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+self.CLIENT_ID+"&client_secret="+"su0xa7amlq6rss7r9b7422n9tengdh"+"&code="+"funuvnh4eo2qlq874lcncgtkzccugr"+"&grant_type=authorization_code"+"&redirect_uri=https://pinasu.github.io/BotAna/"
-        resp = requests.post(URL)
-        self.print_message(str(json.loads(resp.text)))
-        #curl -H 'Client-ID: uo6dggojyb8d6soh92zknwmi5ej1q2'
-        #-H 'Accept: application/vnd.twitchtv.v5+json'
-        #-H 'Authorization: OAuth cfabdegwdoklmawdzdo98xt2fo512y'
-        #-H 'Content-Type: application/json'
-        #-d '{"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": true}}' \
-        #-X PUT 'https://api.twitch.tv/kraken/channels/44322889'
-        URL = "https://api.twitch.tv/kraken/channels/"+"133174210"
-        headers = {
-                "Client-ID" : ""+self.CLIENT_ID+"",
-                "Accept": "application/vnd.twitchtv.v5+json",
-                "Authorization": "OAuth "+access_token+"",
-                "Content-Type": "application/json"
-        }
-        data = {"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": true}}
-        requests.put(url=URL, headers=headers, data=data)
 
     def call_command_mod(self):
         raffled = ""
@@ -907,3 +883,62 @@ class BotAna(QtCore.QThread):
         if command.get_game() == curr_game:
             return True
         return False
+
+    #***************************************************************************
+    #   DO  NOT SCROLL  DOWN
+    #***************************************************************************
+
+
+
+
+
+
+    #***************************************************************************
+    #   REALLY  DUDE
+    #***************************************************************************
+
+
+
+
+
+
+    #***************************************************************************
+    #   I   WARNED  YOU
+    #***************************************************************************
+
+
+
+
+    def set_title(self):
+        #GET https://api.twitch.tv/kraken/oauth2/authorize
+        #?client_id=<your client ID>
+        #&redirect_uri=<your registered redirect URI>
+        #&response_type=code
+        #&scope=<space-separated list of scopes>
+        #Get token
+        URL = "https://api.twitch.tv/kraken/oauth2/authorize?client_id="+self.CLIENT_ID+"&redirect_uri=https://pinasu.github.io/BotAna/&response_type=code&scope=channel_editor"
+        #funuvnh4eo2qlq874lcncgtkzccugr
+        #POST https://api.twitch.tv/kraken/oauth2/token
+        #?client_id=uo6dggojyb8d6soh92zknwmi5ej1q2
+        #&client_secret=nyo51xcdrerl8z9m56w9w6wg
+        #&code=394a8bc98028f39660e53025de824134fb46313
+        #&grant_type=authorization_code
+        #&redirect_uri=http://localhost
+        URL = "https://api.twitch.tv/kraken/oauth2/token?client_id="+self.CLIENT_ID+"&client_secret="+"su0xa7amlq6rss7r9b7422n9tengdh"+"&code="+"funuvnh4eo2qlq874lcncgtkzccugr"+"&grant_type=authorization_code"+"&redirect_uri=https://pinasu.github.io/BotAna/"
+        resp = requests.post(URL)
+        self.print_message(str(json.loads(resp.text)))
+        #curl -H 'Client-ID: uo6dggojyb8d6soh92zknwmi5ej1q2'
+        #-H 'Accept: application/vnd.twitchtv.v5+json'
+        #-H 'Authorization: OAuth cfabdegwdoklmawdzdo98xt2fo512y'
+        #-H 'Content-Type: application/json'
+        #-d '{"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": true}}' \
+        #-X PUT 'https://api.twitch.tv/kraken/channels/44322889'
+        URL = "https://api.twitch.tv/kraken/channels/"+"133174210"
+        headers = {
+                "Client-ID" : ""+self.CLIENT_ID+"",
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Authorization": "OAuth "+access_token+"",
+                "Content-Type": "application/json"
+        }
+        data = {"channel": {"status": "The Finalest of Fantasies", "game": "Final Fantasy XV", "channel_feed_enabled": true}}
+        requests.put(url=URL, headers=headers, data=data)
