@@ -1,6 +1,7 @@
 import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame, threading
 import win32com.client as wincl
 import pythoncom
+from lxml import html
 from pygame import mixer
 from random import randint
 from command import Command
@@ -132,6 +133,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -166,6 +168,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
@@ -189,9 +193,10 @@ class BotAna(QtCore.QThread):
                                 if "tmi.twitch.tv" in self.username:
                                     continue
 
-                                self.lock2.acquire()
-                                self.msg_count += 1
-                                self.lock2.release()
+                                if self.username not in self.mods:
+                                    self.lock2.acquire()
+                                    self.msg_count += 1
+                                    self.lock2.release()
 
                                 self.print_message(self.username+": "+self.message)
 
@@ -594,11 +599,13 @@ class BotAna(QtCore.QThread):
                 user = user.replace('%20', ' ')
             try:
                 resp = requests.get(URL)
+                lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                p2 = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
-                p10 = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
-                p9 = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
-                self.send_message("["+user+"] Solo: "+p2+", Duo: "+p10+", Squad: "+p9+" KappaPride ")
+                wins = lifetime_stats[7]['Value']
+                solo = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
+                duo = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
+                squad = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
+                self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" ("+wins+" partite) KappaPride ")
             except ValueError:
                 if platform == "ps4" or platform == "xbox":
                     self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
@@ -606,8 +613,8 @@ class BotAna(QtCore.QThread):
                     self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
     def find(self, s, first, last):
-        start = s.index( first ) + len( first )
-        end = s.index( last, start )
+        start = s.index(first) + len(first)
+        end = s.index(last, start)
         return s[start:end]
 
     def speak_text(self, text):
