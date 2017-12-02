@@ -1,7 +1,6 @@
 import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame, threading
 import win32com.client as wincl
 import pythoncom
-from lxml import html
 from pygame import mixer
 from random import randint
 from command import Command
