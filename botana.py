@@ -80,7 +80,8 @@ class BotAna(QtCore.QThread):
         				"Se vuoi supportare il canale... Attaccate a Stockhausen, clicca sul Follow. CLASSIC PogChamp",
         				"Io sono BotAna, per i miei comandi digita !comandi PogChamp",
 			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
-        				"Vuoi giocare con noi? Usa il comando !play! KappaPride"
+        				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
+                        "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan"
     					]
 
         self.quotes = []
@@ -133,7 +134,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                '''
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -168,8 +169,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                '''
-                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
