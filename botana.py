@@ -43,7 +43,6 @@ class BotAna(QtCore.QThread):
 
         self.players = []
 
-        #5 positive, 3 ambigue e 5 negative
         self.ball_choices = [
                         "Ma certo che si KappaPride",
                         "Decisamente Kreygasm",
@@ -86,9 +85,10 @@ class BotAna(QtCore.QThread):
 
         self.msg_count = 0
 
-        self.msg_spam = ["Attaccate a StoDiscord https://goo.gl/2QSx3V KappaPride",
+        self.msg_spam = ["Attaccate a StoDiscord https://discord.gg/7r7VfDp KappaPride",
         				"Se vuoi supportare il canale... Attaccate a Stockhausen, clicca sul Follow. CLASSIC PogChamp",
         				"Io sono BotAna, per i miei comandi digita !comandi PogChamp",
+                        "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserve sempre monkaS",
 			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
                         "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan"
@@ -145,7 +145,6 @@ class BotAna(QtCore.QThread):
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
-                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -174,14 +173,12 @@ class BotAna(QtCore.QThread):
                                     usernamesplit = parts[1].split("!")
                                     self.username = usernamesplit[0]
 
-                                    if "tmi.twitch.tv" not in self.username and self.username not in self.vodded:
+                                    if "tmi.twitch.tv" not in self.username and self.username not in self.vodded and self.username not in self.mods:
                                         self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                '''
-                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
