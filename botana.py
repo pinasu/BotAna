@@ -748,6 +748,13 @@ class BotAna(QtCore.QThread):
         elif self.message == "!suoni" and not self.is_in_timeout("!suoni"):
             self.get_sounds()
 
+        elif self.message == "!energia" and self.arguments:
+            args = self.arguments.split(' ')
+            if len(args) > 1:
+                self.send_message("Mi dispiace "+self.username+", ma puoi donare la tua energia a una sola persona FeelsBadMan")
+            else:
+                self.send_message("༼ つ ◕_◕ ༽つ "+str(args[0])+" prendi la mia energia ༼ つ ◕_◕ ༽つ")
+
         else:
             for com in self.commandsPleb.values():
                 if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
