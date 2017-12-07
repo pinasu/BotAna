@@ -175,7 +175,7 @@ class BotAna(QtCore.QThread):
 
                                     if "tmi.twitch.tv" not in self.username and self.username not in self.vodded and self.username not in self.mods:
                                         self.vodded.append(self.username)
-                                        self.send_message("Ciao "+self.username+"! Questo è solo un Vodcast, ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! PogChamp")
+                                        self.send_message("Ciao "+self.username+"! Questo è un Alessiana del passato ( monkaS ), ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! Pigia follow! cmonBruh ")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
@@ -661,7 +661,6 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
 
         elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
-
             threading.Thread(target=self.get_patch, args=()).start()
 
         elif self.message == "!play":
