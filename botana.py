@@ -144,7 +144,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -179,6 +179,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
@@ -433,6 +435,21 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!newpatch":
             threading.Thread(target=self.set_patch, args=(self.arguments,)).start()
+
+        elif self.message == "!addsound":
+            tmp = self.arguments.split(' ')
+            if len(tmp) < 1 or len(tmp) > 1:
+                self.print_message(tmp)
+                self.send_message("Errore. Usa !addsound <!suono>.")
+                return
+
+            if (tmp[0] in self.sounds.keys()):
+                self.send_message("Non posso aggiungere un suono uguale a uno che esiste già, stupido babbuino LUL")
+                return
+
+            with open('sounds.csv', 'a',  encoding='utf-8') as f:
+                f.write("\n"+str(tmp[0]))
+            self.send_message("Suono "+str(tmp[0])+" aggiunto correttamente FeelsGoodMan")
 
         elif self.message == "!addcommand":
             tmp = self.arguments.split(";")
@@ -748,13 +765,15 @@ class BotAna(QtCore.QThread):
         elif self.message == "!suoni" and not self.is_in_timeout("!suoni"):
             self.get_sounds()
 
-        elif self.message == "!energia" and self.arguments:
-            args = self.arguments.split(' ')
-            if len(args) > 1:
-                self.send_message("Mi dispiace "+self.username+", ma puoi donare la tua energia a una sola persona FeelsBadMan")
+        elif self.message == "!energia":
+            if self.arguments:
+                args = self.arguments.split(' ')
+                if len(args) > 1:
+                    self.send_message("Mi dispiace "+self.username+", ma puoi donare la tua energia a una sola persona FeelsBadMan")
+                else:
+                    self.send_message("༼ つ ◕_◕ ༽つ "+str(args[0])+" prendi la mia energia ༼ つ ◕_◕ ༽つ")
             else:
-                self.send_message("༼ つ ◕_◕ ༽つ "+str(args[0])+" prendi la mia energia ༼ つ ◕_◕ ༽つ")
-
+                self.send_message("༼ つ ◕_◕ ༽つ Alessiana prendi la mia energia ༼ つ ◕_◕ ༽つ")
         else:
             for com in self.commandsPleb.values():
                 if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
@@ -805,7 +824,7 @@ class BotAna(QtCore.QThread):
         self.print_message("quotes.csv was read correctly.")
 
     def load_commands(self):
-        with open('commands.csv', encoding='utf-8') as commands:
+        with open('commands.csv') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
                 if len(row) == 5:
