@@ -144,7 +144,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -179,6 +179,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         self.send_message(self.NICK+" is now live.")
@@ -436,13 +438,25 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!addsound":
             tmp = self.arguments.split(' ')
-            if len(tmp) < 1 or len(tmp) > 1:
+            if not tmp[0].startswith('!'):
+                self.send_message("Errore. Il suono deve essre un comando (deve avere ! davanti).")
+                return
+
+            elif len(tmp) < 1 or len(tmp) > 1:
                 self.print_message(tmp)
                 self.send_message("Errore. Usa !addsound <!suono>.")
                 return
 
             if (tmp[0] in self.sounds.keys()):
                 self.send_message("Non posso aggiungere un suono uguale a uno che esiste già, stupido babbuino LUL")
+                return
+
+            PATH = 'res\\Sounds\\'
+            self.print_message(PATH)
+            snd = str(tmp[0])[1:]+".wav"
+            if not os.path.isfile(PATH+snd):
+                self.print_message(PATH+snd)
+                self.send_message("Errore. Aggiungi il file "+snd+" alla cartella "+PATH+" .")
                 return
 
             with open('sounds.csv', 'a',  encoding='utf-8') as f:
