@@ -144,3 +144,16 @@
 
 <h2>Alcune info su BotAna</h2>
 <p>BotAna è stata sviluppata inizialmente da me (Pinasu) a cavallo del 2016/2017. Alcuni di voi ricorderanno i problemi che questa prima versione presentava (crash, spam di messaggi etc), essendo molto rudimentale, ed essendo stata la mia prima volta a interagire con le API di Twitch. <br>Nonostante tutto, ad oggi 24/11/2017 posso definite BotAna 1.0 come affidabile e funzionante nel 90% dei casi. Tuttavia, da quando Lusyoo mi è venuto incontro in questa battaglia contro Python, le API di Twitch fatte male nel 70% dei casi e soprattutto la mia incapacità nella programmazione, BotAna ha raggiunto un nuovo stadio. Oggi BotAna 2.0 è molto più affidabile e stabile di prima, sono stati risolti tantissimi degli errori e malfunzionamenti di BotAna 1.0 ma soprattutto è molto più leggera e reattiva di prima, e questo è dovuto soprattutto all'esperienza di Lusyoo in Python e nella programmazione.<br>Continuerò sicuramente a lavorare su BotAna con il massimo impegno come ho sempre fatto, sperando che Lusyoo, che ringrazio tanto per il contributo, possa essermi ancora d'aiuto. Qua sotto trovate delle info sui comandi e i suoni disponibili, come anche il link al progetto su GitHub per chi fosse interessato.<br>Non esistate ovviamente a contattarmi per suggerirmi features/problemi :)<br><br>Pinasu</p>
+
+<h2>Random YouTube ID</h2>
+<p id="rnd" onload="getRnd()"></p>
+<script>
+function getRnd() {
+  var rands = new Array("0","1","2","3"4,"5","6"7,"8","9","a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","m","M","n","N","o","O","p","P","q","Q","r","R","s","S","t","T","u","U","v","V","w","W","x","X","y","Y","z","Z"-,"_");
+  ID = ""
+  while(ID.length <= rands.length){
+    var rndchar = rands[Math.floor(Math.random()*rands.length)];
+    ID+=rndchar;
+  }
+}
+</script>
