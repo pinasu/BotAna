@@ -155,5 +155,6 @@ function getRnd() {
     var rndchar = rands[Math.floor(Math.random()*rands.length)];
     ID+=rndchar;
   }
+  document.getElementById("rnd").innerHTML = ID; 
 }
 </script>
