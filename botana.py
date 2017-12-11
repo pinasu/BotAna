@@ -110,6 +110,8 @@ class BotAna(QtCore.QThread):
 
         self.text_to_speech = 0
 
+        self.youtube_count = 0
+
     def run(self):
         try:
             self.BOT_OAUTH = self.get_bot_oauth()
@@ -137,6 +139,8 @@ class BotAna(QtCore.QThread):
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
+
+            threading.Thread(target=self.get_rand_yt_video, args=()).start()
 
             while True:
                 self.lock.acquire()
@@ -279,6 +283,19 @@ class BotAna(QtCore.QThread):
             self.online = tmp
             self.lock.release()
             time.sleep(10)
+
+    def get_rand_yt_video(self):
+        self.youtube_count = time.time()
+        while True:
+            if time.time() - self.youtube_count > 1000:
+                self.youtube_count = time.time()
+                self.send_message("Ecco un video random di Youtube per allietarvi: "+self.randYoutubeLink()+" BrokeBack")
+
+    def randYoutubeLink():
+        URL = "https://randomyoutube.net/api/getvid?api_token=ziaNAtZ54kjI88G5Eyo7lvInw6GBjjEZ5HbAVVM3MrQqBzNdMiX7DdQb1maU"
+        resp = requests.get(URL)
+        ID = (json.loads(resp.text))['vid']
+        return "https://www.youtube.com/watch?v="+ID
 
     def read_config_file(self, path):
         if os.path.exists(path):
