@@ -287,11 +287,13 @@ class BotAna(QtCore.QThread):
     def get_rand_yt_video(self):
         self.youtube_count = time.time()
         while True:
+            self.print_message(str(time.time() - self.youtube_count))
             if time.time() - self.youtube_count > 1000:
                 self.youtube_count = time.time()
-                self.send_message("Ecco un video random di Youtube per allietarvi: "+self.randYoutubeLink()+" BrokeBack")
+                self.send_message("Ecco un video random da Youtube per allietarvi: "+self.randYoutubeLink()+" BrokeBack")
+            time.sleep(1/self.RATE)
 
-    def randYoutubeLink():
+    def randYoutubeLink(self):
         URL = "https://randomyoutube.net/api/getvid?api_token=ziaNAtZ54kjI88G5Eyo7lvInw6GBjjEZ5HbAVVM3MrQqBzNdMiX7DdQb1maU"
         resp = requests.get(URL)
         ID = (json.loads(resp.text))['vid']
