@@ -91,6 +91,7 @@ class BotAna(QtCore.QThread):
                         "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserve sempre monkaS",
 			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
+                        "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
                         "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan"
     					]
 
@@ -285,7 +286,7 @@ class BotAna(QtCore.QThread):
     def get_rand_yt_video(self):
         self.youtube_count = time.time()
         while True:
-            if time.time() - self.youtube_count > 1000:
+            if time.time() - self.youtube_count > 3600:
                 self.youtube_count = time.time()
                 self.send_message("Ecco un video random da Youtube per allietarvi: "+self.randYoutubeLink()+" BrokeBack")
             time.sleep(1/self.RATE)
@@ -842,6 +843,10 @@ class BotAna(QtCore.QThread):
         elif "anche io" in message.lower() and not self.is_word_in_timeout("anche io"):
             self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
+
+        elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
+            self.word_in_timeout("omg")
+            self.send_message("IT'S OVER 9000 9000Ana")
 
     def load_quotes(self):
         with open('quotes.csv', encoding='utf-8') as quotes:
