@@ -88,7 +88,7 @@ class BotAna(QtCore.QThread):
         self.msg_spam = ["Attaccate a StoDiscord https://discord.gg/7r7VfDp KappaPride",
         				"Se vuoi supportare il canale... Attaccate a Stockhausen, clicca sul Follow. CLASSIC PogChamp",
         				"Io sono BotAna, per i miei comandi digita !comandi PogChamp",
-                        "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserve sempre monkaS",
+                        "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserva sempre monkaS",
 			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
                         "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
@@ -319,7 +319,7 @@ class BotAna(QtCore.QThread):
         return self.read_config_file("username.txt")
 
     def get_clientID(self):
-                return self.read_config_file("clientID.txt")
+        return self.read_config_file("clientID.txt")
 
     def print_message(self, msg):
         print(msg)
@@ -857,7 +857,7 @@ class BotAna(QtCore.QThread):
         self.print_message("quotes.csv was read correctly.")
 
     def load_commands(self):
-        with open('commands.csv') as commands:
+            with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
             for row in reader:
                 if len(row) == 5:
