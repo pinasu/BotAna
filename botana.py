@@ -287,7 +287,6 @@ class BotAna(QtCore.QThread):
     def get_rand_yt_video(self):
         self.youtube_count = time.time()
         while True:
-            self.print_message(str(time.time() - self.youtube_count))
             if time.time() - self.youtube_count > 1000:
                 self.youtube_count = time.time()
                 self.send_message("Ecco un video random da Youtube per allietarvi: "+self.randYoutubeLink()+" BrokeBack")
