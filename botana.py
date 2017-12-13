@@ -92,8 +92,9 @@ class BotAna(QtCore.QThread):
 			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
                         "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
-                        "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan"
-    					]
+                        "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan",
+                        "C'è un sondaggio per voi FamigliANA! http://www.strawpoll.me/14605518 PogChamp "
+                        ]
 
         self.quotes = []
 
@@ -858,16 +859,16 @@ class BotAna(QtCore.QThread):
 
     def load_commands(self):
             with open('commands.csv', encoding='utf-8') as commands:
-            reader = csv.reader(commands, delimiter=';', quotechar='|')
-            for row in reader:
-                if len(row) == 5:
-                    current = Command(row[0], row[1], row[2], row[3], row[4])
-                else:
-                    current = Command(row[0], row[1], row[2], row[3])
-                if row[3] == "mod":
-                    self.commandsMod[row[0]] = current
-                elif row[3] == "pleb":
-                    self.commandsPleb[row[0]] = current
+                reader = csv.reader(commands, delimiter=';', quotechar='|')
+                for row in reader:
+                    if len(row) == 5:
+                        current = Command(row[0], row[1], row[2], row[3], row[4])
+                    else:
+                        current = Command(row[0], row[1], row[2], row[3])
+                    if row[3] == "mod":
+                        self.commandsMod[row[0]] = current
+                    elif row[3] == "pleb":
+                        self.commandsPleb[row[0]] = current
         self.print_message("commands.csv was read correctly.")
 
     def load_image(self):
