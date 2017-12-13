@@ -858,17 +858,17 @@ class BotAna(QtCore.QThread):
         self.print_message("quotes.csv was read correctly.")
 
     def load_commands(self):
-            with open('commands.csv', encoding='utf-8') as commands:
-                reader = csv.reader(commands, delimiter=';', quotechar='|')
-                for row in reader:
-                    if len(row) == 5:
-                        current = Command(row[0], row[1], row[2], row[3], row[4])
-                    else:
-                        current = Command(row[0], row[1], row[2], row[3])
-                    if row[3] == "mod":
-                        self.commandsMod[row[0]] = current
-                    elif row[3] == "pleb":
-                        self.commandsPleb[row[0]] = current
+        with open('commands.csv', encoding='utf-8') as commands:
+            reader = csv.reader(commands, delimiter=';', quotechar='|')
+            for row in reader:
+                if len(row) == 5:
+                    current = Command(row[0], row[1], row[2], row[3], row[4])
+                else:
+                    current = Command(row[0], row[1], row[2], row[3])
+                if row[3] == "mod":
+                    self.commandsMod[row[0]] = current
+                elif row[3] == "pleb":
+                    self.commandsPleb[row[0]] = current
         self.print_message("commands.csv was read correctly.")
 
     def load_image(self):
