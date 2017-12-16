@@ -78,7 +78,7 @@ class BotAna(QtCore.QThread):
 
         self.timeSkip = 0
 
-        self.greetings = ["ciao", "buonasera", "buongiono", "salve"]
+        self.greetings = ["ciao", "buonasera", "buongiorno", "salve"]
         self.greeted = []
 
         self.words_cooldown = dict()
