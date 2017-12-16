@@ -154,7 +154,6 @@ class BotAna(QtCore.QThread):
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
-                        self.send_message(self.NICK+" is offline.")
 
                     if self.vodded:
                         self.vodded = []
@@ -166,7 +165,6 @@ class BotAna(QtCore.QThread):
                 elif tmponline["stream"]["stream_type"] == "watch_party":
                     if self.state_string != "vodcast":
                         self.state_string = "vodcast"
-                        self.send_message(self.NICK+" started a vodcast.")
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -187,8 +185,7 @@ class BotAna(QtCore.QThread):
                 elif tmponline["stream"]["stream_type"] == "live":
                     if self.state_string != "live":
                         self.state_string = "live"
-                        self.send_message(self.NICK+" is now live.")
-
+                        
                     if self.vodded:
                         self.vodded = []
                     if rec:
