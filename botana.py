@@ -88,7 +88,7 @@ class BotAna(QtCore.QThread):
         self.msg_spam = ["Attaccate a StoDiscord https://discord.gg/7r7VfDp KappaPride",
         				"Se vuoi supportare il canale... Attaccate a Stockhausen, clicca sul Follow. CLASSIC PogChamp",
         				"Io sono BotAna, per i miei comandi digita !comandi PogChamp",
-                        "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserva sempre monkaS",
+                        "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserva sempre monkaPeek",
 			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
                         "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
