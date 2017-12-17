@@ -141,7 +141,7 @@ class BotAna(QtCore.QThread):
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
-                
+
             while True:
                 self.lock.acquire()
                 tmponline = self.online
@@ -687,6 +687,9 @@ class BotAna(QtCore.QThread):
                 if '%20'.join(args[:-1]).lower() == "zizory":
                     self.send_message("E' inutile vedere le mie stat, sono troppo scarsa StoneLightning ")
                     return
+                elif '%20'.join(args[:-1]).lower() == "pinasu":
+                    self.send_message("Questa informazione è classificata. DatSheffy :gun: ")
+
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
