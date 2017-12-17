@@ -13,6 +13,7 @@
 4) Aggiungere le frasi da spammare a un file, così che Alessiana possa gestirle (comandi !addspam e !removespam)
 5) Ogni ora, BotAna fa un Random (0-100) e decide se mettere la chat in emote-only per 2 minuti (LUL)
 6) Fix l'errore di Twitch che restituisce errore su -key: "stream"-
+7) Dopo totsecondi, settare la variabile to_ban="", altrimenti si verrà bannati anche dopo ore dal warning
 -----------------------------------------------------------------------------------------------------------------------------------
 
 ***********************************************************************************************************************************

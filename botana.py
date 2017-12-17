@@ -141,7 +141,7 @@ class BotAna(QtCore.QThread):
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
-            
+                
             while True:
                 self.lock.acquire()
                 tmponline = self.online
