@@ -186,7 +186,7 @@ class BotAna(QtCore.QThread):
                 elif tmponline["stream"]["stream_type"] == "live":
                     if self.state_string != "live":
                         self.state_string = "live"
-                        
+
                     if self.vodded:
                         self.vodded = []
                     if rec:
@@ -703,7 +703,7 @@ class BotAna(QtCore.QThread):
                     return
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
-                threading.Thread(target=self.get_stats, args=(["lidfrid", "pc"])).start()
+                threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
 
         elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
             threading.Thread(target=self.get_patch, args=()).start()
