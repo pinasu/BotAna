@@ -93,7 +93,6 @@ class BotAna(QtCore.QThread):
         				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
                         "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
                         "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan",
-                        "C'è un sondaggio per voi FamigliANA! http://www.strawpoll.me/14605518 PogChamp ",
                         "Inviate ad Alessiana su Discord un audio con cui date il benvenuto da parte vostra nella famigliana ai nuovi follower così da poterlo mettere quando qualcuno mette follow KappaPride"
                         ]
 
