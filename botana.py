@@ -94,7 +94,7 @@ class BotAna(QtCore.QThread):
                         "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
                         "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan",
                         "C'è un sondaggio per voi FamigliANA! http://www.strawpoll.me/14605518 PogChamp ",
-			 "Inviate ad Alessiana su Discord un audio con cui date il benvenuto da parte vostra nella famigliana ai nuovi follower così da poterlo mettere quando qualcuno mette follow KappaPride"
+                        "Inviate ad Alessiana su Discord un audio con cui date il benvenuto da parte vostra nella famigliana ai nuovi follower così da poterlo mettere quando qualcuno mette follow KappaPride"
                         ]
 
         self.quotes = []
@@ -217,7 +217,7 @@ class BotAna(QtCore.QThread):
                                     self.check_ban()
 
                                 if set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
-                                    if self.username not in self.greeted:
+                                    if self.username not in self.greeted and self.username not in self.mods:
                                         self.greeted.append(self.username)
                                         self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
 
@@ -269,10 +269,12 @@ class BotAna(QtCore.QThread):
         self.previous_game = ""
 
     def check_online(self):
-        url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
-        params = {"Client-ID" : ""+self.CLIENT_ID+""}
-        resp = requests.get(url=url, headers=params)
-        return json.loads(resp.text)
+        try:
+            url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
+            params = {"Client-ID" : ""+self.CLIENT_ID+""}
+            resp = requests.get(url=url, headers=params)
+            return json.loads(resp.text)
+        except:
 
     def check_online_cicle(self):
         while True:
@@ -281,20 +283,6 @@ class BotAna(QtCore.QThread):
             self.online = tmp
             self.lock.release()
             time.sleep(10)
-
-    def get_rand_yt_video(self):
-        self.youtube_count = time.time()
-        while True:
-            if time.time() - self.youtube_count > 3600:
-                self.youtube_count = time.time()
-                self.send_message("Ecco un video random da Youtube per allietarvi: "+self.randYoutubeLink()+" BrokeBack")
-            time.sleep(1/self.RATE)
-
-    def randYoutubeLink(self):
-        URL = "https://randomyoutube.net/api/getvid?api_token=ziaNAtZ54kjI88G5Eyo7lvInw6GBjjEZ5HbAVVM3MrQqBzNdMiX7DdQb1maU"
-        resp = requests.get(URL)
-        ID = (json.loads(resp.text))['vid']
-        return "https://www.youtube.com/watch?v="+ID
 
     def read_config_file(self, path):
         if os.path.exists(path):
