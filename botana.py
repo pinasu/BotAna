@@ -141,9 +141,7 @@ class BotAna(QtCore.QThread):
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_spam, args=()).start()
-
-            threading.Thread(target=self.get_rand_yt_video, args=()).start()
-
+            
             while True:
                 self.lock.acquire()
                 tmponline = self.online
@@ -274,6 +272,7 @@ class BotAna(QtCore.QThread):
             resp = requests.get(url=url, headers=params)
             return json.loads(resp.text)
         except:
+            return
 
     def check_online_cicle(self):
         while True:
