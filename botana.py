@@ -136,9 +136,9 @@ class BotAna(QtCore.QThread):
 
             self.online = self.check_online()
 
-            threading.Thread(target=self.check_online_cicle, args=()).start()
-
             self.send_message("Don't even worry guys, BotAna is here anaLove")
+
+            threading.Thread(target=self.check_online_cicle, args=()).start()
 
             threading.Thread(target=self.check_spam, args=()).start()
 
@@ -150,7 +150,6 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
 
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
@@ -264,13 +263,12 @@ class BotAna(QtCore.QThread):
 
     def check_emoteonly(self):
         tempo = time.time()
-        self.print_message(str(tempo))
         while True:
-            if time.time() - tempo > 3600:
+            if time.time() - tempo > 3600 and self.msg_count >= 10:
                 emote = randint(1, 10)
                 if emote > 5:
                     tempo = time.time()
-                    self.send_message("haHAA")
+                    self.send_message("Buon divertimento haHAA")
                     time.sleep(1)
                     self.send_message("/emoteonly")
                     time.sleep(60)
