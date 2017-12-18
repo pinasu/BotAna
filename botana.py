@@ -142,12 +142,15 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_spam, args=()).start()
 
+            threading.Thread(target=self.check_emoteonly, args=()).start()
+
             while True:
                 self.lock.acquire()
                 tmponline = self.online
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
+
 
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
@@ -259,6 +262,21 @@ class BotAna(QtCore.QThread):
         self.send_message("!title AFK")
         self.send_message("!game IRL")
 
+    def check_emoteonly(self):
+        tempo = time.time()
+        self.print_message(str(tempo))
+        while True:
+            if time.time() - tempo > 3600:
+                emote = randint(1, 10)
+                if emote > 5:
+                    tempo = time.time()
+                    self.send_message("haHAA")
+                    time.sleep(1)
+                    self.send_message("/emoteonly")
+                    time.sleep(60)
+                    self.send_message("/emoteonlyoff")
+            time.sleep(1/self.RATE)
+
     def in_game(self):
         self.send_message("!title " + self.previous_title)
         self.send_message("!game " + self.previous_game)
@@ -324,9 +342,19 @@ class BotAna(QtCore.QThread):
         if self.username not in self.mods:
             if self.username == self.to_ban:
                 self.send_message("/timeout "+self.username+" 5")
+                self.to_ban = ""
             else:
                 self.to_ban = self.username
                 self.send_message(self.username+", hai davvero bisogno di tutti quei caps? <warning>")
+                threading.Thread(target=self.restart_toban, args=()).start()
+
+    def restart_toban(self):
+        tempo = time.time()
+        while True:
+            if time.time() - tempo > 10:
+                self.to_ban = ""
+                return;
+            time.sleep(1/self.RATE)
 
     def check_spam(self):
         tempo = time.time()
@@ -688,8 +716,8 @@ class BotAna(QtCore.QThread):
                     self.send_message("E' inutile vedere le mie stat, sono troppo scarsa StoneLightning ")
                     return
                 elif '%20'.join(args[:-1]).lower() == "pinasu":
-                    self.send_message("Questa informazione è classificata. DatSheffy :gun: ")
-
+                    self.send_message("Questa informazione è classificata. :gun: DatSheffy ")
+                    return
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()

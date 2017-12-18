@@ -4,16 +4,13 @@
 -----------------------------------------------------------------------------------------------------------------------------------
 1) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
 ***********************************************************************************************************************************
-
         TO DO AS SOON AS POSSIBLE
 -----------------------------------------------------------------------------------------------------------------------------------
 1) Leggere i dati della configurazione da un file solo (botOauth, clientID, username, clientsecret)
 2) Fixare una volta per tutte la lettura del file commands.csv e controllare che quotes.csv e sounds.csv
 3) Aggiungere i punti: per ogni minuto passato nel canale si guadagna 1 punto (da definire), per ogni citazione e comando vocale si spendono punti
 4) Aggiungere le frasi da spammare a un file, così che Alessiana possa gestirle (comandi !addspam e !removespam)
-5) Ogni ora, BotAna fa un Random (0-100) e decide se mettere la chat in emote-only per 2 minuti (LUL)
-6) Fix l'errore di Twitch che restituisce errore su -key: "stream"-
-7) Dopo totsecondi, settare la variabile to_ban="", altrimenti si verrà bannati anche dopo ore dal warning
+5) Fix l'errore di Twitch che restituisce errore su -key: "stream"- (forse fatto)
 -----------------------------------------------------------------------------------------------------------------------------------
 
 ***********************************************************************************************************************************
