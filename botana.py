@@ -85,16 +85,7 @@ class BotAna(QtCore.QThread):
 
         self.msg_count = 0
 
-        self.msg_spam = ["Attaccate a StoDiscord https://discord.gg/7r7VfDp KappaPride",
-        				"Se vuoi supportare il canale... Attaccate a Stockhausen, clicca sul Follow. CLASSIC PogChamp",
-        				"Io sono BotAna, per i miei comandi digita !comandi PogChamp",
-                        "Anche se può sembrare che Pinasu non sia nello stream, ricordate che vi osserva sempre monkaPeek",
-			            "Se vedi messaggi del tipo anaLove , FeelsBadMan o monkaS e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head",
-        				"Vuoi giocare con noi? Usa il comando !play! KappaPride",
-                        "Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p",
-                        "Per scoprire come usare al meglio i comandi, usa il comando !info FeelsGoodMan",
-                        "Inviate ad Alessiana su Discord un audio con cui date il benvenuto da parte vostra nella famigliana ai nuovi follower così da poterlo mettere quando qualcuno mette follow KappaPride"
-                        ]
+        self.msg_spam = self.get_spam_phrases('spam.txt')
 
         self.quotes = []
 
@@ -290,6 +281,17 @@ class BotAna(QtCore.QThread):
         except:
             return
 
+    def get_spam_phrases(self, path):
+        if os.path.exists(path):
+            try:
+                with open(path) as f:
+                    msg_spam = f.read().splitlines()
+                return msg_spam
+            except:
+                self.print_message("Error opening " + path + "\n")
+        else:
+            self.print_message("Error finding " + path + "\n")
+
     def check_online_cicle(self):
         while True:
             tmp = self.check_online()
@@ -304,7 +306,7 @@ class BotAna(QtCore.QThread):
                 config.read(path)
                 return config['DEFAULT']['user_id']
             except:
-                    self.print_message("Error opening " + path + "\n")
+                self.print_message("Error opening " + path + "\n")
         else:
             self.print_message("Error reading " + path + "\n")
 
@@ -884,8 +886,6 @@ class BotAna(QtCore.QThread):
             for row in reader:
                 self.quotes.append(Quote(row[0], row[1], row[2], row[3]))
 
-        self.print_message("quotes.csv was read correctly.")
-
     def load_commands(self):
         with open('commands.csv', encoding='utf-8') as commands:
             reader = csv.reader(commands, delimiter=';', quotechar='|')
@@ -898,7 +898,6 @@ class BotAna(QtCore.QThread):
                     self.commandsMod[row[0]] = current
                 elif row[3] == "pleb":
                     self.commandsPleb[row[0]] = current
-        self.print_message("commands.csv was read correctly.")
 
     def load_image(self):
         with open('images.csv', encoding='utf-8') as imgs:
@@ -909,7 +908,6 @@ class BotAna(QtCore.QThread):
                 else:
                     current = Image(row[0], row[1], row[2])
                 self.images[row[0]] = current
-        self.print_message("images.csv was read correctly.")
 
     def load_sounds(self):
         with open('sounds.csv', encoding='utf-8') as sounds:
@@ -920,7 +918,6 @@ class BotAna(QtCore.QThread):
                 else:
                     current = Sound(row[0])
                 self.sounds[row[0]] = current
-        self.print_message("sounds.csv was read correctly.")
 
     def get_sounds(self):
         self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
