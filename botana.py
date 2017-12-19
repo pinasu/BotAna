@@ -117,11 +117,12 @@ class BotAna(QtCore.QThread):
     def run(self):
         try:
             path = 'config.ini'
-            self.BOT_OAUTH = self.get_bot_oauth(path)
-            self.NICK = self.get_nick(path)
+            config = configparser.ConfigParser()
+            self.BOT_OAUTH = self.get_bot_oauth(path, config)
+            self.NICK = self.get_nick(path, config)
             self.CHAN = "#"+self.NICK
-            self.CLIENT_ID = self.get_clientID(path)
-            self.USER_ID = self.get_userID(path)
+            self.CLIENT_ID = self.get_clientID(path, config)
+            self.USER_ID = self.get_userID(path, config)
 
             self.load_commands()
             self.load_sounds()
@@ -147,7 +148,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -297,10 +298,9 @@ class BotAna(QtCore.QThread):
             self.lock.release()
             time.sleep(10)
 
-    def get_userID(self, path):
+    def get_userID(self, path, config):
         if os.path.exists(path):
             try:
-                config = configparser.ConfigParser()
                 config.read(path)
                 return config['DEFAULT']['user_id']
             except:
@@ -308,10 +308,9 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error reading " + path + "\n")
 
-    def get_bot_oauth(self, path):
+    def get_bot_oauth(self, path, config):
         if os.path.exists(path):
             try:
-                config = configparser.ConfigParser()
                 config.read(path)
                 return config['DEFAULT']['bot_oauth']
             except:
@@ -319,10 +318,9 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error reading " + path + "\n")
 
-    def get_nick(self, path):
+    def get_nick(self, path, config):
         if os.path.exists(path):
             try:
-                config = configparser.ConfigParser()
                 config.read(path)
                 return config['DEFAULT']['nick']
             except:
@@ -330,10 +328,9 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error reading " + path + "\n")
 
-    def get_clientID(self, path):
+    def get_clientID(self, path, config):
         if os.path.exists(path):
             try:
-                config = configparser.ConfigParser()
                 config.read(path)
                 return config['DEFAULT']['client_id']
             except:
