@@ -294,7 +294,7 @@ class BotAna(QtCore.QThread):
     def add_spam_phrase(self, phrase):
         try:
             msg_spam.append(phrase)
-            with open("spam.txt", "a") as f:
+            with open("spam.txt", "a",  encoding='utf-8') as f:
                 f.write(phrase)
             self.send_message("Frase aggiunta SeemsGood")
         except:
