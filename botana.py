@@ -107,9 +107,8 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            path = 'config.ini'
             config = configparser.ConfigParser()
-            self.BOT_OAUTH = self.get_bot_oauth(path, config)
+            self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick(path, config)
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID(path, config)
@@ -291,6 +290,15 @@ class BotAna(QtCore.QThread):
                 self.print_message("Error opening " + path + "\n")
         else:
             self.print_message("Error finding " + path + "\n")
+
+    def add_spam_phrase(self, phrase):
+        try:
+            msg_spam.append(phrase)
+            with open("spam.txt", "a") as f:
+                f.write(phrase)
+            self.send_message("Frase aggiunta SeemsGood")
+        except:
+            self.send_message("Impossibile aggiungere la frase FeelsBadMan")
 
     def check_online_cicle(self):
         while True:

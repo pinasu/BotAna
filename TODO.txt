@@ -1,23 +1,23 @@
-﻿***********************************************************************************************************************************
------------------------------------------------------------------------------------------------------------------------------------
-        Problems to FIX:
------------------------------------------------------------------------------------------------------------------------------------
-1) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
-***********************************************************************************************************************************
-        TO DO AS SOON AS POSSIBLE
------------------------------------------------------------------------------------------------------------------------------------
-1) Fixare una volta per tutte la lettura del file commands.csv e controllare che quotes.csv e sounds.csv
-2) Aggiungere i punti: per ogni minuto passato nel canale si guadagna 1 punto (da definire), per ogni citazione e comando vocale si spendono punti
-3) Aggiungere le frasi da spammare a un file, così che Ale possa gestirle (comandi !addspam e !removespam)
-4) Fix l'errore di Twitch che restituisce errore su -key: "stream"- (forse fatto)
------------------------------------------------------------------------------------------------------------------------------------
+﻿1) Valutare il comportamento di botana al verificarsi di un'eccezione nei thread non main
+	[Stato]: sembra essere a posto.
 
-5) Bottoni che richiamano addcommand, addsount, addspam etc
+2) Fixare una volta per tutte la lettura del file commands.csv e controllare che quotes.csv e sounds.csv
+	[Stato]: Alessiana deve aprire i file nel suo PC e farlo.
 
-***********************************************************************************************************************************
------------------------------------------------------------------------------------------------------------------------------------
-        Hard ones (make you wanna kill yourself instead):
------------------------------------------------------------------------------------------------------------------------------------
-1) Add command (mod) to set stream title;
-2) Add command (mod) to set stream current game;
-***********************************************************************************************************************************
+3) Aggiungere i punti: per ogni minuto si guadagnano punti, per ogni citazione e comando vocale si spendono punti
+	[Stato]: non ho fatto un cazzo.
+
+4) Aggiungere le frasi da spammare a un file, così che Ale possa gestirle (comandi !addspam e !removespam)
+	[Stato]: aggiunte le frasi al file, aggiunto il comando !addspam e !removespam ma non sono ststi testati (non vengono richiamati).
+
+5) Fix l'errore di Twitch che restituisce errore su -key: "stream"- (forse fatto)
+	[Stato]: ho aggiunto un try/except che dovrebbe risolvere l'errore.
+
+6) Aggiungere all'interfaccia grafica comandi utili (!addcommand, !addspam, !addsound etc...).
+	[Stato]: non ho fatto un cazzo.
+
+7) Aggiungere il comando per settare il titolo dello stream.
+	[Stato]: dio merda.
+
+8) Aggiungere un comando per settare il gioco dello stream.
+	[Stato]: dio merda.
