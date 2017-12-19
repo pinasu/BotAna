@@ -1,4 +1,4 @@
-import socket, time, json, requests, datetime, command, os, traceback, subprocess, random, csv, pygame, threading
+import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading
 import pythoncom
 import win32com.client as wincl
 from pygame import mixer
@@ -116,11 +116,12 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            self.BOT_OAUTH = self.get_bot_oauth()
-            self.NICK = self.get_nick()
+            path = 'config.ini'
+            self.BOT_OAUTH = self.get_bot_oauth(path)
+            self.NICK = self.get_nick(path)
             self.CHAN = "#"+self.NICK
-            self.CLIENT_ID = self.get_clientID()
-            self.USER_ID = self.get_userID()
+            self.CLIENT_ID = self.get_clientID(path)
+            self.USER_ID = self.get_userID(path)
 
             self.load_commands()
             self.load_sounds()
@@ -140,17 +141,13 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
-            threading.Thread(target=self.check_spam, args=()).start()
-
-            threading.Thread(target=self.check_emoteonly, args=()).start()
-
             while True:
                 self.lock.acquire()
                 tmponline = self.online
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -185,6 +182,8 @@ class BotAna(QtCore.QThread):
                 elif tmponline["stream"]["stream_type"] == "live":
                     if self.state_string != "live":
                         self.state_string = "live"
+                        threading.Thread(target=self.check_spam, args=()).start()
+                        threading.Thread(target=self.check_emoteonly, args=()).start()
 
                     if self.vodded:
                         self.vodded = []
@@ -298,29 +297,49 @@ class BotAna(QtCore.QThread):
             self.lock.release()
             time.sleep(10)
 
-    def read_config_file(self, path):
+    def get_userID(self, path):
         if os.path.exists(path):
             try:
-                with open(path,"r") as f:
-                    tmp = f.read()
-                    self.print_message(path + " was read correctly.")
-                    return tmp
+                config = configparser.ConfigParser()
+                config.read(path)
+                return config['DEFAULT']['user_id']
             except:
-                self.print_message("Error opening " + path + "\n")
-            else:
-                self.print_message("Error reading " + path + "\n")
+                    self.print_message("Error opening " + path + "\n")
+        else:
+            self.print_message("Error reading " + path + "\n")
 
-    def get_userID(self):
-        return self.read_config_file("userID.txt")
+    def get_bot_oauth(self, path):
+        if os.path.exists(path):
+            try:
+                config = configparser.ConfigParser()
+                config.read(path)
+                return config['DEFAULT']['bot_oauth']
+            except:
+                    self.print_message("Error opening " + path + "\n")
+        else:
+            self.print_message("Error reading " + path + "\n")
 
-    def get_bot_oauth(self):
-        return self.read_config_file("bot_OAuth.txt")
+    def get_nick(self, path):
+        if os.path.exists(path):
+            try:
+                config = configparser.ConfigParser()
+                config.read(path)
+                return config['DEFAULT']['nick']
+            except:
+                    self.print_message("Error opening " + path + "\n")
+        else:
+            self.print_message("Error reading " + path + "\n")
 
-    def get_nick(self):
-        return self.read_config_file("username.txt")
-
-    def get_clientID(self):
-        return self.read_config_file("clientID.txt")
+    def get_clientID(self, path):
+        if os.path.exists(path):
+            try:
+                config = configparser.ConfigParser()
+                config.read(path)
+                return config['DEFAULT']['client_id']
+            except:
+                    self.print_message("Error opening " + path + "\n")
+        else:
+            self.print_message("Error reading " + path + "\n")
 
     def print_message(self, msg):
         print(msg)

@@ -1,4 +1,4 @@
-***********************************************************************************************************************************
+﻿***********************************************************************************************************************************
 -----------------------------------------------------------------------------------------------------------------------------------
         Problems to FIX:
 -----------------------------------------------------------------------------------------------------------------------------------
@@ -6,14 +6,13 @@
 ***********************************************************************************************************************************
         TO DO AS SOON AS POSSIBLE
 -----------------------------------------------------------------------------------------------------------------------------------
-1) Leggere i dati della configurazione da un file solo (botOauth, clientID, username, clientsecret)
-2) Fixare una volta per tutte la lettura del file commands.csv e controllare che quotes.csv e sounds.csv
-3) Aggiungere i punti: per ogni minuto passato nel canale si guadagna 1 punto (da definire), per ogni citazione e comando vocale si spendono punti
-4) Aggiungere le frasi da spammare a un file, così che Ale possa gestirle (comandi !addspam e !removespam)
-5) Fix l'errore di Twitch che restituisce errore su -key: "stream"- (forse fatto)
+1) Fixare una volta per tutte la lettura del file commands.csv e controllare che quotes.csv e sounds.csv
+2) Aggiungere i punti: per ogni minuto passato nel canale si guadagna 1 punto (da definire), per ogni citazione e comando vocale si spendono punti
+3) Aggiungere le frasi da spammare a un file, così che Ale possa gestirle (comandi !addspam e !removespam)
+4) Fix l'errore di Twitch che restituisce errore su -key: "stream"- (forse fatto)
 -----------------------------------------------------------------------------------------------------------------------------------
 
-6) Bottoni che richiamano addcommand, addsount, addspam etc
+5) Bottoni che richiamano addcommand, addsount, addspam etc
 
 ***********************************************************************************************************************************
 -----------------------------------------------------------------------------------------------------------------------------------
