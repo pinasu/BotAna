@@ -109,10 +109,10 @@ class BotAna(QtCore.QThread):
         try:
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
-            self.NICK = self.get_nick(path, config)
+            self.NICK = self.get_nick('config.ini', config)
             self.CHAN = "#"+self.NICK
-            self.CLIENT_ID = self.get_clientID(path, config)
-            self.USER_ID = self.get_userID(path, config)
+            self.CLIENT_ID = self.get_clientID('config.ini', config)
+            self.USER_ID = self.get_userID('config.ini', config)
 
             self.load_commands()
             self.load_sounds()
