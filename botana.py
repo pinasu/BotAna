@@ -467,7 +467,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!addsound":
             tmp = self.arguments.split(' ')
             if not tmp[0].startswith('!'):
-                self.send_message("Errore. Il suono deve essre un comando (deve avere ! davanti).")
+                self.send_message("Errore. Il suono deve essere un comando (deve avere ! davanti).")
                 return
 
             elif len(tmp) < 1 or len(tmp) > 1:
