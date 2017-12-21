@@ -130,7 +130,7 @@ class Window(QtWidgets.QWidget):
 		self.afkBtn.setIconSize(QtCore.QSize(40,40))
 		self.afkBtn.setCursor (Qt.PointingHandCursor)
 		self.afkBtn.setProperty('class','button gridButton')
-		self.afkBtn.setToolTip("Modifica titolo stream")
+		self.afkBtn.setToolTip("Modifica titolo dello stream")
 
 		g_box = QtWidgets.QGridLayout()
 		g_box.addWidget(self.greenScreenButton, 0 , 0)

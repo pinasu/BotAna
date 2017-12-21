@@ -205,7 +205,7 @@ class BotAna(QtCore.QThread):
                                 if sum(1 for c in self.message if c.isupper()) > 15:
                                     self.check_ban()
 
-                                if set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
+                                elif set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
                                     if self.username not in self.greeted and self.username not in self.mods:
                                         self.greeted.append(self.username)
                                         self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
@@ -669,6 +669,15 @@ class BotAna(QtCore.QThread):
                 else:
                     self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
+    def get_today_stats(self):
+        URL = "https://fortnitetracker.com/profile/pc/alessiana"
+        resp = requests.get(URL)
+        matches_data = json.loads(self.find(resp.text, 'var Matches = ', ';</script>'))
+        wins = matches_data[0]['Top1']
+        killed = matches_data[0]['Kills']
+        matches = matches_data[0]['Matches']
+        self.send_message(str(wins)+" vittorie oggi ("+str(matches)+" partite), "+str(killed)+" buidiulo ammazzati LUL")
+
     def find(self, s, first, last):
         start = s.index(first) + len(first)
         end = s.index(last, start)
@@ -745,6 +754,10 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
+
+        elif self.message == "!winsoggi" and not self.is_in_timeout("!winsoggi") and self.is_for_current_game(self.commandsPleb["!winsoggi"]):
+            self.add_in_timeout("!winsoggi")
+            threading.Thread(target=self.get_today_stats, args=()).start()
 
         elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
             threading.Thread(target=self.get_patch, args=()).start()
