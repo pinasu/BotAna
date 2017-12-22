@@ -751,7 +751,7 @@ class BotAna(QtCore.QThread):
                 elif '%20'.join(args[:-1]).lower() == "pinasu":
                     self.send_message("Questa informazione è classificata. :gun: DatSheffy ")
                 else:
-                    threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
+                    threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
 
