@@ -745,18 +745,18 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
+
                 if '%20'.join(args[:-1]).lower() == "zizory":
                     self.send_message("E' inutile vedere le mie stat, sono troppo scarsa StoneLightning ")
-                    return
                 elif '%20'.join(args[:-1]).lower() == "pinasu":
                     self.send_message("Questa informazione è classificata. :gun: DatSheffy ")
-                    return
-                threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
+                else:
+                    threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1],)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
 
-        elif self.message == "!winsoggi" and not self.is_in_timeout("!winsoggi") and self.is_for_current_game(self.commandsPleb["!winsoggi"]):
-            self.add_in_timeout("!winsoggi")
+        elif self.message == "!winoggi" and not self.is_in_timeout("!winoggi") and self.is_for_current_game(self.commandsPleb["!winoggi"]):
+            self.add_in_timeout("!winoggi")
             threading.Thread(target=self.get_today_stats, args=()).start()
 
         elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
