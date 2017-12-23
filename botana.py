@@ -1,6 +1,9 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading
 import pythoncom
 import win32com.client as wincl
+
+from bs4 import BeautifulSoup
+
 from pygame import mixer
 from random import randint
 from command import Command
@@ -138,7 +141,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -171,6 +174,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         threading.Thread(target=self.check_spam, args=()).start()
@@ -670,13 +675,18 @@ class BotAna(QtCore.QThread):
                     self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
     def get_today_stats(self):
-        URL = "https://fortnitetracker.com/profile/pc/alessiana"
-        resp = requests.get(URL)
-        matches_data = json.loads(self.find(resp.text, 'var Matches = ', ';</script>'))
-        wins = matches_data[0]['Top1']
-        killed = matches_data[0]['Kills']
-        matches = matches_data[0]['Matches']
-        self.send_message(str(wins)+" vittorie oggi ("+str(matches)+" partite), "+str(killed)+" buidiulo ammazzati LUL")
+        resp = requests.get('https://www.stormshield.one/pvp/stats/alessiana')
+        soup = BeautifulSoup(resp.text, "lxml")
+        table = soup.find("table", attrs={"class":"table"})
+
+        tst = table.find("tr")
+        if tst:
+            headings = [th.get_text() for th in tst.find_all("th")]
+            for row in table.find_all("tr")[0:1]:
+                values = [td.get_text() for td in row.find_all("td")]
+            self.send_message(values[1]+" partite oggi, "+values[2]+" vincite e "+values[3]+" buidiulo uccisi LUL")
+        else:
+            self.send_message("Alessiana oggi non ha ancora giocato FeelsBadMan ")
 
     def find(self, s, first, last):
         start = s.index(first) + len(first)
