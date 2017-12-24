@@ -1,9 +1,7 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading
 import pythoncom
 import win32com.client as wincl
-
 from bs4 import BeautifulSoup
-
 from pygame import mixer
 from random import randint
 from command import Command
@@ -60,7 +58,7 @@ class BotAna(QtCore.QThread):
                         "Non ci contare LUL",
                         "Le mie fonti dicono di no FeelsBadMan",
                         "Diciamo che le prospettive non sono per niente buone :/",
-                        "Molto... Molto... improbabile haHAA"
+                        "Molto... Molto... improbabile haHAA",
                         "Ma proprio no LUL"
                         ]
 
@@ -141,7 +139,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                '''
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -174,8 +172,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                '''
-                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         threading.Thread(target=self.check_spam, args=()).start()
