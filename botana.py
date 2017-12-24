@@ -139,7 +139,6 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -992,8 +991,7 @@ class BotAna(QtCore.QThread):
             self.print_message("Error getting stream title.")
             return
         curr_game = resp["game"]
-
-        if command.get_game() == curr_game:
+        if command.get_game().lower() == curr_game.lower():
             return True
         return False
 
