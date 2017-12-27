@@ -139,6 +139,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -171,6 +172,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.state_string = "live"
                         threading.Thread(target=self.check_spam, args=()).start()
@@ -349,8 +352,8 @@ class BotAna(QtCore.QThread):
             self.print_message("Error reading " + path + "\n")
 
     def print_message(self, msg):
-        print(msg)
-        self.sign.emit(time.strftime("%H:%M  ")+msg)
+        print(str(msg))
+        self.sign.emit(time.strftime("%H:%M  ")+str(msg))
 
     def show_image(self, path):
         self.sign2.emit(path)
@@ -670,18 +673,24 @@ class BotAna(QtCore.QThread):
                     self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
     def get_today_stats(self):
-        resp = requests.get('https://www.stormshield.one/pvp/stats/alessiana')
-        soup = BeautifulSoup(resp.text, "lxml")
-        table = soup.find("table", attrs={"class":"table"})
+        URL = "https://fortnitetracker.com/profile/pc/alessiana"
+        wins = 0
+        matches = 0
+        kills = 0
+        try:
+            resp = requests.get(URL)
+            data = json.loads(self.find(resp.text, 'var Matches = ', ';</script>'))
+            today = time.strftime("20%y-%m-%d")
+            for match in data:
+                if today == (match['DateCollected']).split('T')[0]:
+                    wins += match['Top1']
+                    matches += match['Matches']
+                    kills += match['Kills']
 
-        tst = table.find("tr")
-        if tst:
-            headings = [th.get_text() for th in tst.find_all("th")]
-            for row in table.find_all("tr")[0:1]:
-                values = [td.get_text() for td in row.find_all("td")]
-            self.send_message(values[1]+" partite oggi, "+values[2]+" vincite e "+values[3]+" buidiulo uccisi LUL")
-        else:
-            self.send_message("Alessiana oggi non ha ancora giocato FeelsBadMan ")
+            self.send_message(str(matches)+" partite oggi, "+str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
+        except:
+            self.send_message("Non riesco ad accedere ai dati, forse Alessiana non ha ancora giocato oggi FeelsBadMan")
+
 
     def find(self, s, first, last):
         start = s.index(first) + len(first)
