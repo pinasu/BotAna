@@ -770,8 +770,11 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
 
         elif self.message == "!winoggi" and not self.is_in_timeout("!winoggi") and self.is_for_current_game(self.commandsPleb["!winoggi"]):
-            self.add_in_timeout("!winoggi")
-            threading.Thread(target=self.get_today_stats, args=()).start()
+            if self.arguments:
+                self.send_message("Mi dispiace, questo comando è solo per il Papà della FamigliANA FeelsGoodMan ")
+            else:
+                self.add_in_timeout("!winoggi")
+                threading.Thread(target=self.get_today_stats, args=()).start()
 
         elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
             threading.Thread(target=self.get_patch, args=()).start()
