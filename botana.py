@@ -686,11 +686,20 @@ class BotAna(QtCore.QThread):
                     wins += match['Top1']
                     matches += match['Matches']
                     kills += match['Kills']
-
-            self.send_message(str(matches)+" partite oggi, "+str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
+            if matches == 0:
+                self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
+            else:
+                self.send_message(str(matches)+" partite oggi, "+str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
         except:
-            self.send_message("Non riesco ad accedere ai dati, forse Alessiana non ha ancora giocato oggi FeelsBadMan")
+            self.send_message("Non riesco ad accedere ai dati FeelsBadMan")
 
+    def get_random_barza(self):
+        URL = "http://www.barzellette.net/"
+        resp = requests.get(URL)
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        pythoncom.CoInitialize()
+        speak = wincl.Dispatch("SAPI.SpVoice")
+        speak.Speak(soup.find(title="Clicca per spedire questa Barzelletta").get_text())
 
     def find(self, s, first, last):
         start = s.index(first) + len(first)
@@ -748,6 +757,7 @@ class BotAna(QtCore.QThread):
 
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
+            self.add_in_timeout("!cit")
             if self.arguments:
                 if self.arguments.isdigit():
                     self.get_quote(self.arguments)
@@ -755,6 +765,9 @@ class BotAna(QtCore.QThread):
                     self.add_quote(self.arguments)
             else:
                 self.get_rand_quote()
+
+        elif self.message == "!barza" and not self.is_in_timeout("!barza"):
+            threading.Thread(target=self.get_random_barza, args=()).start()
 
         elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
