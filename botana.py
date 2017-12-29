@@ -715,7 +715,7 @@ class BotAna(QtCore.QThread):
         q = self.quotes[rand]
         self.send_message("#"+str(str(q.get_index()))+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date()))
         if time.time() - self.text_to_speech > 20:
-            if str(q.get_author()).split(' ') > 1:
+            if len(str(q.get_author()).split(' ')) > 1:
                 threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
             else:
                 threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
@@ -727,7 +727,12 @@ class BotAna(QtCore.QThread):
             q = self.quotes[int(args)-1]
             self.send_message("#"+str(q.get_index())+": ''"+str(q.get_quote())+" '' - "+q.get_author()+" "+str(q.get_date()))
             if time.time() - self.text_to_speech > 20:
-                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+                if len(str(q.get_author()).split(' ')) > 1:
+                    self.print_message(len(str(q.get_author()).split(' ')))
+                    threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
+                else:
+                    self.print_message(len(str(q.get_author()).split(' ')))
+                    threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def add_quote(self, args):
         args = str(args)
