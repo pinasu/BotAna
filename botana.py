@@ -139,7 +139,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.state_string = "offline"
@@ -640,7 +640,12 @@ class BotAna(QtCore.QThread):
             if '%20' in user:
                 user = user.replace('%20', ' ')
             try:
-                resp = requests.get(URL)
+                try:
+                    resp = requests.get(URL, timeout=10)
+                except requests.exceptions.Timeout:
+                    self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
+                    return
+
                 lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
                 wins = lifetime_stats[7]['Value']
@@ -660,7 +665,12 @@ class BotAna(QtCore.QThread):
         matches = 0
         kills = 0
         try:
-            resp = requests.get(URL)
+            try:
+                resp = requests.get(URL)
+            except requests.exceptions.Timeout:
+                self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
+                return
+
             data = json.loads(self.find(resp.text, 'var Matches = ', ';</script>'))
             today = time.strftime("20%y-%m-%d")
             for match in data:
