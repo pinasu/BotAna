@@ -203,7 +203,7 @@ class BotAna(QtCore.QThread):
 
                                 self.print_message(self.username+": "+self.message)
 
-                                if sum(1 for c in self.message if c.isupper()) > 15:
+                                if sum(1 for c in self.message if c.isupper()) > 15 and (self.message not in self.commandsMod.keys() and self.username not in self.mods):
                                     self.check_ban()
 
                                 elif set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
@@ -216,7 +216,6 @@ class BotAna(QtCore.QThread):
 
                                     self.message = message_list[0]
                                     self.arguments = ' '.join(message_list[1:])
-
                                     if self.message in self.commandsMod.keys() and self.username in self.mods:
                                         self.call_command_mod()
                                     else:
@@ -444,7 +443,7 @@ class BotAna(QtCore.QThread):
 
     def call_command_mod(self):
         raffled = ""
-
+        print("dio caro: " + self.message)
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
