@@ -175,7 +175,6 @@ class BotAna(QtCore.QThread):
                     if self.state_string != "live":
                         self.state_string = "live"
                         threading.Thread(target=self.check_spam, args=()).start()
-                        threading.Thread(target=self.check_emoteonly, args=()).start()
 
                     if self.vodded:
                         self.vodded = []
@@ -250,20 +249,6 @@ class BotAna(QtCore.QThread):
         self.previous_game = j["game"]
         self.send_message("!title AFK")
         self.send_message("!game IRL")
-
-    def check_emoteonly(self):
-        tempo = time.time()
-        while True:
-            if time.time() - tempo > 3600 and self.msg_count >= 10:
-                emote = randint(1, 10)
-                if emote > 5:
-                    tempo = time.time()
-                    self.send_message("Buon divertimento haHAA")
-                    time.sleep(1)
-                    self.send_message("/emoteonly")
-                    time.sleep(60)
-                    self.send_message("/emoteonlyoff")
-            time.sleep(1/self.RATE)
 
     def in_game(self):
         self.send_message("!title " + self.previous_title)
