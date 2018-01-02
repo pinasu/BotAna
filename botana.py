@@ -142,7 +142,7 @@ class BotAna(QtCore.QThread):
 
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     self.print_message(self.NICK+" is offline.")
-                    
+
                     if self.state_string != "offline":
                         self.state_string = "offline"
 
@@ -647,7 +647,7 @@ class BotAna(QtCore.QThread):
                 user = user.replace('%20', ' ')
             try:
                 try:
-                    resp = requests.get(URL, timeout=10)
+                    resp = requests.get(URL, timeout=3)
                 except requests.exceptions.Timeout:
                     self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
                     return
