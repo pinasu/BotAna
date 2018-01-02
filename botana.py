@@ -141,9 +141,9 @@ class BotAna(QtCore.QThread):
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
-                    self.print_message(self.NICK+" is offline.")
 
                     if self.state_string != "offline":
+                        self.print_message(self.NICK+" is offline.")
                         self.state_string = "offline"
 
                     if self.vodded:
@@ -154,10 +154,10 @@ class BotAna(QtCore.QThread):
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
                 elif tmponline["stream"]["stream_type"] == "watch_party":
-                    self.print_message(self.NICK+" is in a vodcast.")
-
                     if self.state_string != "vodcast":
+                        self.print_message(self.NICK+" is in a vodcast.")
                         self.state_string = "vodcast"
+
                     if rec:
                         for line in rec:
                             if "PING" in line:
@@ -176,9 +176,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                    self.print_message(self.NICK+" is online.")
-
                     if self.state_string != "live":
+                        self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
 
                     if self.vodded:
