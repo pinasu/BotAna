@@ -206,7 +206,7 @@ class BotAna(QtCore.QThread):
 
                                 self.print_message(self.username+": "+self.message)
 
-                                elif set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
+                                if set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
                                     if self.username not in self.greeted and self.username not in self.mods:
                                         self.greeted.append(self.username)
                                         self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
