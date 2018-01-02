@@ -180,7 +180,6 @@ class BotAna(QtCore.QThread):
 
                     if self.state_string != "live":
                         self.state_string = "live"
-                        threading.Thread(target=self.check_spam, args=()).start()
 
                     if self.vodded:
                         self.vodded = []
@@ -352,24 +351,6 @@ class BotAna(QtCore.QThread):
 
     def send_whisper(self, message):
         self.sock.send(bytes("PRIVMSG #botana__ :/w "+self.username+" "+message+"\r\n", "UTF-8"))
-
-    def check_ban(self):
-        if self.username not in self.mods:
-            if self.username == self.to_ban:
-                self.send_message("/timeout "+self.username+" 5")
-                self.to_ban = ""
-            else:
-                self.to_ban = self.username
-                self.send_message(self.username+", hai davvero bisogno di tutti quei caps? <warning>")
-                threading.Thread(target=self.restart_toban, args=()).start()
-
-    def restart_toban(self):
-        tempo = time.time()
-        while True:
-            if time.time() - tempo > 10:
-                self.to_ban = ""
-                return;
-            time.sleep(1/self.RATE)
 
     def check_spam(self):
         tempo = time.time()
@@ -654,11 +635,10 @@ class BotAna(QtCore.QThread):
 
                 lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                wins = lifetime_stats[7]['Value']
                 solo = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
                 duo = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
                 squad = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
-                self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" ("+wins+" partite) KappaPride ")
+                self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
             except ValueError:
                 if platform == "ps4" or platform == "xbox":
                     self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
@@ -715,10 +695,7 @@ class BotAna(QtCore.QThread):
         q = self.quotes[rand]
         self.send_message("#"+str(str(q.get_index()))+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date()))
         if time.time() - self.text_to_speech > 20:
-            if len(str(q.get_author()).split(' ')) > 1:
-                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
-            else:
-                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+            threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
