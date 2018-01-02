@@ -206,9 +206,6 @@ class BotAna(QtCore.QThread):
 
                                 self.print_message(self.username+": "+self.message)
 
-                                if sum(1 for c in self.message if c.isupper()) > 15 and (self.message not in self.commandsMod.keys() and self.username not in self.mods):
-                                    self.check_ban()
-
                                 elif set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
                                     if self.username not in self.greeted and self.username not in self.mods:
                                         self.greeted.append(self.username)
