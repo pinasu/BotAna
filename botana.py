@@ -411,7 +411,6 @@ class BotAna(QtCore.QThread):
 
     def call_command_mod(self):
         raffled = ""
-        print("dio caro: " + self.message)
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
@@ -449,11 +448,10 @@ class BotAna(QtCore.QThread):
                 self.send_message("Non ci sono persone da scegliere BibleThump")
 
         elif self.message == "!comandi":
-            self.send_message(self.username+", i tuoi comandi sono " + str(set(self.commandsPleb.keys())))
-            self.send_whisper(self.username+", essendo un mod hai anche: " + str(set(self.commandsMod.keys())))
+            self.send_message(self.username+", la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp")
 
         elif self.message == "!suoni":
-            self.get_sounds()
+            self.send_message(self.username+", la lista dei suoni è su https://pinasu.github.io/BotAna/")
 
         elif self.message == "!newpatch":
             threading.Thread(target=self.set_patch, args=(self.arguments,)).start()
@@ -663,7 +661,7 @@ class BotAna(QtCore.QThread):
             if matches == 0:
                 self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
             else:
-                self.send_message(str(matches)+" partite oggi, "+str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
+                self.send_message(str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
         except:
             self.send_message("Non riesco ad accedere ai dati FeelsBadMan")
 
@@ -851,10 +849,10 @@ class BotAna(QtCore.QThread):
                 self.send_message(self.username+" non posso bandire il nulla,  stupido babbuino LUL")
 
         elif self.message == "!comandi" and not self.is_in_timeout("!comandi"):
-            self.send_message(str(set(self.commandsPleb.keys())))
+            self.send_message(self.username+", la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp")
 
         elif self.message == "!suoni" and not self.is_in_timeout("!suoni"):
-            self.get_sounds()
+            self.send_message(self.username+", la lista dei suoni è su https://pinasu.github.io/BotAna/ PogChamp")
 
         elif self.message == "!energia":
             if self.arguments:
@@ -862,9 +860,9 @@ class BotAna(QtCore.QThread):
                 if len(args) > 1:
                     self.send_message("Mi dispiace "+self.username+", ma puoi donare la tua energia a una sola persona FeelsBadMan")
                 else:
-                    self.send_message("༼ つ ◕_◕ ༽つ "+str(args[0])+" prendi la mia energia ༼ つ ◕_◕ ༽つ")
+                    self.send_message("༼ つ ◕_◕ ༽つ "+str(args[0])+" PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ")
             else:
-                self.send_message("༼ つ ◕_◕ ༽つ Alessiana prendi la mia energia ༼ つ ◕_◕ ༽つ")
+                self.send_message("༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ")
         else:
             for com in self.commandsPleb.values():
                 if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
@@ -948,9 +946,6 @@ class BotAna(QtCore.QThread):
                 else:
                     current = Sound(row[0])
                 self.sounds[row[0]] = current
-
-    def get_sounds(self):
-        self.send_message(self.username+", i suoni disponibili sono: "+str(set(self.sounds.keys())))
 
     def call_image(self, name):
         for img in self.images.values():
