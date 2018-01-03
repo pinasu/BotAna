@@ -23,12 +23,12 @@
       <td>0</td>
     </tr>
     <tr>
-      <td>!energia  [ ]/[nomeutente]</td>
+      <td>!energia []/[nomeutente]</td>
       <td>༼ つ ◕_◕ ༽つ ALESSIANA/[nomeutente] PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>!cit [numero]/ [ ]/[citazione]</td>
+      <td>!cit [numero]/[]/[citazione]</td>
       <td>Restituisce la citazione al numero specificato, una citazione random o aggiunge una nuova citazione</td>
       <td>0</td>
     </tr>
@@ -48,7 +48,7 @@
       <td>10</td>
     </tr>
     <tr>
-      <td>!love  [ ]/[nomeutente]</td>
+      <td>!love  []/[nomeutente]</td>
       <td>Quanto ami [un viewer random]/[nomeutente] da 1 a 100?</td>
       <td>10</td>
     </tr>
