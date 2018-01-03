@@ -6,7 +6,7 @@
 
 <div>
   <h2>Comandi</h2>
-  <table>
+  <table style="text-align: center">
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
