@@ -104,7 +104,7 @@ class BotAna(QtCore.QThread):
 
         self.text_to_speech = 0
 
-        self.youtube_count = 0
+        self.speak = None
 
     def run(self):
         try:
@@ -139,9 +139,8 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
-
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
                         self.state_string = "offline"
@@ -176,6 +175,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                    '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -414,6 +415,10 @@ class BotAna(QtCore.QThread):
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
+
+        elif self.message == "!stopbarza":
+            self.speak.Pause()
+            self.send_message("Killed haHAA")
 
         elif self.message == "!stop":
             self.send_message("HeyGuys")
@@ -669,9 +674,7 @@ class BotAna(QtCore.QThread):
         URL = "http://www.barzellette.net/"
         resp = requests.get(URL)
         soup = BeautifulSoup(resp.text, 'html.parser')
-        pythoncom.CoInitialize()
-        speak = wincl.Dispatch("SAPI.SpVoice")
-        speak.Speak(soup.find(title="Clicca per spedire questa Barzelletta").get_text())
+        self.speak_text(soup.find(title="Clicca per spedire questa Barzelletta").get_text())
 
     def find(self, s, first, last):
         start = s.index(first) + len(first)
@@ -681,8 +684,8 @@ class BotAna(QtCore.QThread):
     def speak_text(self, text):
         self.text_to_speech = time.time()
         pythoncom.CoInitialize()
-        speak = wincl.Dispatch("SAPI.SpVoice")
-        speak.Speak(text)
+        self.speak = wincl.Dispatch("SAPI.SpVoice")
+        self.speak.Speak(text)
 
     def get_rand_quote(self):
         rand = randint(0, len(self.quotes)-1)
