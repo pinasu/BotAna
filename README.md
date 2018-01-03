@@ -18,22 +18,22 @@
       <td>0</td>
     </tr>
     <tr>
-      <td>!wins -nomeutente-</td>
-      <td>Numero delle vincite a Fortnite in solo, duo e squad dell'utente</td>
+      <td>!wins "nomeutente"</td>
+      <td>Numero delle vincite a Fortnite in solo, duo e squad di "nomeutente"</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>!energia -nomeutente-</td>
-      <td>༼ つ ◕_◕ ༽つ -nomeutente- PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
+      <td>!energia "nomeutente"</td>
+      <td>༼ つ ◕_◕ ༽つ "nomeutente" PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>!cit -numero-/- -/-citazione-</td>
+      <td>!cit "numero"/" "/"citazione"</td>
       <td>Restituisce la citazione al numero specificato, una citazione random o aggiunge una nuova citazione</td>
       <td>0</td>
     </tr>
     <tr>
-      <td>!8ball -domanda-</td>
+      <td>!8ball "domanda"</td>
       <td>Domande scomode alle quali solo BotAna può rispondere</td>
       <td>10</td>
     </tr>
@@ -43,13 +43,13 @@
       <td>10</td>
     </tr>
     <tr>
-      <td>!ban -nomeutente- </td>
+      <td>!ban "nomeutente" </td>
       <td>Banna -nomeutente- dalla chat!</td>
       <td>10</td>
     </tr>
     <tr>
-      <td>!love -nomeutente-/- -</td>
-      <td>Quanto ami -nomeutente- da 1 a 100?</td>
+      <td>!love "nomeutente"/" "</td>
+      <td>Quanto ami "nomeutente"/un viewer random da 1 a 100?</td>
       <td>10</td>
     </tr>
     <tr>
@@ -83,7 +83,7 @@
       <td>20</td>
     </tr>
   <tr>
-    <td>!bttv;20;pleb</td>
+    <td>!bttv</td>
     <td>Se vedi messaggi del tipo anaLove , FeelsBadMan , monkaS o anaLUL e pensi che la gente sia impazzita, probabilmente non hai BetterTTV: https://goo.gl/hx75Jf 4Head</td>
     <td>20</td>
   </tr>
