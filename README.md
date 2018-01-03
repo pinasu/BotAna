@@ -93,11 +93,6 @@
       <td>20</td>
     </tr>
     <tr>
-      <td>!barza</td>
-      <td>BotAna ci legge una bella barzelletta</td>
-      <td>120</td>
-    </tr>
-    <tr>
       <td>!players</td>
       <td>Restituisce l'elenco dei viewers che vogliono giocare</td>
       <td>20</td>
@@ -126,6 +121,11 @@
     <td>!twitchmoments</td>
     <td>Alessiana è stato avvistato in questi video di Twitch Moment UNO: https://youtu.be/ATAUIyBUjdU?t=56s DUE: https://youtu.be/08wUZ1eSAQI?t=3m5s PogChamp</td>
     <td>20</td>
+  </tr>
+  <tr>
+    <td>!barza</td>
+    <td>BotAna ci legge una bella barzelletta</td>
+    <td>120</td>
   </tr>
   </table>
 </div>
