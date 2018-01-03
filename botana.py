@@ -863,9 +863,9 @@ class BotAna(QtCore.QThread):
                 if len(args) > 1:
                     self.send_message("Mi dispiace "+self.username+", ma puoi donare la tua energia a una sola persona FeelsBadMan")
                 else:
-                    self.send_message("༼ つ ◕_◕ ༽つ "+str(args[0])+" PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ")
+                    self.send_message("GivePLZ "+str(args[0])+" PRENDI LA MIA ENERGIA GivePLZ")
             else:
-                self.send_message("༼ つ ◕_◕ ༽つ ALESSIANA PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ")
+                self.send_message("GivePLZ ALESSIANA PRENDI LA MIA ENERGIA GivePLZ")
         else:
             for com in self.commandsPleb.values():
                 if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
