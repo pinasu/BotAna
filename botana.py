@@ -920,6 +920,10 @@ class BotAna(QtCore.QThread):
             self.word_in_timeout("omg")
             self.send_message("IT'S OVER 9000 9000Ana")
 
+        elif "mod" in message.lower() and not self.is_word_in_timeout("mod"):
+            self.word_in_timeout("mod")
+            self.send_message("Jebaited")
+
     def load_quotes(self):
         with open('quotes.csv', encoding='utf-8') as quotes:
             reader = csv.reader(quotes, delimiter=';', quotechar='|')
