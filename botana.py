@@ -34,7 +34,7 @@ class BotAna(QtCore.QThread):
 
         self.RATE = 20/30
 
-        self.mods = ["lusyoo", "boomtvmod", "botana__", "boxyes", "frankiethor", "gurzo06", "ilmarcana", "iltegame", "khaleesix90", "moobot", "nightbot", "pinasu", "revlobot", "stockazzobot", "stockhausen_l2p", "tubbablubbah", "urza2k", "vivbot", "xuneera"]
+        self.mods = ["boomtvmod", "botana__", "boxyes", "ilmarcana", "iltegame", "logviewer", "lusyoo", "moobot", "nightbot", "pinasu", "revlobot", "stockhausen_l2p", "vivbot"]
 
         self.to_ban = ""
 
@@ -105,6 +105,8 @@ class BotAna(QtCore.QThread):
         self.text_to_speech = 0
 
         self.speak = None
+
+        self.gged = dict()
 
     def run(self):
         try:
@@ -276,6 +278,15 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error finding " + path + "\n")
 
+    def get_follower_list(self, client_id):
+        #https://api.twitch.tv/kraken/channels/client_id/follows
+        try:
+            url = "https://api.twitch.tv/kraken/channels/"+client_id+"/follows"
+            resp = requests.get(url=url)
+            new_followers = json.loads(resp.text)
+        except:
+            return
+
     def add_spam_phrase(self, phrase):
         try:
             msg_spam.append(phrase)
@@ -416,7 +427,7 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!stopbarza":
             self.speak.Pause()
-            self.send_message("Killed haHAA")
+            self.send_message("Questa barza fa schifo HotPokket")
 
         elif self.message == "!stop":
             self.send_message("HeyGuys")
@@ -969,10 +980,18 @@ class BotAna(QtCore.QThread):
 
     def call_sound(self, name):
         if name[:1] == "!":
-                sname = name[1:]
+            sname = name[1:]
+
         if name == "!gg":
             self.sound_add_in_timeout(name)
-            self.play_sound(sname)
+
+            if self.username not in self.gged:
+                self.gged[self.username] = 0
+
+            if time.time() - self.gged[self.username] > 7:
+                self.play_sound(sname)
+                self.gged[self.username] = time.time()
+
         elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
             self.play_sound(sname)
 
@@ -989,6 +1008,7 @@ class BotAna(QtCore.QThread):
             self.print_message("Error getting stream title.")
             return
         curr_game = resp["game"]
+
         if command.get_game().lower() == curr_game.lower():
             return True
         return False
