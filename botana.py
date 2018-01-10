@@ -908,20 +908,20 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if "classic" in message.lower() and not self.is_word_in_timeout(" classic "):
-            self.word_in_timeout(" classic ")
+        if "classic " in message.lower() and not self.is_word_in_timeout("classic "):
+            self.word_in_timeout("classic ")
             self.send_message("CLASSIC LUL")
 
-        elif " anche io " in message.lower() and not self.is_word_in_timeout(" anche io "):
-            self.word_in_timeout(" anche io ")
+        elif "anche io " in message.lower() and not self.is_word_in_timeout("anche io "):
+            self.word_in_timeout("anche io ")
             self.send_message("Anche io KappaPride")
 
-        elif " omg " in message.lower() and not self.is_word_in_timeout(" omg "):
-            self.word_in_timeout(" omg ")
+        elif "omg " in message.lower() and not self.is_word_in_timeout("omg "):
+            self.word_in_timeout("omg ")
             self.send_message("IT'S OVER 9000 9000Ana")
 
-        elif " mod " in message.lower() and not self.is_word_in_timeout(" mod "):
-            self.word_in_timeout(" mod ")
+        elif "mod " in message.lower() and not self.is_word_in_timeout("mod "):
+            self.word_in_timeout("mod ")
             self.send_message("Jebaited")
 
     def load_quotes(self):
