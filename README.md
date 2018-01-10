@@ -138,7 +138,7 @@
   </tr>
   <tr>
     <td>!gg</td>
-    <td>0</td>
+    <td>7 per ogni utente</td>
   </tr>
   <tr>
     <td>!naisu</td>
