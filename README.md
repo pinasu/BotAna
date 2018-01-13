@@ -169,6 +169,10 @@
     <td>20</td>
   </tr>
   <tr>
+    <td>!boo</td>
+    <td>20</td>
+  </tr>
+  <tr>
     <td>!merda</td>
     <td>20</td>
   </tr>
