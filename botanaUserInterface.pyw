@@ -62,7 +62,7 @@ class Window(QtWidgets.QWidget):
 		super().__init__()
 		self.is_afk = False
 		self.init_ui()
-		self.secondWind = WindowTwo(self)
+		self.secondWind = None #WindowTwo(self)
 		self.move_center()
 		self.bot = BotAna()
 		self.bot.sign.connect(self.print_on_text_area)
@@ -212,7 +212,8 @@ class Window(QtWidgets.QWidget):
 		self.secondWind.show_image(path)
 
 	def closeEvent(self, event):
-		self.secondWind.close()
+		if self.secondWind:
+			self.secondWind.close()
 		event.accept()
 
 	def print_on_text_area(self, msg):
@@ -236,10 +237,14 @@ class Window(QtWidgets.QWidget):
 			self.secondWind.move(0,0)
 
 	def move_center(self):
-		width = ((QDesktopWidget().availableGeometry().width()/2) - (self.width()/2)) + self.secondWind.width()/2
+		tmp = 0
+		if self.secondWind:
+			tmp = self.secondWind.width()/2
+		width = ((QDesktopWidget().availableGeometry().width()/2) - (self.width()/2)) + tmp
 		height = (QDesktopWidget().availableGeometry().height()/2) - (self.height()/2)
 		self.move(width, height)
-		self.move_green_screen_wind()
+		if self.secondWind:
+			self.move_green_screen_wind()
 
 app = QtWidgets.QApplication(sys.argv)
 a_window = Window()
