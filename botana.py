@@ -141,7 +141,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -177,11 +177,11 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                    threading.Thread(target=self.check_spam, args=()).start()
 
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
+                        threading.Thread(target=self.check_spam, args=()).start()
 
                     if self.vodded:
                         self.vodded = []
@@ -345,6 +345,19 @@ class BotAna(QtCore.QThread):
                     self.print_message("Error opening " + path + "\n")
         else:
             self.print_message("Error reading " + path + "\n")
+
+    def get_loyalty_points(self):
+        URL = "https://streamlabs.com/api/v1.0/token"
+        data = {
+            'grant_type':'authorization_code',
+            'client_id':'FiX9lgKtirdJQl1iuvtOTI41rQWY1xNyNEpEOqNN',
+            'client_secret':'OZRdsW1zOKZAfst0RuczVDEQsdZop1FHqgwxk4l1',
+            'redirect_uri':'https://pinasu.github.io/BotAna/',
+            'code':'KLT90sXbh7XaLUffd2Sqrq9x4KGBPfDpkFHTBras'
+            }
+        resp = requests.post(URL, data=data)
+        resp_j = json.loads(resp.text)
+        print(resp_j)
 
     def print_message(self, msg):
         print(str(msg))
