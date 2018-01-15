@@ -280,15 +280,6 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error finding " + path + "\n")
 
-    def get_follower_list(self, client_id):
-        #https://api.twitch.tv/kraken/channels/client_id/follows
-        try:
-            url = "https://api.twitch.tv/kraken/channels/"+client_id+"/follows"
-            resp = requests.get(url=url)
-            new_followers = json.loads(resp.text)
-        except:
-            return
-
     def add_spam_phrase(self, phrase):
         try:
             msg_spam.append(phrase)
@@ -345,19 +336,6 @@ class BotAna(QtCore.QThread):
                     self.print_message("Error opening " + path + "\n")
         else:
             self.print_message("Error reading " + path + "\n")
-
-    def get_loyalty_points(self):
-        URL = "https://streamlabs.com/api/v1.0/token"
-        data = {
-            'grant_type':'authorization_code',
-            'client_id':'FiX9lgKtirdJQl1iuvtOTI41rQWY1xNyNEpEOqNN',
-            'client_secret':'OZRdsW1zOKZAfst0RuczVDEQsdZop1FHqgwxk4l1',
-            'redirect_uri':'https://pinasu.github.io/BotAna/',
-            'code':'KLT90sXbh7XaLUffd2Sqrq9x4KGBPfDpkFHTBras'
-            }
-        resp = requests.post(URL, data=data)
-        resp_j = json.loads(resp.text)
-        print(resp_j)
 
     def print_message(self, msg):
         print(str(msg))
@@ -715,8 +693,8 @@ class BotAna(QtCore.QThread):
         rand = randint(0, len(self.quotes)-1)
         q = self.quotes[rand]
         self.send_message("#"+str(str(q.get_index()))+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date()))
-        if time.time() - self.text_to_speech > 20:
-            threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+        #if time.time() - self.text_to_speech > 20:
+            #threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
@@ -724,13 +702,8 @@ class BotAna(QtCore.QThread):
         else:
             q = self.quotes[int(args)-1]
             self.send_message("#"+str(q.get_index())+": ''"+str(q.get_quote())+" '' - "+q.get_author()+" "+str(q.get_date()))
-            if time.time() - self.text_to_speech > 20:
-                if len(str(q.get_author()).split(' ')) > 1:
-                    self.print_message(len(str(q.get_author()).split(' ')))
-                    threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
-                else:
-                    self.print_message(len(str(q.get_author()).split(' ')))
-                    threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+            #if time.time() - self.text_to_speech > 20:
+                #threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def add_quote(self, args):
         args = str(args)
