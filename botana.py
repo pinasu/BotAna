@@ -1001,7 +1001,7 @@ class BotAna(QtCore.QThread):
             self.print_message("Error getting stream title.")
             return
         curr_game = resp["game"]
-        self.send_message(curr_game + " - " + self.CLIENT_ID)
+        self.send_message(curr_game + " - " + self.CLIENT_ID + " - " + user_id)
         if command.get_game().lower() == curr_game.lower():
             return True
         return False
