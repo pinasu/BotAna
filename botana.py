@@ -638,7 +638,11 @@ class BotAna(QtCore.QThread):
                 solo = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
                 duo = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
                 squad = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
-                self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+                if user == "Alessiana":
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+                else:
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
+
             except ValueError:
                 if platform == "ps4" or platform == "xbox":
                     self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
@@ -751,8 +755,6 @@ class BotAna(QtCore.QThread):
 
                 if '%20'.join(args[:-1]).lower() == "zizory":
                     self.send_message("E' inutile vedere le mie stat, sono troppo scarsa StoneLightning ")
-                elif '%20'.join(args[:-1]).lower() == "pinasu":
-                    self.send_message("Questa informazione è classificata. :gun: DatSheffy ")
                 else:
                     threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
