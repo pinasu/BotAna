@@ -141,7 +141,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -696,8 +696,8 @@ class BotAna(QtCore.QThread):
         rand = randint(0, len(self.quotes)-1)
         q = self.quotes[rand]
         self.send_message("#"+str(str(q.get_index()))+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date()))
-        #if time.time() - self.text_to_speech > 20:
-            #threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+        if time.time() - self.text_to_speech > 20:
+            threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
@@ -705,14 +705,14 @@ class BotAna(QtCore.QThread):
         else:
             q = self.quotes[int(args)-1]
             self.send_message("#"+str(q.get_index())+": ''"+str(q.get_quote())+" '' - "+q.get_author()+" "+str(q.get_date()))
-            #if time.time() - self.text_to_speech > 20:
-                #threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+            if time.time() - self.text_to_speech > 20:
+                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def add_quote(self, args):
         args = str(args)
         args = args.split('-')
         if len(args) != 2:
-            self.send_message("A questa citazione manca l'autore: aggiungilo alla fine dopo un trattino!")
+            self.send_message("A questa citazione manca l'autore: aggiungilo alla fine dopo un trattino! SeemsGood")
             return
 
         self.quotes.append(Quote(len(self.quotes)+1, args[0], args[1], time.strftime("[%d/%m/%Y]")))
@@ -723,7 +723,8 @@ class BotAna(QtCore.QThread):
             writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
             writer.writerow(fields)
 
-        self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes)))
+        self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes))+" FeelsAmazingMan")
+        self.get_quote(len(self.quotes))
 
     def get_patch(self):
         self.add_in_timeout("!patch")
