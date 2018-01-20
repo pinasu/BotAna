@@ -141,7 +141,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -641,7 +641,14 @@ class BotAna(QtCore.QThread):
                 if user == "Alessiana":
                     self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
                 else:
-                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
+                    if solo == "0":
+                        solo = "OMEGALUL"
+                    if duo == "0":
+                        duo = "OMEGALUL"
+                    if squad == "0":
+                        squad = "OMEGALUL"
+
+                    self.send_message("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
 
             except ValueError:
                 if platform == "ps4" or platform == "xbox":
