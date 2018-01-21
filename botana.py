@@ -133,6 +133,8 @@ class BotAna(QtCore.QThread):
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
+            self.check_new_follows("a")
+
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
             while True:
@@ -258,6 +260,23 @@ class BotAna(QtCore.QThread):
         self.send_message("!game " + self.previous_game)
         self.previous_title = ""
         self.previous_game = ""
+
+    def check_new_follows(self, old):
+        while True:
+            new = self.get_follower_list()
+            for x in new:
+                print(new['follows']['user']['_id'])
+
+            time.sleep(20)
+
+    def get_follower_list(self):
+        url = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/follows"
+        params = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID" : ""+self.CLIENT_ID+""
+        }
+        resp = requests.get(url=url, headers=params)
+        return json.loads(resp.text)
 
     def check_online(self):
         try:
