@@ -779,11 +779,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-
-                if '%20'.join(args[:-1]).lower() == "zizory":
-                    self.send_message("E' inutile vedere le mie stat, sono troppo scarsa StoneLightning ")
-                else:
-                    threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
+                threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
 
