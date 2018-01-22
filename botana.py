@@ -133,7 +133,7 @@ class BotAna(QtCore.QThread):
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
-            self.check_new_follows("a")
+            self.check_new_follows(self.get_follower_list())
 
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
@@ -264,9 +264,13 @@ class BotAna(QtCore.QThread):
     def check_new_follows(self, old):
         while True:
             new = self.get_follower_list()
-            for x in new:
-                print(new['follows']['user']['_id'])
-
+            #Faccio l'intersezione degli insiemi e per ogni elemento ringrazio del follow 
+            new_st = set(new)
+            old_st = set(old)
+            diff = new_st - old_st
+            for x in diff:
+                self.send_message(x['user']['name']+" ! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
+                old = new
             time.sleep(20)
 
     def get_follower_list(self):
@@ -276,7 +280,13 @@ class BotAna(QtCore.QThread):
             "Client-ID" : ""+self.CLIENT_ID+""
         }
         resp = requests.get(url=url, headers=params)
-        return json.loads(resp.text)
+        #Prendo la lista dei follower
+        lst = json.loads(resp.text)['follows']
+        #Creo una lista di ID dei follower, più facile da scorrere
+        id_lst = []
+        for l in lst:
+            id_lst.append(l['user']['_id'])
+        return id_lst
 
     def check_online(self):
         try:
@@ -920,20 +930,20 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if "classic " in message.lower() and not self.is_word_in_timeout("classic "):
-            self.word_in_timeout("classic ")
+        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
+            self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
-        elif "anche io " in message.lower() and not self.is_word_in_timeout("anche io "):
-            self.word_in_timeout("anche io ")
+        elif "anche io" in message.lower() and not self.is_word_in_timeout("anche io"):
+            self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
 
-        elif "omg " in message.lower() and not self.is_word_in_timeout("omg "):
-            self.word_in_timeout("omg ")
+        elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
+            self.word_in_timeout("omg")
             self.send_message("IT'S OVER 9000 9000Ana")
 
-        elif "mod " in message.lower() and not self.is_word_in_timeout("mod "):
-            self.word_in_timeout("mod ")
+        elif "mod" in message.lower() and not self.is_word_in_timeout("mod"):
+            self.word_in_timeout("mod")
             self.send_message("Jebaited")
 
     def load_quotes(self):
