@@ -108,6 +108,8 @@ class BotAna(QtCore.QThread):
 
         self.gged = dict()
 
+        self.is_muted = False
+
     def run(self):
         try:
             config = configparser.ConfigParser()
@@ -725,11 +727,20 @@ class BotAna(QtCore.QThread):
         end = s.index(last, start)
         return s[start:end]
 
+    def mute(self):
+        self.is_muted = True
+
+    def unmute(self):
+        self.is_muted = False
+
     def speak_text(self, text):
-        self.text_to_speech = time.time()
-        pythoncom.CoInitialize()
-        self.speak = wincl.Dispatch("SAPI.SpVoice")
-        self.speak.Speak(text)
+        if self.is_muted:
+            self.send_message("Botana non ha voglia di parlare adesso anaLUL")
+        else:
+            self.text_to_speech = time.time()
+            pythoncom.CoInitialize()
+            self.speak = wincl.Dispatch("SAPI.SpVoice")
+            self.speak.Speak(text)
 
     def get_rand_quote(self):
         rand = randint(0, len(self.quotes)-1)
@@ -995,17 +1006,20 @@ class BotAna(QtCore.QThread):
                 self.show_image(img.get_message())
 
     def play_sound(self, name):
-        pygame.mixer.pre_init(44100, 16, 2, 4096)
-        pygame.mixer.init()
+        if not self.is_muted:
+            pygame.mixer.pre_init(44100, 16, 2, 4096)
+            pygame.mixer.init()
 
-        sound = pygame.mixer.Sound("res/Sounds/" + name + ".wav")
+            sound = pygame.mixer.Sound("res/Sounds/" + name + ".wav")
 
-        sound.play(0)
-        clock = pygame.time.Clock()
-        clock.tick(10)
-        while pygame.mixer.music.get_busy():
-            pygame.event.poll()
+            sound.play(0)
+            clock = pygame.time.Clock()
             clock.tick(10)
+            while pygame.mixer.music.get_busy():
+                pygame.event.poll()
+                clock.tick(10)
+        else:
+            self.send_message("Shhhhhh silenzio!!!")
 
     def call_sound(self, name):
         if name[:1] == "!":

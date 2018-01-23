@@ -189,11 +189,11 @@ class Window(QtWidgets.QWidget):
 
 	def mute(self):
 		if self.is_muted:
-			#self.bot.unmute()
+			self.bot.unmute()
 			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOn.png'))
 			self.is_muted = False
 		else:
-			#self.bot.mute()
+			self.bot.mute()
 			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOff.png'))
 			self.is_muted = True
 
