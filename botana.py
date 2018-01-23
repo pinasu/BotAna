@@ -133,6 +133,8 @@ class BotAna(QtCore.QThread):
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
+            threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
+
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
             while True:
@@ -141,7 +143,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -177,6 +179,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -258,6 +262,32 @@ class BotAna(QtCore.QThread):
         self.send_message("!game " + self.previous_game)
         self.previous_title = ""
         self.previous_game = ""
+
+    def check_new_follows(self, old):
+        while True:
+            new = self.get_follower_list()
+            new_st = set(new)
+            old_st = set(old)
+            diff = new_st - old_st
+            for x in diff:
+                self.send_message(x+" ! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
+                old = new
+            time.sleep(15)
+
+    def get_follower_list(self):
+        url = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/follows?limit=100"
+        params = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID" : ""+self.CLIENT_ID+""
+        }
+        resp = requests.get(url=url, headers=params)
+        lst = json.loads(resp.text)['follows']
+        usr_lst = []
+        for l in lst:
+            usr_lst.append(l['user']['name'])
+        print(usr_lst)
+        print("TOTAL "+str(len(lst)))
+        return usr_lst
 
     def check_online(self):
         try:
@@ -635,11 +665,13 @@ class BotAna(QtCore.QThread):
 
                 lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                solo = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
-                duo = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
-                squad = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
+                solo = player_data['p2'][2]['value'] if "p2" in player_data else "N/A"
+                duo = player_data['p10'][2]['value'] if "p10" in player_data else "N/A"
+                squad = player_data['p9'][2]['value'] if "p9" in player_data else "N/A"
+                squad_a = player_data['p9'][3]['value'] if "p9" in player_data else "N/A"
+
                 if user == "Alessiana":
-                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad_a+" KappaPride ")
                 else:
                     if solo == "0":
                         solo = "OMEGALUL"
@@ -738,7 +770,7 @@ class BotAna(QtCore.QThread):
         try:
             file = open("patch.txt", "r")
             patch = file.read()
-            self.send_message(self.username+", ecco l'ulima patch di FortNite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
+            self.send_message(self.username+", ecco l'ulima patch di Fortnite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
             file.close()
         except:
             self.print_message("Error reading patch.txt")
@@ -757,7 +789,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
 
-        elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
+        elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
@@ -771,7 +803,7 @@ class BotAna(QtCore.QThread):
                 self.add_in_timeout("!winoggi")
                 threading.Thread(target=self.get_today_stats, args=()).start()
 
-        elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
+        elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!patch"]):
             threading.Thread(target=self.get_patch, args=()).start()
 
         elif self.message == "!play":
@@ -901,20 +933,20 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if "classic " in message.lower() and not self.is_word_in_timeout("classic "):
-            self.word_in_timeout("classic ")
+        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
+            self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
-        elif "anche io " in message.lower() and not self.is_word_in_timeout("anche io "):
-            self.word_in_timeout("anche io ")
+        elif "anche io" in message.lower() and not self.is_word_in_timeout("anche io"):
+            self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
 
-        elif "omg " in message.lower() and not self.is_word_in_timeout("omg "):
-            self.word_in_timeout("omg ")
+        elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
+            self.word_in_timeout("omg")
             self.send_message("IT'S OVER 9000 9000Ana")
 
-        elif "mod " in message.lower() and not self.is_word_in_timeout("mod "):
-            self.word_in_timeout("mod ")
+        elif "mod" in message.lower() and not self.is_word_in_timeout("mod"):
+            self.word_in_timeout("mod")
             self.send_message("Jebaited")
 
     def load_quotes(self):
@@ -999,10 +1031,13 @@ class BotAna(QtCore.QThread):
         user_id = self.USER_ID
         try:
             url = 'https://api.twitch.tv/kraken/channels/'+user_id
-            headers = {'Client-ID': self.CLIENT_ID, 'Accept': 'application/vnd.twitchtv.v5+json'}
+            headers = {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': self.CLIENT_ID
+            }
             resp = requests.get(url, headers=headers).json()
         except:
-            self.print_message("Error getting stream title.")
+            self.print_message("Error getting stream game.")
             return
         curr_game = resp["game"]
         if command.get_game().lower() == curr_game.lower():
