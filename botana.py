@@ -768,7 +768,7 @@ class BotAna(QtCore.QThread):
         try:
             file = open("patch.txt", "r")
             patch = file.read()
-            self.send_message(self.username+", ecco l'ulima patch di FortNite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
+            self.send_message(self.username+", ecco l'ulima patch di Fortnite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
             file.close()
         except:
             self.print_message("Error reading patch.txt")
@@ -801,7 +801,7 @@ class BotAna(QtCore.QThread):
                 self.add_in_timeout("!winoggi")
                 threading.Thread(target=self.get_today_stats, args=()).start()
 
-        elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!wins"]):
+        elif self.message == "!patch" and not self.is_in_timeout("!patch") and self.is_for_current_game(self.commandsPleb["!patch"]):
             threading.Thread(target=self.get_patch, args=()).start()
 
         elif self.message == "!play":
