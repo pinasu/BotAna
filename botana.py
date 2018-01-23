@@ -787,7 +787,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
 
-        elif self.message == "!wins" and not self.is_in_timeout("!wins") and self.is_for_current_game(self.commandsPleb["!wins"]):
+        elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
@@ -1029,10 +1029,13 @@ class BotAna(QtCore.QThread):
         user_id = self.USER_ID
         try:
             url = 'https://api.twitch.tv/kraken/channels/'+user_id
-            headers = {'Client-ID': self.CLIENT_ID, 'Accept': 'application/vnd.twitchtv.v5+json'}
+            headers = {
+                'Accept': 'application/vnd.twitchtv.v5+json',
+                'Client-ID': self.CLIENT_ID
+            }
             resp = requests.get(url, headers=headers).json()
         except:
-            self.print_message("Error getting stream title.")
+            self.print_message("Error getting stream game.")
             return
         curr_game = resp["game"]
         if command.get_game().lower() == curr_game.lower():
