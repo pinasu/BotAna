@@ -61,6 +61,7 @@ class Window(QtWidgets.QWidget):
 	def __init__(self):
 		super().__init__()
 		self.is_afk = False
+		self.is_muted = False
 		self.init_ui()
 		self.secondWind = None #WindowTwo(self)
 		self.move_center()
@@ -119,6 +120,7 @@ class Window(QtWidgets.QWidget):
 		self.testImageGreenScreen.setCursor (Qt.PointingHandCursor)
 		self.testImageGreenScreen.setProperty('class','button gridButton')
 		self.testImageGreenScreen.setToolTip("Mostra/Nascondi immagine di test del green screen")
+		self.testImageGreenScreen.setEnabled(False)
 		self.restartBtn = QtWidgets.QPushButton("")
 		self.restartBtn.setIcon(QtGui.QIcon('res/Gui/restart.png'))
 		self.restartBtn.setIconSize(QtCore.QSize(40,40))
@@ -131,13 +133,22 @@ class Window(QtWidgets.QWidget):
 		self.afkBtn.setCursor (Qt.PointingHandCursor)
 		self.afkBtn.setProperty('class','button gridButton')
 		self.afkBtn.setToolTip("Modifica titolo dello stream")
+		self.audioBtn = QtWidgets.QPushButton("")
+		self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOn.png'))
+		self.audioBtn.setIconSize(QtCore.QSize(40,40))
+		self.audioBtn.setCursor (Qt.PointingHandCursor)
+		self.audioBtn.setProperty('class','button gridButton')
+		self.audioBtn.setToolTip("Attiva/disattiva audio")
+
 
 		g_box = QtWidgets.QGridLayout()
 		g_box.addWidget(self.greenScreenButton, 0 , 0)
 		g_box.addWidget(self.testImageGreenScreen, 0 , 1)
 		g_box.addWidget(self.logErrorButton, 1 , 0)
 		g_box.addWidget(self.afkBtn, 1 , 1)
-		g_box.addWidget(self.restartBtn, 2 , 0, 2, 2)
+		g_box.addWidget(self.audioBtn, 2 , 0)
+		g_box.addWidget(self.restartBtn, 2 , 1)
+		#g_box.addWidget(self.restartBtn, 2 , 0, 2, 2)
 
 		v_box = QtWidgets.QVBoxLayout()
 		v_box.setContentsMargins(7,7,14,0)
@@ -169,11 +180,22 @@ class Window(QtWidgets.QWidget):
 		self.testImageGreenScreen.clicked.connect(self.trigger_test_image)
 		self.restartBtn.clicked.connect(self.restart)
 		self.afkBtn.clicked.connect(self.afk)
+		self.audioBtn.clicked.connect(self.mute)
 
 		self.show()
 
 	def restart(self):
 		self.bot.restart()
+
+	def mute(self):
+		if self.is_muted:
+			#self.bot.unmute()
+			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOn.png'))
+			self.is_muted = False
+		else:
+			#self.bot.mute()
+			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOff.png'))
+			self.is_muted = True
 
 	def afk(self):
 		if self.is_afk:
