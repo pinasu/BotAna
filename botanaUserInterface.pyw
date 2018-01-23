@@ -68,6 +68,7 @@ class Window(QtWidgets.QWidget):
 		self.bot = BotAna()
 		self.bot.sign.connect(self.print_on_text_area)
 		self.bot.sign2.connect(self.show_image)
+		self.bot.sign3.connect(self.set_mute)
 		self.bot.start()
 		self.activateWindow()
 
@@ -180,15 +181,15 @@ class Window(QtWidgets.QWidget):
 		self.testImageGreenScreen.clicked.connect(self.trigger_test_image)
 		self.restartBtn.clicked.connect(self.restart)
 		self.afkBtn.clicked.connect(self.afk)
-		self.audioBtn.clicked.connect(self.mute)
+		self.audioBtn.clicked.connect(self.trigger_mute)
 
 		self.show()
 
 	def restart(self):
 		self.bot.restart()
 
-	def mute(self):
-		if self.is_muted:
+	def set_mute(self, bo):
+		if not bo:
 			self.bot.unmute()
 			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOn.png'))
 			self.is_muted = False
@@ -196,6 +197,12 @@ class Window(QtWidgets.QWidget):
 			self.bot.mute()
 			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOff.png'))
 			self.is_muted = True
+
+	def trigger_mute(self):
+		if self.is_muted:
+			self.set_mute(False)
+		else:
+			self.set_mute(True)
 
 	def afk(self):
 		if self.is_afk:

@@ -14,6 +14,7 @@ from PyQt5.QtCore import pyqtSignal
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
     sign2 = pyqtSignal(str)
+    sign3 = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__()
@@ -584,6 +585,22 @@ class BotAna(QtCore.QThread):
                 subprocess.run("ren commands_bkp.csv commands.csv", shell=True)
                 self.send_message("Impossibile eliminare il comando " + self.arguments+" FeelsBadMan")
             subprocess.run("del commands_bkp.csv", shell=True)
+
+        elif self.message == "!mute":
+            self.is_muted = True
+            self.sign3.emit(True)
+            self.send_message("mutato")
+
+        elif self.message == "!unmute":
+            self.is_muted = False
+            self.sign3.emit(False)
+            self.send_message("smutato")
+
+        elif self.message == "!ismute":
+            if self.is_muted:
+                self.send_message("Botana è in silenzio")
+            else:
+                self.send_message("Botana ha voglia di urlare")
 
         else:
             for com in self.commandsMod.values():
