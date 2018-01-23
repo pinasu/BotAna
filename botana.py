@@ -133,7 +133,7 @@ class BotAna(QtCore.QThread):
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
-            self.check_new_follows(self.get_follower_list())
+            threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
             threading.Thread(target=self.check_online_cicle, args=()).start()
 
@@ -143,7 +143,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -179,6 +179,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -264,29 +266,28 @@ class BotAna(QtCore.QThread):
     def check_new_follows(self, old):
         while True:
             new = self.get_follower_list()
-            #Faccio l'intersezione degli insiemi e per ogni elemento ringrazio del follow 
             new_st = set(new)
             old_st = set(old)
             diff = new_st - old_st
             for x in diff:
-                self.send_message(x['user']['name']+" ! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
+                self.send_message(x+" ! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
                 old = new
-            time.sleep(20)
+            time.sleep(15)
 
     def get_follower_list(self):
-        url = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/follows"
+        url = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/follows?limit=100"
         params = {
             "Accept": "application/vnd.twitchtv.v5+json",
             "Client-ID" : ""+self.CLIENT_ID+""
         }
         resp = requests.get(url=url, headers=params)
-        #Prendo la lista dei follower
         lst = json.loads(resp.text)['follows']
-        #Creo una lista di ID dei follower, più facile da scorrere
-        id_lst = []
+        usr_lst = []
         for l in lst:
-            id_lst.append(l['user']['_id'])
-        return id_lst
+            usr_lst.append(l['user']['name'])
+        print(usr_lst)
+        print("TOTAL "+str(len(lst)))
+        return usr_lst
 
     def check_online(self):
         try:
