@@ -665,11 +665,13 @@ class BotAna(QtCore.QThread):
 
                 lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                solo = player_data['p2'][1]['value'] if "p2" in player_data else "N/A"
-                duo = player_data['p10'][1]['value'] if "p10" in player_data else "N/A"
-                squad = player_data['p9'][1]['value'] if "p9" in player_data else "N/A"
+                solo = player_data['p2'][2]['value'] if "p2" in player_data else "N/A"
+                duo = player_data['p10'][2]['value'] if "p10" in player_data else "N/A"
+                squad = player_data['p9'][2]['value'] if "p9" in player_data else "N/A"
+                squad_a = player_data['p9'][3]['value'] if "p9" in player_data else "N/A"
+
                 if user == "Alessiana":
-                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad_a+" KappaPride ")
                 else:
                     if solo == "0":
                         solo = "OMEGALUL"
