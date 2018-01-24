@@ -4,7 +4,7 @@
 2) Aggiungere le frasi da spammare a un file, così che Ale possa gestirle (comandi !addspam e !removespam), con GUI
 	[Stato]: aggiunte le frasi al file, aggiunto il comando !addspam e !removespam ma non sono ststi testati (non vengono richiamati).
 
-3) Fix l'errore di Twitch che restituisce errore su -key: "stream"- (forse fatto)
+3) Fix l'errore di Twitch che restituisce errore su -key: "stream"
 	[Stato]: ho aggiunto un try/except che dovrebbe risolvere l'errore, ma ogni tanto si ripresenta a caso.
 	
 4) Aggiungere il comando per settare il titolo dello stream.
@@ -12,6 +12,3 @@
 
 5) Aggiungere un comando per settare il gioco dello stream.
 	[Stato]: eh
-	
-6) Aggiungere una checkbox alla GUI per disattivare la voce di BotAna.	
-	[Stato]: lo farò asap.
