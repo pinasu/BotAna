@@ -249,15 +249,18 @@ class BotAna(QtCore.QThread):
         self.wait()
 
     def afk(self):
-        url = "https://api.twitch.tv/kraken/channels/"+self.NICK+""
-        params = {"Client-ID" : ""+self.CLIENT_ID+""}
-        resp = requests.get(url=url, headers=params)
-        j = json.loads(resp.text)
-        self.previous_title = j["status"]
-        self.previous_game = j["game"]
-        self.send_message("!title AFK")
-        self.send_message("!game IRL")
-
+        try:
+            url = "https://api.twitch.tv/kraken/channels/"+self.NICK+""
+            params = {"Client-ID" : ""+self.CLIENT_ID+""}
+            resp = requests.get(url=url, headers=params)
+            j = json.loads(resp.text)
+            self.previous_title = j["status"]
+            self.previous_game = j["game"]
+            self.send_message("!title AFK")
+            self.send_message("!game IRL")
+        except:
+            return
+        
     def in_game(self):
         self.send_message("!title " + self.previous_title)
         self.send_message("!game " + self.previous_game)
@@ -273,23 +276,24 @@ class BotAna(QtCore.QThread):
             for x in diff:
                 self.send_message(x+" ! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
                 old = new
-            time.sleep(15)
+            time.sleep(10)
 
     def get_follower_list(self):
-        url = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/follows?limit=100"
-        params = {
-            "Accept": "application/vnd.twitchtv.v5+json",
-            "Client-ID" : ""+self.CLIENT_ID+""
-        }
-        resp = requests.get(url=url, headers=params)
-        lst = json.loads(resp.text)['follows']
-        usr_lst = []
-        for l in lst:
-            usr_lst.append(l['user']['name'])
-        print(usr_lst)
-        print("TOTAL "+str(len(lst)))
-        return usr_lst
-
+        try:
+            url = "https://api.twitch.tv/kraken/channels/"+self.USER_ID+"/follows?limit=100"
+            params = {
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Client-ID" : ""+self.CLIENT_ID+""
+            }
+            resp = requests.get(url=url, headers=params)
+            lst = json.loads(resp.text)['follows']
+            usr_lst = []
+            for l in lst:
+                usr_lst.append(l['user']['name'])
+            return usr_lst
+        except:
+            return
+            
     def check_online(self):
         try:
             url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
@@ -958,7 +962,7 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
+        if " classic" in message.lower() and not self.is_word_in_timeout("classic"):
             self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
@@ -966,11 +970,11 @@ class BotAna(QtCore.QThread):
             self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
 
-        elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
+        elif " omg" in message.lower() and not self.is_word_in_timeout("omg"):
             self.word_in_timeout("omg")
-            self.send_message("IT'S OVER 9000 9000Ana")
+            self.send_message("IT'S OVER 9000 THOUSAND 9000Ana")
 
-        elif "mod" in message.lower() and not self.is_word_in_timeout("mod"):
+        elif " mod" in message.lower() and not self.is_word_in_timeout("mod"):
             self.word_in_timeout("mod")
             self.send_message("Jebaited")
 
@@ -1033,7 +1037,7 @@ class BotAna(QtCore.QThread):
                 pygame.event.poll()
                 clock.tick(10)
         else:
-            self.send_message("Shhhhhh silenzio!!!")
+            self.send_message("Shhhhhh silenzio!")
 
     def call_sound(self, name):
         if name[:1] == "!":
