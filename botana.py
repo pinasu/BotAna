@@ -663,12 +663,12 @@ class BotAna(QtCore.QThread):
 
         rand_user = username
         if json_str['chatters']['viewers']:
-            while rand_user == username:
+            while rand_user == username or rand_user == "nightbot" or rand_viewer == "logviewer":
                 rand_user = random.choice(json_str['chatters']['viewers'])
 
         ret_list.append(rand_user)
 
-        self.send_message(username+" ama "+random.choice(ret_list)+" al "+str(rand)+"% "+emote)
+        self.send_message("C'è il "+str(rand)+"% <3 tra "+username+" e "+random.choice(ret_list)+" "+emote)
 
     def get_stats(self, user, platform):
         if platform != "pc" and platform != "xbox" and platform != "ps4":
