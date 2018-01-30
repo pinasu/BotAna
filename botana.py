@@ -146,7 +146,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -260,7 +260,7 @@ class BotAna(QtCore.QThread):
             self.send_message("!game IRL")
         except:
             return
-        
+
     def in_game(self):
         self.send_message("!title " + self.previous_title)
         self.send_message("!game " + self.previous_game)
@@ -293,7 +293,7 @@ class BotAna(QtCore.QThread):
             return usr_lst
         except:
             return
-            
+
     def check_online(self):
         try:
             url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
@@ -663,7 +663,7 @@ class BotAna(QtCore.QThread):
 
         rand_user = username
         if json_str['chatters']['viewers']:
-            while rand_user == username or rand_user == "nightbot" or rand_viewer == "logviewer":
+            while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
                 rand_user = random.choice(json_str['chatters']['viewers'])
 
         ret_list.append(rand_user)
