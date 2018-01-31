@@ -734,6 +734,15 @@ class BotAna(QtCore.QThread):
         except:
             self.send_message("Non riesco ad accedere ai dati FeelsBadMan")
 
+    def get_emotes(self, channel):
+        URL = "https://twitch.center/customapi/bttvemotes?channel="+channel
+        try:
+            resp = requests.get(URL)
+            self.send_message("Le emote di BTTV di "+channel+" sono: "+resp.text)
+        except:
+            return
+
+
     def get_random_barza(self):
         URL = "http://www.barzellette.net/"
         resp = requests.get(URL)
@@ -864,6 +873,9 @@ class BotAna(QtCore.QThread):
         elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
             threading.Thread(target=self.start_roulette, args=([self.username])).start()
 
+        elif self.message == "!emotes":
+            self.get_emotes("stockhausen_l2p")
+
         elif self.message == "!salta":
             if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
                 del self.skippers[:]
@@ -892,7 +904,7 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!love" and not self.is_in_timeout("!love"):
             if self.username == "lusyoo" and self.arguments.lower() == "dio":
-                self.send_message(self.username+" ama "+self.arguments+" allo 0% FeelsBadMan")
+                self.send_message("C'è lo 0% <3 tra "+self.username+" e "+self.arguments+" FeelsBadMan")
                 return
             emote = ""
             rand = randint(0, 100)
@@ -904,7 +916,7 @@ class BotAna(QtCore.QThread):
                 emote = "PogChamp"
 
             if self.arguments:
-                self.send_message(self.username+" ama "+self.arguments+" al "+str(rand)+"% "+emote)
+                self.send_message("C'è il"+str(rand)+"% <3 tra "+self.username+" e "+self.arguments+" FeelsBadMan")
             else:
                 threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
