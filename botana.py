@@ -306,7 +306,7 @@ class BotAna(QtCore.QThread):
     def get_spam_phrases(self, path):
         if os.path.exists(path):
             try:
-                with open(path) as f:
+                with open(path, encoding='utf8') as f:
                     msg_spam = f.read().splitlines()
                 return msg_spam
             except:
