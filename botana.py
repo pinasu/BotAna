@@ -674,7 +674,7 @@ class BotAna(QtCore.QThread):
         if platform == "":
             platform = "pc"
             
-        else if platform != "pc" and platform != "xbox" and platform != "ps4":
+        elif platform != "pc" and platform != "xbox" and platform != "ps4":
             self.send_message("Errore. Usa !wins <utente> <piattaforma> SeemsGood")
             
         else:
