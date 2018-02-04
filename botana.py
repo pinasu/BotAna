@@ -147,6 +147,10 @@ class BotAna(QtCore.QThread):
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
+                #Il metodo __getitem__ è usato per l'indexing dunque se non è presente in tmponline vuol dire che è stato restituito un oggetto non "indexingabile" (anaLUL) e quindi non corretto
+                if not hasattr(tmponline, "__getitem__"):
+                    continue
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -673,7 +677,7 @@ class BotAna(QtCore.QThread):
     def get_stats(self, user, platform):
         if platform != "pc" and platform != "xbox" and platform != "ps4":
             self.send_message("Errore. Usa !wins <utente> <piattaforma> SeemsGood")
-            
+
         else:
             URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
             if '%20' in user:
