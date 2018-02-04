@@ -671,10 +671,7 @@ class BotAna(QtCore.QThread):
         self.send_message("C'è il "+str(rand)+"% <3 tra "+username+" e "+random.choice(ret_list)+" "+emote)
 
     def get_stats(self, user, platform):
-        if platform == "":
-            platform = "pc"
-            
-        elif platform != "pc" and platform != "xbox" and platform != "ps4":
+        if platform != "pc" and platform != "xbox" and platform != "ps4":
             self.send_message("Errore. Usa !wins <utente> <piattaforma> SeemsGood")
             
         else:
