@@ -319,6 +319,8 @@ class BotAna(QtCore.QThread):
             self.print_message("Error finding " + path + "\n")
 
     def add_spam_phrase(self, phrase):
+        if(phrase in msg_spam):
+            return
         try:
             msg_spam.append(phrase)
             with open("spam.txt", "a",  encoding='utf-8') as f:
@@ -595,18 +597,18 @@ class BotAna(QtCore.QThread):
         elif self.message == "!mute":
             self.is_muted = True
             self.sign3.emit(True)
-            self.send_message("mutato")
+            self.send_message("Un po'di silenzio, grazie Kappa")
 
         elif self.message == "!unmute":
             self.is_muted = False
             self.sign3.emit(False)
-            self.send_message("smutato")
+            self.send_message("Toh, m'è tornata la voglia di parlare! PogChamp")
 
         elif self.message == "!ismute":
             if self.is_muted:
-                self.send_message("Botana è in silenzio")
+                self.send_message("Non ho voglia di parlare, ora ResidentSleeper")
             else:
-                self.send_message("Botana ha voglia di urlare")
+                self.send_message("SeemsGood")
 
         else:
             for com in self.commandsMod.values():
