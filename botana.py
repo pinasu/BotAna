@@ -111,6 +111,8 @@ class BotAna(QtCore.QThread):
 
         self.is_muted = False
 
+        self.counting = False
+
     def run(self):
         try:
             config = configparser.ConfigParser()
@@ -147,10 +149,9 @@ class BotAna(QtCore.QThread):
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
-                #Il metodo __getitem__ è usato per l'indexing dunque se non è presente in tmponline vuol dire che è stato restituito un oggetto non "indexingabile" (anaLUL) e quindi non corretto
                 if not hasattr(tmponline, "__getitem__"):
                     continue
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -186,6 +187,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -749,7 +752,6 @@ class BotAna(QtCore.QThread):
         except:
             return
 
-
     def get_random_barza(self):
         URL = "http://www.barzellette.net/"
         resp = requests.get(URL)
@@ -820,6 +822,20 @@ class BotAna(QtCore.QThread):
         except:
             self.print_message("Error reading patch.txt")
 
+    def count_trap():
+        self.counting = True
+        count = 0
+
+        tempo = time.time()
+        while tempo - time.time() < 20:
+            if self.message == "!trap":
+                count = count + 1
+
+        self.counting = False
+        if count == 3:
+            file = open("trap.txt", "w")
+            file.write("1")
+
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
             self.add_in_timeout("!cit")
@@ -830,6 +846,10 @@ class BotAna(QtCore.QThread):
                     self.add_quote(self.arguments)
             else:
                 self.get_rand_quote()
+
+        elif self.message == "!trap" and not self.is_in_timeout("!trap"):
+            if not self.counting:
+                threading.Thread(target=self.count_trap, args=()).start()
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
