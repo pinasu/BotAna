@@ -151,6 +151,8 @@ class BotAna(QtCore.QThread):
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 if not hasattr(tmponline, "__getitem__"):
+                    file = open("LogError.txt", "a")
+                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLA STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
 
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
