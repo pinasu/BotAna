@@ -111,7 +111,8 @@ class BotAna(QtCore.QThread):
 
         self.is_muted = False
 
-        self.counting = False
+        self.tempo_trap = time.time()
+        self.trap_count = 0
 
     def run(self):
         try:
@@ -151,7 +152,7 @@ class BotAna(QtCore.QThread):
 
                 if not hasattr(tmponline, "__getitem__"):
                     continue
-                
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -218,10 +219,9 @@ class BotAna(QtCore.QThread):
 
                                 self.print_message(self.username+": "+self.message)
 
-                                if set(self.greetings).intersection(set(list(self.message.lower().split(' ')))):
-                                    if self.username not in self.greeted and self.username not in self.mods:
-                                        self.greeted.append(self.username)
-                                        self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
+                                if self.username not in self.greeted and self.username not in self.mods:
+                                    self.greeted.append(self.username)
+                                    self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
 
                                 elif self.message.startswith('!'):
                                     message_list = self.message.split(' ');
@@ -248,6 +248,7 @@ class BotAna(QtCore.QThread):
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
+            file.close()
 
     def __del__(self):
         self.exiting = True
@@ -623,6 +624,7 @@ class BotAna(QtCore.QThread):
                 file = open("patch.txt", "w")
                 file.write(args)
                 self.send_message("Nuova patch registrata SeemsGood ")
+                file.close()
             except:
                 self.print_message("Error while writing file patch.txt")
         else:
@@ -820,20 +822,6 @@ class BotAna(QtCore.QThread):
         except:
             self.print_message("Error reading patch.txt")
 
-    def count_trap():
-        self.counting = True
-        count = 0
-
-        tempo = time.time()
-        while tempo - time.time() < 20:
-            if self.message == "!trap":
-                count = count + 1
-
-        self.counting = False
-        if count == 3:
-            file = open("trap.txt", "w")
-            file.write("1")
-
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
             self.add_in_timeout("!cit")
@@ -845,9 +833,20 @@ class BotAna(QtCore.QThread):
             else:
                 self.get_rand_quote()
 
-        elif self.message == "!trap" and not self.is_in_timeout("!trap"):
-            if not self.counting:
-                threading.Thread(target=self.count_trap, args=()).start()
+        elif self.message == "!trap":
+            if self.tempo_trap - time.time() > 20 or self.trap_count == 0:
+                self.tempo_trap = time.time()
+                self.trap_count = 1
+
+            elif self.tempo_trap - time.time() <= 20:
+                self.trap_count = self.trap_count + 1
+                if self.trap_count >= 3:
+                    file = open("trap.txt", "w")
+                    file.write("1")
+                    file.close()
+                    self.trap_count = 0
+                    self.tempo_trap = time.time()
+                    self.send_message("PogChamp")
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
@@ -894,6 +893,7 @@ class BotAna(QtCore.QThread):
 
             file = open("maledizioni.txt", "w")
             file.write(str(count))
+            file.close()
 
         elif self.message == "!roulette" and not self.is_in_timeout("!roulette"):
             threading.Thread(target=self.start_roulette, args=([self.username])).start()
