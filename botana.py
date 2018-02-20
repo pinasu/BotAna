@@ -225,7 +225,7 @@ class BotAna(QtCore.QThread):
                                     self.greeted.append(self.username)
                                     self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
 
-                                elif self.message.startswith('!'):
+                                if self.message.startswith('!'):
                                     message_list = self.message.split(' ');
 
                                     self.message = message_list[0]
