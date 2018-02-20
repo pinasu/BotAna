@@ -1009,14 +1009,19 @@ class BotAna(QtCore.QThread):
             self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
 
-        elif " omg" in message.lower() and not self.is_word_in_timeout("omg"):
+        elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
             self.word_in_timeout("omg")
             self.send_message("IT'S OVER 9000 THOUSAND 9000Ana")
 
-        elif " mod" in message.lower() and not self.is_word_in_timeout("mod"):
+        elif "mod" in message.lower() and not self.is_word_in_timeout("mod"):
             self.word_in_timeout("mod")
             self.send_message("Jebaited")
-
+        
+        elif "denti" in message.lower() and not self.is_word_in_timeout("denti"):
+            if self.username == "xuneera":
+                self.word_in_timeout("denti")
+                self.send_message("Quali denti OMEGALUL ")
+        
     def load_quotes(self):
         with open('quotes.csv', encoding='utf-8') as quotes:
             reader = csv.reader(quotes, delimiter=';', quotechar='|')
