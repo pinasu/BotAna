@@ -942,7 +942,7 @@ class BotAna(QtCore.QThread):
                 emote = "PogChamp"
 
             if self.arguments:
-                self.send_message("C'è il"+str(rand)+"% <3 tra "+self.username+" e "+self.arguments+" FeelsBadMan")
+                self.send_message("C'è il "+str(rand)+"% <3 tra "+self.username+" e "+self.arguments+" FeelsBadMan")
             else:
                 threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
