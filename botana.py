@@ -111,7 +111,7 @@ class BotAna(QtCore.QThread):
         self.is_muted = False
 
         self.tempo_trap = time.time()
-        self.trap_count = 0
+        self.trap_nicks = []
 
     def run(self):
         try:
@@ -838,20 +838,21 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!trap":
             MAX_TIME = 20
-            if time.time() - self.tempo_trap > MAX_TIME or self.trap_count == 0:
+            if time.time() - self.tempo_trap > MAX_TIME or len(self.trap_nicks) == 0:
                 self.print_message("Starting trap counter at "+str(time.time() - self.tempo_trap))
                 self.tempo_trap = time.time()
-                self.trap_count = 1
+                self.trap_nicks.append(self.username)
             elif time.time() - self.tempo_trap <= MAX_TIME:
-                self.print_message("Incrementing trap counter at "+str(time.time() - self.tempo_trap))
-                self.trap_count = self.trap_count + 1
-                if self.trap_count >= 3:
-                    file = open("trap.txt", "w")
-                    file.write("1")
-                    file.close()
-                    self.trap_count = 0
-                    self.tempo_trap = time.time()
-                    self.send_message("PogChamp")
+                if self.username not in self.trap_nicks:
+                    self.print_message("Incrementing trap counter at "+str(time.time() - self.tempo_trap))
+                    self.trap_nicks.append(self.username)
+                    if len(self.trap_nicks) >= 3:
+                        file = open("trap.txt", "w")
+                        file.write("1")
+                        file.close()
+                        self.trap_nicks = []
+                        self.tempo_trap = time.time()
+                        self.send_message("PogChamp")
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
