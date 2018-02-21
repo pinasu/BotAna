@@ -837,12 +837,12 @@ class BotAna(QtCore.QThread):
                 self.get_rand_quote()
 
         elif self.message == "!trap":
-            MAX_TIME = 20
-            if time.time() - self.tempo_trap > MAX_TIME or self.trap_count == 0:
+            if time.time() - self.tempo_trap > 20 or self.trap_count == 0:
                 self.print_message("Starting trap counter at "+str(time.time() - self.tempo_trap))
                 self.tempo_trap = time.time()
                 self.trap_count = 1
-            elif time.time() - self.tempo_trap <= MAX_TIME:
+
+            elif time.time() - self.tempo_trap <= 20:
                 self.print_message("Incrementing trap counter at "+str(time.time() - self.tempo_trap))
                 self.trap_count = self.trap_count + 1
                 if self.trap_count >= 3:
