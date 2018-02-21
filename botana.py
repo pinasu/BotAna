@@ -153,7 +153,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLA STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-
+                '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -189,6 +189,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -835,11 +837,13 @@ class BotAna(QtCore.QThread):
                 self.get_rand_quote()
 
         elif self.message == "!trap":
-            if self.tempo_trap - time.time() > 20 or self.trap_count == 0:
+            if time.time() - self.tempo_trap > 20 or self.trap_count == 0:
+                self.print_message("Starting trap counter at "+str(time.time() - self.tempo_trap))
                 self.tempo_trap = time.time()
                 self.trap_count = 1
 
-            elif self.tempo_trap - time.time() <= 20:
+            elif time.time() - self.tempo_trap <= 20:
+                self.print_message("Incrementing trap counter at "+str(time.time() - self.tempo_trap))
                 self.trap_count = self.trap_count + 1
                 if self.trap_count >= 3:
                     file = open("trap.txt", "w")
