@@ -58,6 +58,11 @@
       <td>10</td>
     </tr>
     <tr>
+      <td>!trap</td>
+      <td>Ogni 3, fa partire un overlay per la trappola che ha ucciso un buodiulo!</td>
+      <td>20</td>
+    </tr>
+    <tr>
       <td>!fortnite</td>
       <td>[Fortnite] Alessiana</td>
       <td>20</td>
