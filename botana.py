@@ -234,7 +234,7 @@ class BotAna(QtCore.QThread):
                                 self.arguments = ' '.join(message_list[1:])
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
-                                else:
+                                elif self.message in self.commandsPleb.keys():
                                     self.call_command_pleb()
 
                                 if len(message_list) == 1 and self.message in self.sounds.keys():
