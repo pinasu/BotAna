@@ -134,26 +134,26 @@ class BotAna(QtCore.QThread):
 
             self.print_message("I'm now connected to "+ self.NICK + ".")
 
-            self.online = self.check_online()
-
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
-            threading.Thread(target=self.check_online_cicle, args=()).start()
+            threading.Thread(target=self.check_spam, args=()).start()
+
+            #self.online = self.check_online()
+            #threading.Thread(target=self.check_online_cicle, args=()).start()
 
             while True:
+                '''
                 self.lock.acquire()
                 tmponline = self.online
                 self.lock.release()
 
-                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
                 if not hasattr(tmponline, "__getitem__"):
                     file = open("LogError.txt", "a")
-                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLA STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
+                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-                '''
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -167,6 +167,7 @@ class BotAna(QtCore.QThread):
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
                 elif tmponline["stream"]["stream_type"] == "watch_party":
+                if True:
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
                         self.state_string = "vodcast"
@@ -189,59 +190,59 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 elif tmponline["stream"]["stream_type"] == "live":
-                '''
-                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
-                        threading.Thread(target=self.check_spam, args=()).start()
 
                     if self.vodded:
                         self.vodded = []
-                    if rec:
-                        for line in rec:
-                            if "PING" in line:
-                                self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-                            else:
-                                parts = line.split(':', 2)
+                    '''
+                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
-                                if len(parts) < 3: continue
-                                if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                                    self.message = parts[2]
+                if rec:
+                    for line in rec:
+                        if "PING" in line:
+                            self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+                        else:
+                            parts = line.split(':', 2)
 
-                                usernamesplit = parts[1].split("!")
-                                self.username = usernamesplit[0]
+                            if len(parts) < 3: continue
+                            if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
+                                self.message = parts[2]
 
-                                if "tmi.twitch.tv" in self.username:
-                                    continue
+                            usernamesplit = parts[1].split("!")
+                            self.username = usernamesplit[0]
 
-                                if self.username not in self.mods:
-                                    self.lock2.acquire()
-                                    self.msg_count += 1
-                                    self.lock2.release()
+                            if "tmi.twitch.tv" in self.username:
+                                continue
 
-                                self.print_message(self.username+": "+self.message)
+                            if self.username not in self.mods:
+                                self.lock2.acquire()
+                                self.msg_count += 1
+                                self.lock2.release()
 
-                                if self.username not in self.greeted and self.username not in self.mods:
-                                    self.greeted.append(self.username)
-                                    self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
+                            self.print_message(self.username+": "+self.message)
 
-                                if self.message.startswith('!'):
-                                    message_list = self.message.split(' ');
+                            if self.username not in self.greeted and self.username not in self.mods:
+                                self.greeted.append(self.username)
+                                self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
 
-                                    self.message = message_list[0]
-                                    self.arguments = ' '.join(message_list[1:])
-                                    if self.message in self.commandsMod.keys() and self.username in self.mods:
-                                        self.call_command_mod()
-                                    else:
-                                        self.call_command_pleb()
+                            if self.message.startswith('!'):
+                                message_list = self.message.split(' ');
 
-                                    if len(message_list) == 1 and self.message in self.sounds.keys():
-                                        self.call_sound(self.message)
-                                    elif len(message_list) == 1 and self.message in self.images.keys():
-                                        self.call_image(self.message)
+                                self.message = message_list[0]
+                                self.arguments = ' '.join(message_list[1:])
+                                if self.message in self.commandsMod.keys() and self.username in self.mods:
+                                    self.call_command_mod()
+                                else:
+                                    self.call_command_pleb()
 
-                                self.check_words(self.message)
+                                if len(message_list) == 1 and self.message in self.sounds.keys():
+                                    self.call_sound(self.message)
+                                elif len(message_list) == 1 and self.message in self.images.keys():
+                                    self.call_image(self.message)
+
+                            self.check_words(self.message)
 
                 time.sleep(1/self.RATE)
 
