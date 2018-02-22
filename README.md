@@ -18,7 +18,7 @@
       <td>0</td>
     </tr>
     <tr>
-      <td>!wins [nomeutente]</td>
+      <td>!wins []/[nomeutente]</td>
       <td>Numero delle vincite a Fortnite in solo, duo e squad di [nomeutente]</td>
       <td>0</td>
     </tr>
@@ -44,7 +44,7 @@
     </tr>
     <tr>
       <td>!ban [nomeutente] </td>
-      <td>Banna [nomeutente] dalla chat!</td>
+      <td>Bandisce [nomeutente] dalla chat!</td>
       <td>10</td>
     </tr>
     <tr>
@@ -56,6 +56,11 @@
       <td>!discord</td>
       <td>Attaccate a StoDiscord! https://goo.gl/P35L9R KappaPride</td>
       <td>10</td>
+    </tr>
+    <tr>
+      <td>!trap</td>
+      <td>Ogni 3, fa partire un overlay per la trappola che ha ucciso un buodiulo!</td>
+      <td>20</td>
     </tr>
     <tr>
       <td>!fortnite</td>
@@ -75,11 +80,6 @@
     <tr>
       <td>!maledizione</td>
       <td>Numero delle volte nelle quali la maledizione ci ha colpiti: la safe è dall'altra parte FeelsBadMan </td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <td>!bush</td>
-      <td>Alessiana diventa un cespuglio!</td>
       <td>20</td>
     </tr>
     <tr>
