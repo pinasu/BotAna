@@ -138,6 +138,9 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
+            print(self.get_host_list())
+            #threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
+
             threading.Thread(target=self.check_spam, args=()).start()
 
             #self.online = self.check_online()
@@ -277,6 +280,40 @@ class BotAna(QtCore.QThread):
         self.previous_title = ""
         self.previous_game = ""
 
+    def check_new_hosts(self, old):
+        while True:
+            new = self.get_host_list()
+            new_st = set(new)
+            old_st = set(old)
+            diff = new_st - old_st
+            #Facciamo tante richieste al server solo in teoria: nella pratica gli host non sono così tanti, quindi |diff| = 1, per euristica
+            for x in diff:
+                url = "https://api.twitch.tv/kraken/streams/"+x
+                params = {
+                    "Accept": "application/vnd.twitchtv.v5+json",
+                    "Client-ID" : ""+self.CLIENT_ID+""
+                }
+                resp = requests.get(url=url, headers=params)
+                stream = json.loads(resp.text)
+                self.send_message(x+" ci ha buttato in faccia "+stream['viewers']+"viewers PogChamp Grazie mille Kreygasm Mettete un like a "+x+" su https://www.twitch.tv/"+x+"/ PogChamp")
+
+    def get_host_list(self):
+        try:
+            url = "https://tmi.twitch.tv/hosts?include_logins=1&target="+self.USER_ID
+            params = {
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Client-ID" : ""+self.CLIENT_ID+""
+            }
+            resp = requests.get(url=url, headers=params)
+            lst = json.loads(resp.text)['hosts']
+            host_lst = []
+            for l in lst:
+                host_lst.append(l['host_login'])
+            print(host_lst)
+            return host_lst
+        except:
+            return
+
     def check_new_follows(self, old):
         while True:
             new = self.get_follower_list()
@@ -284,7 +321,7 @@ class BotAna(QtCore.QThread):
             old_st = set(old)
             diff = new_st - old_st
             for x in diff:
-                self.send_message(x+" ! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
+                self.send_message(x+"! Grazie del follow PogChamp Mucho apreciato 1 2 3 1 2 3 KappaPride Usa !discord per unirti alla FamigliANA FeelsGoodMan")
                 old = new
             time.sleep(10)
 
