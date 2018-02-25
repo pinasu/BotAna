@@ -138,8 +138,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
-            print(self.get_host_list())
-            #threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
+            threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
 
             threading.Thread(target=self.check_spam, args=()).start()
 
@@ -296,6 +295,7 @@ class BotAna(QtCore.QThread):
                 resp = requests.get(url=url, headers=params)
                 stream = json.loads(resp.text)
                 self.send_message(x+" ci ha buttato in faccia "+stream['viewers']+"viewers PogChamp Grazie mille Kreygasm Mettete un like a "+x+" su https://www.twitch.tv/"+x+"/ PogChamp")
+            time.sleep(10)
 
     def get_host_list(self):
         try:
