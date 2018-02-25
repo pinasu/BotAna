@@ -138,7 +138,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
-            threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
+            #threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
 
             threading.Thread(target=self.check_spam, args=()).start()
 
@@ -279,22 +279,38 @@ class BotAna(QtCore.QThread):
         self.previous_title = ""
         self.previous_game = ""
 
+    def get_user_id(self, user):
+        try:
+            url = "https://api.twitch.tv/kraken/users?login="+user
+            params = {
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Client-ID" : ""+self.CLIENT_ID+""
+            }
+            resp = requests.get(url=url, headers=params)
+            user = json.loads(resp.text)
+            return user['users'][0]['_id']
+        except:
+            return
+
     def check_new_hosts(self, old):
         while True:
             new = self.get_host_list()
             new_st = set(new)
             old_st = set(old)
             diff = new_st - old_st
+            self.print_message(str(new_st))
+            self.print_message(str(old_st))
+            self.print_message(str(diff))
             #Facciamo tante richieste al server solo in teoria: nella pratica gli host non sono così tanti, quindi |diff| = 1, per euristica
             for x in diff:
-                url = "https://api.twitch.tv/kraken/streams/"+x
+                '''url = "https://api.twitch.tv/kraken/channels/"+self.get_user_id(x)
                 params = {
                     "Accept": "application/vnd.twitchtv.v5+json",
                     "Client-ID" : ""+self.CLIENT_ID+""
                 }
                 resp = requests.get(url=url, headers=params)
-                stream = json.loads(resp.text)
-                self.send_message(x+" ci ha buttato in faccia "+stream['viewers']+"viewers PogChamp Grazie mille Kreygasm Mettete un like a "+x+" su https://www.twitch.tv/"+x+"/ PogChamp")
+                stream = json.loads(resp.text)'''
+                self.send_message(x+" ci ha buttato in faccia "+stream['viewers']+"viewers PogChamp Grazie mille Kreygasm Mettetegli un like su https://www.twitch.tv/"+x+"/ PogChamp")
             time.sleep(10)
 
     def get_host_list(self):
