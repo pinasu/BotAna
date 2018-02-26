@@ -138,7 +138,7 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
-            #threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
+            threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
 
             threading.Thread(target=self.check_spam, args=()).start()
 
@@ -294,23 +294,27 @@ class BotAna(QtCore.QThread):
 
     def check_new_hosts(self, old):
         while True:
-            new = self.get_host_list()
-            new_st = set(new)
-            old_st = set(old)
-            diff = new_st - old_st
-            self.print_message(str(new_st))
-            self.print_message(str(old_st))
-            self.print_message(str(diff))
-            #Facciamo tante richieste al server solo in teoria: nella pratica gli host non sono così tanti, quindi |diff| = 1, per euristica
-            for x in diff:
-                '''url = "https://api.twitch.tv/kraken/channels/"+self.get_user_id(x)
-                params = {
-                    "Accept": "application/vnd.twitchtv.v5+json",
-                    "Client-ID" : ""+self.CLIENT_ID+""
-                }
-                resp = requests.get(url=url, headers=params)
-                stream = json.loads(resp.text)'''
-                self.send_message(x+" ci ha buttato in faccia "+stream['viewers']+"viewers PogChamp Grazie mille Kreygasm Mettetegli un like su https://www.twitch.tv/"+x+"/ PogChamp")
+            new = get_host_list()
+            if(new and old):
+                new_st = set(new)
+                old_st = set(old)
+                diff = new_st - old_st
+                #Facciamo tante richieste al server solo in teoria: nella pratica gli host non sono così tanti, quindi |diff| = 1, per euristica
+                for x in diff:
+                  url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
+                  params = {
+                      "Accept": "application/vnd.twitchtv.v5+json",
+                      "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
+                  }
+                  resp = requests.get(url=url, headers=params)
+                  jsonl = json.loads(resp.text)
+                  if jsonl['stream'] == None:
+                      count = 1
+                  else:
+                      count = int(jsonl['stream']['viewers'])
+
+                  old = new
+                  self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewers PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
             time.sleep(10)
 
     def get_host_list(self):
@@ -325,7 +329,6 @@ class BotAna(QtCore.QThread):
             host_lst = []
             for l in lst:
                 host_lst.append(l['host_login'])
-            print(host_lst)
             return host_lst
         except:
             return
