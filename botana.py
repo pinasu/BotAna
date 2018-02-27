@@ -294,27 +294,27 @@ class BotAna(QtCore.QThread):
 
     def check_new_hosts(self, old):
         while True:
-            new = get_host_list()
-            if(new and old):
+            new = self.get_host_list()
+            if(new or old):
                 new_st = set(new)
                 old_st = set(old)
                 diff = new_st - old_st
                 #Facciamo tante richieste al server solo in teoria: nella pratica gli host non sono così tanti, quindi |diff| = 1, per euristica
                 for x in diff:
-                  url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
-                  params = {
+                    url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
+                    params = {
                       "Accept": "application/vnd.twitchtv.v5+json",
                       "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
-                  }
-                  resp = requests.get(url=url, headers=params)
-                  jsonl = json.loads(resp.text)
-                  if jsonl['stream'] == None:
+                    }
+                    resp = requests.get(url=url, headers=params)
+                    jsonl = json.loads(resp.text)
+                    if jsonl['stream'] == None:
                       count = 1
-                  else:
+                    else:
                       count = int(jsonl['stream']['viewers'])
 
-                  old = new
-                  self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewers PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
+                    old = new
+                    self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewers PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
             time.sleep(10)
 
     def get_host_list(self):
