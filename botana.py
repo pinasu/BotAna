@@ -310,11 +310,13 @@ class BotAna(QtCore.QThread):
                     jsonl = json.loads(resp.text)
                     if jsonl['stream'] == None:
                       count = 1
+                      self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewer PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
+
                     else:
                       count = int(jsonl['stream']['viewers'])
+                      self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewers PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
 
                     old = new
-                    self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewers PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
             time.sleep(10)
 
     def get_host_list(self):
