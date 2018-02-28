@@ -80,8 +80,6 @@ class BotAna(QtCore.QThread):
 
         self.timeSkip = 0
 
-        self.greeted = []
-
         self.words_cooldown = dict()
 
         self.msg_count = 0
@@ -224,10 +222,6 @@ class BotAna(QtCore.QThread):
 
                             self.print_message(self.username+": "+self.message)
 
-                            if self.username not in self.greeted and self.username not in self.mods:
-                                self.greeted.append(self.username)
-                                self.send_message("Ciao, "+self.ana(self.username)+"! KappaPride")
-
                             if self.message.startswith('!'):
                                 message_list = self.message.split(' ');
 
@@ -302,18 +296,16 @@ class BotAna(QtCore.QThread):
                 for x in diff:
                     url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
                     params = {
-                      "Accept": "application/vnd.twitchtv.v5+json",
-                      "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
+                    "Accept": "application/vnd.twitchtv.v5+json",
+                    "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
                     }
                     resp = requests.get(url=url, headers=params)
                     jsonl = json.loads(resp.text)
-                    if jsonl['stream'] == None:
-                      count = 1
-                    else:
-                      count = int(jsonl['stream']['viewers'])
+                    if jsonl['stream'] != None:
+                        count = int(jsonl['stream']['viewers'])
+                        self.send_message("["+x+"] https://www.twitch.tv/"+x)
 
-                    old = new
-                    self.send_message(x+" ci ha buttato in faccia "+str(count)+" viewers PogChamp Grazie mille Kreygasm Mettete un like su https://www.twitch.tv/"+x+"/ PogChamp")
+            old = new
             time.sleep(10)
 
     def get_host_list(self):
