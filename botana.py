@@ -297,16 +297,16 @@ class BotAna(QtCore.QThread):
                 for x in diff:
                     url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
                     params = {
-                      "Accept": "application/vnd.twitchtv.v5+json",
-                      "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
+                    "Accept": "application/vnd.twitchtv.v5+json",
+                    "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
                     }
                     resp = requests.get(url=url, headers=params)
                     jsonl = json.loads(resp.text)
                     if jsonl['stream'] != None:
-                      count = int(jsonl['stream']['viewers'])
-                      self.send_message("["+x+"] https://www.twitch.tv/"+x)
+                        count = int(jsonl['stream']['viewers'])
+                        self.send_message("["+x+"] https://www.twitch.tv/"+x)
 
-                  old = new
+            old = new
             time.sleep(10)
 
     def get_host_list(self):
