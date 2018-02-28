@@ -142,14 +142,15 @@ class BotAna(QtCore.QThread):
 
             threading.Thread(target=self.check_spam, args=()).start()
 
-            #self.online = self.check_online()
-            #threading.Thread(target=self.check_online_cicle, args=()).start()
+            self.online = self.check_online()
+            threading.Thread(target=self.check_online_cicle, args=()).start()
 
             while True:
-                '''
                 self.lock.acquire()
                 tmponline = self.online
                 self.lock.release()
+
+                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 if not hasattr(tmponline, "__getitem__"):
                     file = open("LogError.txt", "a")
@@ -169,7 +170,7 @@ class BotAna(QtCore.QThread):
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
                 elif tmponline["stream"]["stream_type"] == "watch_party":
-                if True:
+                #if True:
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
                         self.state_string = "vodcast"
@@ -198,8 +199,6 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
-                    '''
-                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
                 if rec:
                     for line in rec:
@@ -362,9 +361,12 @@ class BotAna(QtCore.QThread):
 
     def check_online(self):
         try:
-            url = "https://api.twitch.tv/kraken/streams/"+self.NICK+""
-            params = {"Client-ID" : ""+self.CLIENT_ID+""}
-            resp = requests.get(url=url, headers=params)
+            url = "https://api.twitch.tv/kraken/streams/"+self.USER_ID
+            params = {
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Client-ID" : self.CLIENT_ID
+            }
+            resp = requests.get(url=url, headers=params, timeout=10)
             return json.loads(resp.text)
         except:
             return
