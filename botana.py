@@ -1065,11 +1065,7 @@ class BotAna(QtCore.QThread):
 
         elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
             self.word_in_timeout("omg")
-            self.send_message("IT'S OVER 9000 THOUSAND 9000Ana")
-
-        elif "mod" in message.lower() and not self.is_word_in_timeout("mod"):
-            self.word_in_timeout("mod")
-            self.send_message("Jebaited")
+            self.send_message("IT'S OVER 9000 THOUSAND SwiftRage")
 
         elif "denti" in message.lower() and not self.is_word_in_timeout("denti"):
             if self.username == "xuneera":
