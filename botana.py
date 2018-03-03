@@ -901,7 +901,6 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!trap":
             MAX_TIME = 20
-            self.trap_count = self.trap_count + 1
 
             if time.time() - self.tempo_trap > MAX_TIME or len(self.trap_nicks) == 0:
                 self.tempo_trap = time.time()
@@ -911,6 +910,7 @@ class BotAna(QtCore.QThread):
                 if self.username not in self.trap_nicks:
                     self.trap_nicks.append(self.username)
                     if len(self.trap_nicks) >= 3:
+                        self.trap_count = self.trap_count + 1
                         file = open("trap.txt", "w")
                         file.write(self.trap_count)
                         file.close()
