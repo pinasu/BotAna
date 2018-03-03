@@ -111,6 +111,8 @@ class BotAna(QtCore.QThread):
         self.tempo_trap = time.time()
         self.trap_nicks = []
 
+        self.trap_count = 0
+
     def run(self):
         try:
             config = configparser.ConfigParser()
@@ -135,6 +137,8 @@ class BotAna(QtCore.QThread):
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
             threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
+
+            threading.Thread(target=self.reset_trap, args=()).start()
 
             threading.Thread(target=self.check_new_hosts, args=(self.get_host_list(),)).start()
 
@@ -284,6 +288,14 @@ class BotAna(QtCore.QThread):
             return user['users'][0]['_id']
         except:
             return
+
+    def reset_trap(self):
+        try:
+            file = open("trap.txt", "w")
+            file.write("1")
+            file.close()
+        except:
+            self.print_message("Error opening trap.txt\n")
 
     def check_new_hosts(self, old):
         while True:
@@ -889,6 +901,8 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!trap":
             MAX_TIME = 20
+            self.trap_count = self.trap_count + 1
+
             if time.time() - self.tempo_trap > MAX_TIME or len(self.trap_nicks) == 0:
                 self.tempo_trap = time.time()
                 self.trap_nicks.append(self.username)
@@ -898,7 +912,7 @@ class BotAna(QtCore.QThread):
                     self.trap_nicks.append(self.username)
                     if len(self.trap_nicks) >= 3:
                         file = open("trap.txt", "w")
-                        file.write("1")
+                        file.write(self.trap_count)
                         file.close()
                         self.trap_nicks = []
                         self.tempo_trap = time.time()
