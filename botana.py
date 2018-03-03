@@ -158,7 +158,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-
+                    '''
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -201,7 +201,7 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
-
+                        '''
                 if rec:
                     for line in rec:
                         if "PING" in line:
@@ -292,7 +292,7 @@ class BotAna(QtCore.QThread):
     def reset_trap(self):
         try:
             file = open("trap.txt", "w")
-            file.write("1")
+            file.write("0")
             file.close()
         except:
             self.print_message("Error opening trap.txt\n")
@@ -912,11 +912,11 @@ class BotAna(QtCore.QThread):
                     if len(self.trap_nicks) >= 3:
                         self.trap_count = self.trap_count + 1
                         file = open("trap.txt", "w")
-                        file.write(self.trap_count)
+                        file.write(str(self.trap_count))
                         file.close()
                         self.trap_nicks = []
                         self.tempo_trap = time.time()
-                        self.send_message("PogChamp")
+                        self.send_message("Fino ad ora " + self.trap_count + "trappole PogChamp")
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
