@@ -158,7 +158,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-                    '''
+
                 if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -201,7 +201,7 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
-                        '''
+                        
                 if rec:
                     for line in rec:
                         if "PING" in line:
@@ -861,7 +861,10 @@ class BotAna(QtCore.QThread):
             q = self.quotes[int(args)-1]
             self.send_message("#"+str(q.get_index())+": ''"+str(q.get_quote())+" '' - "+q.get_author()+" "+str(q.get_date()))
             if time.time() - self.text_to_speech > 20:
-                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+                if "e" in q.get_author().lower():
+                    threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
+                else:
+                    threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def add_quote(self, args):
         args = str(args)
