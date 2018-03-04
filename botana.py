@@ -849,7 +849,10 @@ class BotAna(QtCore.QThread):
         q = self.quotes[rand]
         self.send_message("#"+str(str(q.get_index()))+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date()))
         if time.time() - self.text_to_speech > 20:
-            threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
+            if " e " in str(q.get_author()):
+                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
+            else:
+                threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def get_quote(self, args):
         if int(args) > len(self.quotes):
@@ -1033,9 +1036,9 @@ class BotAna(QtCore.QThread):
                 if len(args) > 1:
                     self.send_message("Mi dispiace "+self.username+", ma puoi donare la tua energia a una sola persona FeelsBadMan")
                 else:
-                    self.send_message("GivePLZ "+str(args[0]).upper()+" "+self.username+" TI DONA LA SUA ENERGIA GivePLZ")
+                    self.send_message("GivePLZ "+str(args[0]).upper()+" "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
             else:
-                self.send_message("GivePLZ ALESSIANA  "+self.username+" TI DONA LA SUA ENERGIA GivePLZ")
+                self.send_message("GivePLZ ALESSIANA  "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
         else:
             for com in self.commandsPleb.values():
                 if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
