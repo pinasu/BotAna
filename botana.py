@@ -159,7 +159,7 @@ class BotAna(QtCore.QThread):
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
 
-                if tmponline["stream"] == None or (tmponline["stream"]["stream_type"] != "watch_party" and tmponline["stream"]["stream_type"] != "live"):
+                if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
                         self.state_string = "offline"
@@ -171,8 +171,7 @@ class BotAna(QtCore.QThread):
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
-                elif tmponline["stream"]["stream_type"] == "watch_party":
-                #if True:
+                elif tmponline["stream"]["is_playlist"] == "true":
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
                         self.state_string = "vodcast"
@@ -194,7 +193,7 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è un Alessiana del passato ( monkaS ), ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! Pigia follow! cmonBruh ")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
-                elif tmponline["stream"]["stream_type"] == "live":
+                else:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -375,6 +374,14 @@ class BotAna(QtCore.QThread):
         except:
             return
 
+    def check_online_cicle(self):
+        while True:
+            tmp = self.check_online()
+            self.lock.acquire()
+            self.online = tmp
+            self.lock.release()
+            time.sleep(10)
+
     def get_spam_phrases(self, path):
         if os.path.exists(path):
             try:
@@ -396,14 +403,6 @@ class BotAna(QtCore.QThread):
             self.send_message("Frase aggiunta SeemsGood")
         except:
             self.send_message("Impossibile aggiungere la frase FeelsBadMan")
-
-    def check_online_cicle(self):
-        while True:
-            tmp = self.check_online()
-            self.lock.acquire()
-            self.online = tmp
-            self.lock.release()
-            time.sleep(10)
 
     def get_userID(self, path, config):
         if os.path.exists(path):
