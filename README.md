@@ -202,6 +202,16 @@
     <td>!icchece</td>
     <td>20</td>
   </tr>
+  </tr>
+    <tr>
+    <td>!camper</td>
+    <td>20</td>
+  </tr>
+  </tr>
+    <tr>
+    <td>!lurkerz</td>
+    <td>20</td>
+  </tr>
   </table>
 </div>
 
