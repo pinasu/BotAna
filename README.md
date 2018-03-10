@@ -22,6 +22,11 @@
       <td>Numero delle vincite a Fortnite in solo, duo e squad di [nomeutente]</td>
       <td>0</td>
     </tr>
+      <tr>
+      <td>!ks []/[nomeutente]</td>
+      <td>K/D a Fortnite in solo, duo e squad di [nomeutente]</td>
+      <td>0</td>
+    </tr>
     <tr>
       <td>!energia []/[nomeutente]</td>
       <td>༼ つ ◕_◕ ༽つ ALESSIANA/[nomeutente] PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
