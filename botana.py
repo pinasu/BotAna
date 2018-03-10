@@ -533,6 +533,16 @@ class BotAna(QtCore.QThread):
             self.send_message("HeyGuys")
             os._exit(0)
 
+        elif self.message == "!shout":
+            args = self.arguments.split(' ')
+            if len(args) == 1:
+                URL = "https://api.twitch.tv/kraken/channels/"+str(self.get_user_id(str(args[0])))
+                self.print_message(URL)
+                params = {"Client-ID" : ""+self.CLIENT_ID+""}
+                print(requests.get(url = URL, headers = params).status_code)
+                if requests.get(URL).status_code == 200:
+                    self.send_message("Andate a mettere un follow a "+args[0]+" su https://www.twitch.tv/"+args[0]+" PogChamp")
+
         elif self.message == "!clean":
             file = open("players.txt", "w")
             file.write("")
@@ -744,6 +754,44 @@ class BotAna(QtCore.QThread):
 
         self.send_message("C'è il "+str(rand)+"% <3 tra "+username+" e "+random.choice(ret_list)+" "+emote)
 
+    def get_kd(self, user, platform):
+        if platform != "pc" and platform != "xbox" and platform != "ps4":
+            self.send_message("Errore. Usa !kd <utente> <piattaforma> SeemsGood")
+
+        else:
+            URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
+            if '%20' in user:
+                user = user.replace('%20', ' ')
+            try:
+                try:
+                    resp = requests.get(URL, timeout=3)
+                except requests.exceptions.Timeout:
+                    self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
+                    return
+
+                lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
+                player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
+                solo = player_data['p2'][9]['value'] if "p2" in player_data else "0"
+                duo = player_data['p10'][9]['value'] if "p10" in player_data else "0"
+                squad = player_data['p9'][9]['value'] if "p9" in player_data else "0"
+
+                if user == "Alessiana":
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+                else:
+                    if solo == "0":
+                        solo = "OMEGALUL"
+                    if duo == "0":
+                        duo = "OMEGALUL"
+                    if squad == "0":
+                        squad = "OMEGALUL"
+
+                    self.send_message("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
+            except ValueError:
+                if platform == "ps4" or platform == "xbox":
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
+                else:
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
+
     def get_stats(self, user, platform):
         if platform != "pc" and platform != "xbox" and platform != "ps4":
             self.send_message("Errore. Usa !wins <utente> <piattaforma> SeemsGood")
@@ -761,9 +809,9 @@ class BotAna(QtCore.QThread):
 
                 lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
                 player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-                solo = player_data['p2'][2]['value'] if "p2" in player_data else "N/A"
-                duo = player_data['p10'][2]['value'] if "p10" in player_data else "N/A"
-                squad = player_data['p9'][2]['value'] if "p9" in player_data else "N/A"
+                solo = player_data['p2'][2]['value'] if "p2" in player_data else "0"
+                duo = player_data['p10'][2]['value'] if "p10" in player_data else "0"
+                squad = player_data['p9'][2]['value'] if "p9" in player_data else "0"
 
                 if user == "Alessiana":
                     self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
@@ -933,6 +981,13 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
+
+        elif self.message == "!kd" and self.is_for_current_game(self.commandsPleb["!kd"]):
+            if self.arguments:
+                args = self.arguments.split(' ')
+                threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
+            else:
+                threading.Thread(target=self.get_kd, args=(["Alessiana", "pc"])).start()
 
         elif self.message == "!winoggi" and not self.is_in_timeout("!winoggi") and self.is_for_current_game(self.commandsPleb["!winoggi"]):
             if self.arguments:
