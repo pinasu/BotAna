@@ -921,7 +921,8 @@ class BotAna(QtCore.QThread):
                         file.close()
                         self.trap_nicks = []
                         self.tempo_trap = time.time()
-                        self.send_message("Fino ad ora " + str(self.trap_count) + " trappole PogChamp")
+                        self.send_message(str(self.trap_count) + " trappole PogChamp")
+                        self.play_sound("spiketrap")
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
             threading.Thread(target=self.get_random_barza, args=()).start()
