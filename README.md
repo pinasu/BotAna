@@ -48,11 +48,6 @@
       <td>10</td>
     </tr>
     <tr>
-      <td>!ban [nomeutente] </td>
-      <td>Bandisce [nomeutente] dalla chat!</td>
-      <td>10</td>
-    </tr>
-    <tr>
       <td>!love  []/[nomeutente]</td>
       <td>Quanto ami [un viewer random]/[nomeutente] da 1 a 100?</td>
       <td>10</td>
