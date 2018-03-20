@@ -22,6 +22,11 @@
       <td>Numero delle vincite a Fortnite in solo, duo e squad di [nomeutente]</td>
       <td>0</td>
     </tr>
+      <tr>
+      <td>!ks []/[nomeutente]</td>
+      <td>K/D a Fortnite in solo, duo e squad di [nomeutente]</td>
+      <td>0</td>
+    </tr>
     <tr>
       <td>!energia []/[nomeutente]</td>
       <td>༼ つ ◕_◕ ༽つ ALESSIANA/[nomeutente] PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
@@ -40,11 +45,6 @@
     <tr>
       <td>!roulette</td>
       <td>Una pistola puntata in testa e un proiettile, vivrai o morirai?</td>
-      <td>10</td>
-    </tr>
-    <tr>
-      <td>!ban [nomeutente] </td>
-      <td>Bandisce [nomeutente] dalla chat!</td>
       <td>10</td>
     </tr>
     <tr>

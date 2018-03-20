@@ -1145,7 +1145,7 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if " classic" in message.lower() and not self.is_word_in_timeout("classic"):
+        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
             self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
