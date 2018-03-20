@@ -113,6 +113,8 @@ class BotAna(QtCore.QThread):
 
         self.trap_count = 0
 
+        self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
+
     def run(self):
         try:
             config = configparser.ConfigParser()
@@ -158,7 +160,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-
+                '''
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -194,6 +196,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -314,7 +318,7 @@ class BotAna(QtCore.QThread):
                     jsonl = json.loads(resp.text)
                     if jsonl['stream'] != None:
                         count = int(jsonl['stream']['viewers'])
-                        self.send_message("["+x+"] https://www.twitch.tv/"+x)
+                        self.send_message("[Host da "+x+"] https://www.twitch.tv/"+x)
 
             old = new
             time.sleep(10)
@@ -456,7 +460,7 @@ class BotAna(QtCore.QThread):
         self.print_message(self.botName + ": " + str(message))
 
     def send_whisper(self, message):
-        self.sock.send(bytes("PRIVMSG #botana__ :/w "+self.username+" "+message+"\r\n", "UTF-8"))
+        self.sock.send(bytes("PRIVMSG #botana__ :/w "+str(self.username)+" "+str(message)+"\r\n", "utf-8"))
 
     def check_spam(self):
         tempo = time.time()
@@ -521,6 +525,7 @@ class BotAna(QtCore.QThread):
 
     def call_command_mod(self):
         raffled = ""
+
         if self.message == "!restart":
             subprocess.Popen("botanaUserInterface.pyw", shell=True)
             os._exit(0)
@@ -533,15 +538,16 @@ class BotAna(QtCore.QThread):
             self.send_message("HeyGuys")
             os._exit(0)
 
-        elif self.message == "!shout":
+        elif self.message == "!multi":
             args = self.arguments.split(' ')
-            if len(args) == 1:
-                URL = "https://api.twitch.tv/kraken/channels/"+str(self.get_user_id(str(args[0])))
-                self.print_message(URL)
-                params = {"Client-ID" : ""+self.CLIENT_ID+""}
-                print(requests.get(url = URL, headers = params).status_code)
-                if requests.get(URL).status_code == 200:
-                    self.send_message("Andate a mettere un follow a "+args[0]+" su https://www.twitch.tv/"+args[0]+" PogChamp")
+            if len(args) > 1:
+                chans = "/".join(args)
+                self.multi_twitch = "Segui tutti gli streamer nello stesso momento! https://multistre.am/"+self.NICK+"/"+chans+" FeelsGoodMan"
+                self.send_message(self.multi_twitch)
+            else:
+                if len(self.multi_twitch) > len("https://multistre.am/")+len(self.NICK+"/"):
+                    self.send_message(self.multi_twitch)
+
 
         elif self.message == "!clean":
             file = open("players.txt", "w")
@@ -572,10 +578,15 @@ class BotAna(QtCore.QThread):
                 self.send_message("Non ci sono persone da scegliere BibleThump")
 
         elif self.message == "!comandi":
-            self.send_message(self.username+", la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp")
+            args = self.arguments.split(' ')
+            if len(args) > 1:
+                self.send_message(str(args)+", la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp")
+            else:
+                self.send_whisper("Ecco i comandi: [MOD] "+', '.join(str(key[0]) for key in self.commandsMod.items()))
+                self.send_whisper(" [PLEB] "+', '.join(str(key[0]) for key in self.commandsMod.items()))
 
         elif self.message == "!suoni":
-            self.send_message(self.username+", la lista dei suoni è su https://pinasu.github.io/BotAna/")
+            self.send_message(str(self.sounds))
 
         elif self.message == "!newpatch":
             threading.Thread(target=self.set_patch, args=(self.arguments,)).start()
@@ -583,16 +594,15 @@ class BotAna(QtCore.QThread):
         elif self.message == "!addsound":
             tmp = self.arguments.split(' ')
             if not tmp[0].startswith('!'):
-                self.send_message("Errore. Il suono deve essere un comando (deve avere ! davanti).")
+                self.send_whisper("Errore. Il suono deve essere un comando (deve avere ! davanti).")
                 return
 
             elif len(tmp) < 1 or len(tmp) > 1:
-                self.print_message(tmp)
-                self.send_message("Errore. Usa !addsound <!suono>.")
+                self.send_whisper("Errore. Usa !addsound <!suono>.")
                 return
 
             if (tmp[0] in self.sounds.keys()):
-                self.send_message("Non posso aggiungere un suono uguale a uno che esiste già, stupido babbuino LUL")
+                self.send_whisper("Errore. Non posso aggiungere un suono uguale a uno che esiste già.")
                 return
 
             PATH = 'res\\Sounds\\'
@@ -600,17 +610,17 @@ class BotAna(QtCore.QThread):
             snd = str(tmp[0])[1:]+".wav"
             if not os.path.isfile(PATH+snd):
                 self.print_message(PATH+snd)
-                self.send_message("Errore. Aggiungi il file "+snd+" alla cartella "+PATH+" .")
+                self.send_whisper("Errore. Aggiungi il file "+snd+" alla cartella "+PATH+" .")
                 return
 
             with open('sounds.csv', 'a',  encoding='utf-8') as f:
                 f.write("\n"+str(tmp[0]))
-            self.send_message("Suono "+str(tmp[0])+" aggiunto correttamente FeelsGoodMan")
+            self.send_whisper("Suono "+str(tmp[0])+" aggiunto correttamente.")
 
         elif self.message == "!addcommand":
             tmp = self.arguments.split(";")
             if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
-                self.send_message("Non posso aggiungere un comando uguale a uno che esiste già, stupido babbuino LUL")
+                self.send_whisper("Non posso aggiungere un comando uguale a uno che esiste già, stupido babbuino LUL")
                 return
             if ((len(tmp) == 4 or len(tmp) == 5) and len(tmp[0].split(" ")) == 1):
                 if len(tmp) == 4:
@@ -626,32 +636,32 @@ class BotAna(QtCore.QThread):
                     self.commandsMod[tmp[0]] = newComm
                 elif tmp[3] == "pleb":
                     self.commandsPleb[tmp[0]] = newComm
-                self.send_message("Ho aggiunto il comando " + tmp[0] + " FeelsGoodMan")
+                self.send_whisper("Ho aggiunto il comando " + tmp[0] + " FeelsGoodMan")
             else:
-                self.send_message("Errore. Usa: !comando;risposta;cooldown;permessi(pleb/mod);gioco(opzionale)")
+                self.send_whisper("Errore. Usa: !comando;risposta;cooldown;permessi(pleb/mod);gioco(opzionale)")
 
         elif self.message == "!removecommand":
             args = self.arguments.split(" ")
             if len(args) == 1 and args[0]== "":
-                self.send_message("Devi specificarmi quale comando eliminare, stupido babbuino LUL")
+                self.send_whisper("Devi specificarmi quale comando eliminare, stupido babbuino LUL")
                 return
 
             if len(args) == 1 or args[1] == "pleb":
                 if args[0] in self.commandsPleb.keys(): #Pleb command
                     del self.commandsPleb[args[0]]
                 else:
-                    self.send_message("Il comando " + args[0] + " (pleb) non esiste, scrivi bene stupido babbuino LUL")
+                    self.send_whisper("Il comando " + args[0] + " (pleb) non esiste, scrivi bene stupido babbuino LUL")
                     return
 
             elif len(args) == 2 and  args[1] == "mod":
                 if args[0] in self.commandsMod.keys(): #Mod command
                     del self.commandsMod[args[0]]
                 else:
-                    self.send_message("Il comando " + args[0] + " (mod) non esiste, scrivi bene stupido babbuino LUL")
+                    self.send_whisper("Il comando " + args[0] + " (mod) non esiste, scrivi bene stupido babbuino LUL")
                     return
 
             else:
-                self.send_message("Errore. Usa: !removecommand !comando mod(opzionale)")
+                self.send_whisper("Errore. Usa: !removecommand !comando mod(opzionale)")
                 return
 
             subprocess.run("copy commands.csv commands_bkp.csv", shell=True)
@@ -664,17 +674,17 @@ class BotAna(QtCore.QThread):
                         writer.writerow([p.get_name(), p.get_response(), p.get_cooldown(), p.get_tipo()])
                     for m in self.commandsMod.values():
                         writer.writerow([m.get_name(), m.get_response(), m.get_cooldown(), m.get_tipo()])
-                self.send_message("Comando " + self.arguments + " eliminato FeelsGoodMan")
+                self.send_whisper("Comando " + self.arguments + " eliminato FeelsGoodMan")
             except:
                 subprocess.run("del commands.csv", shell=True)
                 subprocess.run("ren commands_bkp.csv commands.csv", shell=True)
-                self.send_message("Impossibile eliminare il comando " + self.arguments+" FeelsBadMan")
+                self.send_whisper("Impossibile eliminare il comando " + self.arguments+" FeelsBadMan")
             subprocess.run("del commands_bkp.csv", shell=True)
 
         elif self.message == "!mute":
             self.is_muted = True
             self.sign3.emit(True)
-            self.send_message("Un po'di silenzio, grazie Kappa")
+            self.send_message("Credo che me ne starò zitta per un po', grazie Kappa")
 
         elif self.message == "!unmute":
             self.is_muted = False
@@ -685,7 +695,7 @@ class BotAna(QtCore.QThread):
             if self.is_muted:
                 self.send_message("Non ho voglia di parlare, ora ResidentSleeper")
             else:
-                self.send_message("SeemsGood")
+                self.whisper("SeemsGood")
 
         else:
             for com in self.commandsMod.values():
@@ -698,12 +708,12 @@ class BotAna(QtCore.QThread):
             try:
                 file = open("patch.txt", "w")
                 file.write(args)
-                self.send_message("Nuova patch registrata SeemsGood ")
+                self.send_whisper("Nuova patch registrata SeemsGood ")
                 file.close()
             except:
-                self.print_message("Error while writing file patch.txt")
+                self.print_whisper("Error while writing file patch.txt")
         else:
-            self.send_message("Errore. Usa !newpatch link")
+            self.send_whisper("Errore. Usa !newpatch link")
 
     def start_roulette(self, user):
         self.add_in_timeout("!roulette")
@@ -952,6 +962,10 @@ class BotAna(QtCore.QThread):
             else:
                 self.get_rand_quote()
 
+        elif self.message == "!multi":
+            if self.multi_twitch != "multitwitch.tv/stockhausen_l2p/":
+                self.send_message(self.multi_twitch)
+
         elif self.message == "!trap":
             MAX_TIME = 20
 
@@ -973,6 +987,7 @@ class BotAna(QtCore.QThread):
                         self.play_sound("spiketrap")
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
+            self.send_message("haHAA")
             threading.Thread(target=self.get_random_barza, args=()).start()
 
         elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
@@ -991,7 +1006,7 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!winoggi" and not self.is_in_timeout("!winoggi") and self.is_for_current_game(self.commandsPleb["!winoggi"]):
             if self.arguments:
-                self.send_message("Mi dispiace, questo comando è solo per il Papà della FamigliANA FeelsGoodMan ")
+                return
             else:
                 self.add_in_timeout("!winoggi")
                 threading.Thread(target=self.get_today_stats, args=()).start()
