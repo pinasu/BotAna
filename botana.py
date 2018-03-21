@@ -307,7 +307,7 @@ class BotAna(QtCore.QThread):
                 new_st = set(new)
                 old_st = set(old)
                 diff = new_st - old_st
-                #Facciamo tante richieste al server solo in teoria: nella pratica gli host non sono così tanti, quindi |diff| = 1, per euristica
+
                 for x in diff:
                     url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
                     params = {
@@ -397,16 +397,32 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error finding " + path + "\n")
 
+    def remove_spam_phrase(self, id):
+        f_r = open("spam.txt", "r", encoding="utf-8")
+        d = f_r.readlines()
+        f_r.close()
+
+        f = open("spam.txt", "w", encoding="utf-8")
+        for line in d:
+            if line != self.msg_spam[int(id)-1]+"\n":
+                self.print_message("LINE: *"+line+"* MSG: *"+self.msg_spam[int(id)]+"*")
+                f.write(line)
+
+        f.close()
+        self.send_whisper("Spam con id "+id+" rimosso.")
+
     def add_spam_phrase(self, phrase):
-        if(phrase in msg_spam):
+        if(phrase in self.msg_spam):
+            self.send_whisper("Errore. Impossibile aggiungere una fase già presente.")
             return
         try:
-            msg_spam.append(phrase)
+            self.msg_spam.append(phrase)
             with open("spam.txt", "a",  encoding='utf-8') as f:
-                f.write(phrase)
-            self.send_message("Frase aggiunta SeemsGood")
+                f.write(phrase+"\n")
+            self.send_whisper("Frase aggiunta con indice "+str(len(self.msg_spam)))
+            f.close()
         except:
-            self.send_message("Impossibile aggiungere la frase FeelsBadMan")
+            self.send_whisper("Impossibile aggiungere la frase FeelsBadMan")
 
     def get_userID(self, path, config):
         if os.path.exists(path):
@@ -449,7 +465,6 @@ class BotAna(QtCore.QThread):
             self.print_message("Error reading " + path + "\n")
 
     def print_message(self, msg):
-        print(str(msg))
         self.sign.emit(time.strftime("%H:%M  ")+str(msg))
 
     def show_image(self, path):
@@ -548,6 +563,19 @@ class BotAna(QtCore.QThread):
                 if len(self.multi_twitch) > len("https://multistre.am/")+len(self.NICK+"/"):
                     self.send_message(self.multi_twitch)
 
+        elif self.message == "!addspam":
+            args = self.arguments
+            if len(args) > 1:
+                threading.Thread(target=self.add_spam_phrase, args=(args,)).start()
+            else:
+                self.send_whisper("Impossibile aggiungere lo spam (frase troppo breve).")
+
+        elif self.message == "!removespam":
+            args = self.arguments
+            if args.isdigit():
+                threading.Thread(target=self.remove_spam_phrase, args=(args,)).start()
+            else:
+                self.send_whisper("Impossibile rimuovere lo spam.")
 
         elif self.message == "!clean":
             file = open("players.txt", "w")
@@ -1145,7 +1173,7 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
+        if " classic" in message.lower() and not self.is_word_in_timeout("classic"):
             self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
