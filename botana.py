@@ -795,7 +795,6 @@ class BotAna(QtCore.QThread):
     def get_kd(self, user, platform):
         if platform != "pc" and platform != "xbox" and platform != "ps4":
             self.send_message("Errore. Usa !kd <utente> <piattaforma> SeemsGood")
-
         else:
             URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
             if '%20' in user:
@@ -813,8 +812,15 @@ class BotAna(QtCore.QThread):
                 duo = player_data['p10'][9]['value'] if "p10" in player_data else "0"
                 squad = player_data['p9'][9]['value'] if "p9" in player_data else "0"
 
-                if user == "Alessiana":
+                if user == "alessiana":
                     self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+
+                elif user == "zizory":
+                    if self.username != "zizory":
+                        self.send_message("Questi non sono affari tuoi HotPokket")
+                    else:
+                        self.send_whisper("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
+
                 else:
                     if solo == "0":
                         solo = "OMEGALUL"
@@ -851,8 +857,14 @@ class BotAna(QtCore.QThread):
                 duo = player_data['p10'][2]['value'] if "p10" in player_data else "0"
                 squad = player_data['p9'][2]['value'] if "p9" in player_data else "0"
 
-                if user == "Alessiana":
+                if user == "alessiana":
                     self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+
+                elif user == "zizory":
+                    if self.username != "zizory":
+                        self.send_message("Questi non sono affari tuoi HotPokket")
+                    else:
+                        self.send_whisper("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
                 else:
                     if solo == "0":
                         solo = "OMEGALUL"
