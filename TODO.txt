@@ -1,14 +1,8 @@
 1) Aggiungere i punti: per ogni minuto si guadagnano punti, per ogni citazione e comando vocale si spendono punti
 	[Stato]: aspetto la risposta da Streamlabs.
 
-2) Aggiungere le frasi da spammare a un file, così che Ale possa gestirle (comandi !addspam e !removespam), con GUI
-	[Stato]: aggiunte le frasi al file, aggiunto il comando !addspam e !removespam ma non sono ststi testati (non vengono richiamati).
-
-3) Fix l'errore di Twitch che restituisce errore su -key: "stream"
-	[Stato]: ho aggiunto un try/except che dovrebbe risolvere l'errore, ma ogni tanto si ripresenta a caso.
-	
-4) Aggiungere il comando per settare il titolo dello stream.
+2) Aggiungere il comando per settare il titolo dello stream.
 	[Stato]: eh
 
-5) Aggiungere un comando per settare il gioco dello stream.
+3) Aggiungere un comando per settare il gioco dello stream.
 	[Stato]: eh
