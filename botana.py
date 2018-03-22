@@ -160,7 +160,9 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-                '''
+
+                print(tmponline)
+
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -173,7 +175,7 @@ class BotAna(QtCore.QThread):
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
-                elif tmponline["stream"]["is_playlist"] == "true":
+                elif tmponline["stream"]["stream_type"] == "rerun":
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
                         self.state_string = "vodcast"
@@ -196,8 +198,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
-                '''
-                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
