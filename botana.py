@@ -271,7 +271,10 @@ class BotAna(QtCore.QThread):
             self.send_message("!title AFK")
             self.send_message("!game IRL")
         except:
-            return
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def in_game(self):
         self.send_message("!title " + self.previous_title)
@@ -290,7 +293,10 @@ class BotAna(QtCore.QThread):
             user = json.loads(resp.text)
             return user['users'][0]['_id']
         except:
-            return
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def reset_trap(self):
         try:
@@ -309,17 +315,22 @@ class BotAna(QtCore.QThread):
                 diff = new_st - old_st
 
                 for x in diff:
-                    url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
-                    params = {
-                    "Accept": "application/vnd.twitchtv.v5+json",
-                    "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
-                    }
-                    resp = requests.get(url=url, headers=params)
-                    jsonl = json.loads(resp.text)
-                    if jsonl['stream'] != None:
-                        count = int(jsonl['stream']['viewers'])
-                        self.send_message("[Host da "+x+"] https://www.twitch.tv/"+x)
-
+                    try:
+                        url = "https://api.twitch.tv/kraken/streams/"+self.get_user_id(x)
+                        params = {
+                        "Accept": "application/vnd.twitchtv.v5+json",
+                        "Client-ID" : "tf2kbvxsjvy19m0m53oxupk6w6aelv"
+                        }
+                        resp = requests.get(url=url, headers=params)
+                        jsonl = json.loads(resp.text)
+                        if jsonl['stream'] != None:
+                            count = int(jsonl['stream']['viewers'])
+                            self.send_message("[Host da "+x+"] https://www.twitch.tv/"+x)
+                    except:
+                        file = open("LogError.txt", "a")
+                        file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                        traceback.print_exc()
+                        file.close()
             old = new
             time.sleep(10)
 
@@ -337,7 +348,10 @@ class BotAna(QtCore.QThread):
                 host_lst.append(l['host_login'])
             return host_lst
         except:
-            return
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def check_new_follows(self, old):
         while True:
@@ -364,7 +378,10 @@ class BotAna(QtCore.QThread):
                 usr_lst.append(l['user']['name'])
             return usr_lst
         except:
-            return
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def check_online(self):
         try:
@@ -376,7 +393,10 @@ class BotAna(QtCore.QThread):
             resp = requests.get(url=url, headers=params, timeout=10)
             return json.loads(resp.text)
         except:
-            return
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def check_online_cicle(self):
         while True:
@@ -398,18 +418,24 @@ class BotAna(QtCore.QThread):
             self.print_message("Error finding " + path + "\n")
 
     def remove_spam_phrase(self, id):
-        f_r = open("spam.txt", "r", encoding="utf-8")
-        d = f_r.readlines()
-        f_r.close()
+        try:
+            f_r = open("spam.txt", "r", encoding="utf-8")
+            d = f_r.readlines()
+            f_r.close()
 
-        f = open("spam.txt", "w", encoding="utf-8")
-        for line in d:
-            if line != self.msg_spam[int(id)-1]+"\n":
-                self.print_message("LINE: *"+line+"* MSG: *"+self.msg_spam[int(id)]+"*")
-                f.write(line)
+            f = open("spam.txt", "w", encoding="utf-8")
+            for line in d:
+                if line != self.msg_spam[int(id)-1]+"\n":
+                    self.print_message("LINE: *"+line+"* MSG: *"+self.msg_spam[int(id)]+"*")
+                    f.write(line)
+            f.close()
+            self.send_whisper("Spam con id "+id+" rimosso.")
 
-        f.close()
-        self.send_whisper("Spam con id "+id+" rimosso.")
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def add_spam_phrase(self, phrase):
         if(phrase in self.msg_spam):
@@ -422,7 +448,10 @@ class BotAna(QtCore.QThread):
             self.send_whisper("Frase aggiunta con indice "+str(len(self.msg_spam)))
             f.close()
         except:
-            self.send_whisper("Impossibile aggiungere la frase FeelsBadMan")
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def get_userID(self, path, config):
         if os.path.exists(path):
@@ -430,7 +459,10 @@ class BotAna(QtCore.QThread):
                 config.read(path)
                 return config['DEFAULT']['user_id']
             except:
-                self.print_message("Error opening " + path + "\n")
+                file = open("LogError.txt", "a")
+                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                traceback.print_exc()
+                file.close()
         else:
             self.print_message("Error reading " + path + "\n")
 
@@ -440,9 +472,12 @@ class BotAna(QtCore.QThread):
                 config.read(path)
                 return config['DEFAULT']['bot_oauth']
             except:
-                    self.print_message("Error opening " + path + "\n")
+                    file = open("LogError.txt", "a")
+                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                    traceback.print_exc()
+                    file.close()
         else:
-            self.print_message("Error reading " + path + "\n")
+            self.print_message("Error finding " + path + "\n")
 
     def get_nick(self, path, config):
         if os.path.exists(path):
@@ -450,7 +485,10 @@ class BotAna(QtCore.QThread):
                 config.read(path)
                 return config['DEFAULT']['nick']
             except:
-                    self.print_message("Error opening " + path + "\n")
+                file = open("LogError.txt", "a")
+                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                traceback.print_exc()
+                file.close()
         else:
             self.print_message("Error reading " + path + "\n")
 
@@ -460,7 +498,10 @@ class BotAna(QtCore.QThread):
                 config.read(path)
                 return config['DEFAULT']['client_id']
             except:
-                    self.print_message("Error opening " + path + "\n")
+                file = open("LogError.txt", "a")
+                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                traceback.print_exc()
+                file.close()
         else:
             self.print_message("Error reading " + path + "\n")
 
@@ -478,21 +519,27 @@ class BotAna(QtCore.QThread):
         self.sock.send(bytes("PRIVMSG #botana__ :/w "+str(self.username)+" "+str(message)+"\r\n", "utf-8"))
 
     def check_spam(self):
-        tempo = time.time()
-        index = 0
-        while True:
-            self.lock2.acquire()
-            count = self.msg_count
-            self.lock2.release()
-            if time.time() - tempo > 700 and count > 15:
-                self.send_message(self.msg_spam[index])
-                tempo = time.time()
+        try:
+            tempo = time.time()
+            index = 0
+            while True:
                 self.lock2.acquire()
-                self.msg_count = 0
+                count = self.msg_count
                 self.lock2.release()
-                index = (index + 1) % len(self.msg_spam)
+                if time.time() - tempo > 700 and count > 15:
+                    self.send_message(self.msg_spam[index])
+                    tempo = time.time()
+                    self.lock2.acquire()
+                    self.msg_count = 0
+                    self.lock2.release()
+                    index = (index + 1) % len(self.msg_spam)
 
-            time.sleep(1)
+                time.sleep(1)
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def add_in_timeout(self, command):
         if command in self.commandsMod.keys():
@@ -535,8 +582,14 @@ class BotAna(QtCore.QThread):
         return True
 
     def restart(self):
-        subprocess.Popen("botanaUserInterface.pyw", shell=True)
-        os._exit(0)
+        try:
+            subprocess.Popen("botanaUserInterface.pyw", shell=True)
+            os._exit(0)
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
 
     def call_command_mod(self):
         raffled = ""
@@ -611,7 +664,7 @@ class BotAna(QtCore.QThread):
                 self.send_message(str(args)+", la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp")
             else:
                 self.send_whisper("Ecco i comandi: [MOD] "+', '.join(str(key[0]) for key in self.commandsMod.items()))
-                self.send_whisper(" [PLEB] "+', '.join(str(key[0]) for key in self.commandsMod.items()))
+                self.send_whisper(" [PLEB] "+', '.join(str(key[0]) for key in self.commandsPleb.items()))
 
         elif self.message == "!suoni":
             self.send_message(str(self.sounds))
@@ -739,7 +792,10 @@ class BotAna(QtCore.QThread):
                 self.send_whisper("Nuova patch registrata SeemsGood ")
                 file.close()
             except:
-                self.print_whisper("Error while writing file patch.txt")
+                file = open("LogError.txt", "a")
+                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                traceback.print_exc()
+                file.close()
         else:
             self.send_whisper("Errore. Usa !newpatch link")
 
@@ -765,10 +821,9 @@ class BotAna(QtCore.QThread):
             self.send_message(user+" si è suicidato monkaS Press F to pay respect BibleThump")
 
     def perform_love(self, username, rand, emote):
-        url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
-        params = dict(user = "na")
-
         try:
+            url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
+            params = dict(user = "na")
             resp = requests.get(url=url, params=params, timeout=10)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
             self.send_message("Mi dispiace "+username+", ma tu non amerai nessuno oggi FeelsBadMan")

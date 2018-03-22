@@ -257,6 +257,11 @@ class Window(QtWidgets.QWidget):
 		msg = self.inputText.text()
 		if(msg != ""):
 			self.bot.send_message(msg)
+			'''
+			Boh, non so come fare a fare in modo che BotAna pssa usare i comandi, così non funziona
+			self.bot.message = msg
+			self.bot.username = self.bot.botName
+			'''
 			self.inputText.setText("")
 
 	def move_green_screen_wind(self):
