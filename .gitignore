@@ -1,15 +1,11 @@
 *.pyc
-bot_OAuth.txt
-clientID.txt
-username.txt
+config.ini
 patch.txt
-clientsecret.txt
 LogError.txt
 maledizioni.txt
 commands.csv
 quotes.csv
-config.ini
+sounds.csv
 trap.txt
 LICENSE.txt
 spam.txt
-sounds.csv
