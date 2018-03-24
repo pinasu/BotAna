@@ -161,8 +161,6 @@ class BotAna(QtCore.QThread):
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
 
-                print(tmponline)
-
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -234,6 +232,7 @@ class BotAna(QtCore.QThread):
 
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
+
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
                                 elif self.message in self.commandsPleb.keys():
@@ -608,13 +607,21 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!multi":
             args = self.arguments.split(' ')
-            if len(args) > 1:
+
+            print(self.multi_twitch)
+            if args[0] == "reset":
+                self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
+                self.send_whisper("Multi-Twitch resettato ("+self.multi_twitch+")")
+            elif args[0] == "":
+                if "Segui" in self.multi_twitch:
+                    self.send_message(self.multi_twitch)
+                else:
+                    self.send_message("Non ci sono streamer amici da guardare, per ora KappaPride")
+            else:
                 chans = "/".join(args)
                 self.multi_twitch = "Segui tutti gli streamer nello stesso momento! https://multistre.am/"+self.NICK+"/"+chans+" FeelsGoodMan"
+                print("A")
                 self.send_message(self.multi_twitch)
-            else:
-                if len(self.multi_twitch) > len("https://multistre.am/")+len(self.NICK+"/"):
-                    self.send_message(self.multi_twitch)
 
         elif self.message == "!addspam":
             args = self.arguments
@@ -1058,8 +1065,10 @@ class BotAna(QtCore.QThread):
                 self.get_rand_quote()
 
         elif self.message == "!multi":
-            if self.multi_twitch != "multitwitch.tv/stockhausen_l2p/":
+            if "Segui" in self.multi_twitch:
                 self.send_message(self.multi_twitch)
+            else:
+                self.send_message("Non ci sono streamer amici da guardare, per ora KappaPride")
 
         elif self.message == "!trap":
             MAX_TIME = 20
@@ -1207,6 +1216,7 @@ class BotAna(QtCore.QThread):
                     self.send_message("GivePLZ "+str(args[0]).upper()+" "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
             else:
                 self.send_message("GivePLZ ALESSIANA  "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
+
         else:
             for com in self.commandsPleb.values():
                 if com.is_simple_command() and self.message == com.get_name() and self.is_for_current_game(com):
@@ -1224,10 +1234,8 @@ class BotAna(QtCore.QThread):
             while last not in "bcdfghjklmnpqrstvwxyz":
                 lun = lun -1
                 last = user[lun]
-                print(last)
 
             new = user[:lun+1]
-            print(new)
 
         return new + "ANA";
 
