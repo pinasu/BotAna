@@ -114,6 +114,7 @@ class BotAna(QtCore.QThread):
         self.trap_count = 0
 
         self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
+        self.multi_spam_index = -1
 
     def run(self):
         try:
@@ -428,7 +429,7 @@ class BotAna(QtCore.QThread):
                     self.print_message("LINE: *"+line+"* MSG: *"+self.msg_spam[int(id)]+"*")
                     f.write(line)
             f.close()
-            self.send_whisper("Spam con id "+id+" rimosso.")
+            self.send_whisper("Spam con id "+str(id)+" rimosso.")
 
         except:
             file = open("LogError.txt", "a")
@@ -608,10 +609,11 @@ class BotAna(QtCore.QThread):
         elif self.message == "!multi":
             args = self.arguments.split(' ')
 
-            print(self.multi_twitch)
             if args[0] == "reset":
-                self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
-                self.send_whisper("Multi-Twitch resettato ("+self.multi_twitch+")")
+                if self.multi_spam_index != -1:
+                    self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
+                    self.remove_spam_phrase(self.multi_spam_index)
+                    self.send_whisper("Multi-Twitch resettato ("+self.multi_twitch+")")
             elif args[0] == "":
                 if "Segui" in self.multi_twitch:
                     self.send_message(self.multi_twitch)
@@ -620,7 +622,8 @@ class BotAna(QtCore.QThread):
             else:
                 chans = "/".join(args)
                 self.multi_twitch = "Segui tutti gli streamer nello stesso momento! https://multistre.am/"+self.NICK+"/"+chans+" FeelsGoodMan"
-                print("A")
+                self.add_spam_phrase(self.multi_twitch)
+                self.multi_spam_index = len(self.msg_spam)
                 self.send_message(self.multi_twitch)
 
         elif self.message == "!addspam":
