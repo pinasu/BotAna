@@ -1092,7 +1092,7 @@ class BotAna(QtCore.QThread):
                 else:
                     threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
-                threading.Thread(target=self.get_stats, args=(["Alessiana", "pc"])).start()
+                threading.Thread(target=self.get_stats, args=(["alessiana", "pc"])).start()
 
         elif self.message == "!kd" and self.is_for_current_game(self.commandsPleb["!kd"]):
             if self.arguments:
