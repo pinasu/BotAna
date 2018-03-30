@@ -262,7 +262,7 @@ class BotAna(QtCore.QThread):
 
                             self.print_message(self.username+": "+self.message)
 
-                            self.TriggerKey(self.message)
+                            # self.TriggerKey(self.message)
 
                             if self.message.startswith('!'):
                                 message_list = self.message.split(' ')
