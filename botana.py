@@ -222,7 +222,7 @@ class BotAna(QtCore.QThread):
                                 parts = line.split(':')
                                 if len(parts) < 3: continue
                                 if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                                    self.message = parts[2]
+                                    self.message = parts[2].lower()
                                     usernamesplit = parts[1].split("!")
                                     self.username = usernamesplit[0]
 
