@@ -119,6 +119,7 @@ class BotAna(QtCore.QThread):
 
         self.msg_count = 0
 
+        self.msg_spam = []
         self.msg_spam = self.get_spam_phrases('spam.txt')
 
         self.quotes = []
@@ -555,7 +556,7 @@ class BotAna(QtCore.QThread):
             file.close()
 
     def add_spam_phrase(self, phrase):
-        if(phrase in self.msg_spam):
+        if phrase in self.msg_spam:
             self.send_whisper("Errore. Impossibile aggiungere una fase già presente.")
             return
         try:
