@@ -119,6 +119,7 @@ class BotAna(QtCore.QThread):
 
         self.msg_count = 0
 
+        self.msg_spam = []
         self.msg_spam = self.get_spam_phrases('spam.txt')
 
         self.quotes = []
@@ -222,7 +223,7 @@ class BotAna(QtCore.QThread):
                                 parts = line.split(':')
                                 if len(parts) < 3: continue
                                 if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                                    self.message = parts[2]
+                                    self.message = parts[2].lower()
                                     usernamesplit = parts[1].split("!")
                                     self.username = usernamesplit[0]
 
@@ -248,7 +249,7 @@ class BotAna(QtCore.QThread):
 
                             if len(parts) < 3: continue
                             if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                                self.message = parts[2]
+                                self.message = parts[2].lower()
 
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
@@ -269,7 +270,7 @@ class BotAna(QtCore.QThread):
                             if self.message.startswith('!'):
                                 message_list = self.message.split(' ')
 
-                                self.message = message_list[0]
+                                self.message = message_list[0].lower()
                                 self.arguments = ' '.join(message_list[1:])
 
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
@@ -555,7 +556,7 @@ class BotAna(QtCore.QThread):
             file.close()
 
     def add_spam_phrase(self, phrase):
-        if(phrase in self.msg_spam):
+        if phrase in self.msg_spam:
             self.send_whisper("Errore. Impossibile aggiungere una fase già presente.")
             return
         try:
