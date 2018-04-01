@@ -69,6 +69,7 @@ class Window(QtWidgets.QWidget):
 		self.bot.sign.connect(self.print_on_text_area)
 		self.bot.sign2.connect(self.show_image)
 		self.bot.sign3.connect(self.set_mute)
+		self.bot.sign4.connect(self.set_move_btn)
 		self.bot.start()
 		self.activateWindow()
 
@@ -140,6 +141,12 @@ class Window(QtWidgets.QWidget):
 		self.audioBtn.setCursor (Qt.PointingHandCursor)
 		self.audioBtn.setProperty('class','button gridButton')
 		self.audioBtn.setToolTip("Attiva/disattiva audio")
+		self.moveBtn = QtWidgets.QPushButton("")
+		self.moveBtn.setIcon(QtGui.QIcon('res/Gui/moveOff.png'))
+		self.moveBtn.setIconSize(QtCore.QSize(40,40))
+		self.moveBtn.setCursor (Qt.PointingHandCursor)
+		self.moveBtn.setProperty('class','button gridButton')
+		self.moveBtn.setToolTip("Attiva/disattiva audio")
 
 
 		g_box = QtWidgets.QGridLayout()
@@ -148,8 +155,8 @@ class Window(QtWidgets.QWidget):
 		g_box.addWidget(self.logErrorButton, 1 , 0)
 		g_box.addWidget(self.afkBtn, 1 , 1)
 		g_box.addWidget(self.audioBtn, 2 , 0)
-		g_box.addWidget(self.restartBtn, 2 , 1)
-		#g_box.addWidget(self.restartBtn, 2 , 0, 2, 2)
+		g_box.addWidget(self.moveBtn, 2 , 1)
+		g_box.addWidget(self.restartBtn, 3 , 0, 3, 2)
 
 		v_box = QtWidgets.QVBoxLayout()
 		v_box.setContentsMargins(7,7,14,0)
@@ -182,6 +189,7 @@ class Window(QtWidgets.QWidget):
 		self.restartBtn.clicked.connect(self.restart)
 		self.afkBtn.clicked.connect(self.afk)
 		self.audioBtn.clicked.connect(self.trigger_mute)
+		self.moveBtn.clicked.connect(self.trigger_move)
 
 		self.show()
 
@@ -198,11 +206,30 @@ class Window(QtWidgets.QWidget):
 			self.audioBtn.setIcon(QtGui.QIcon('res/Gui/speakerOff.png'))
 			self.is_muted = True
 
+	def set_move_btn(self, bo):
+		if bo:
+			self.moveBtn.setIcon(QtGui.QIcon('res/Gui/moveOn.png'))
+		else:
+			self.moveBtn.setIcon(QtGui.QIcon('res/Gui/moveOff.png'))
+
+	def set_move(self, bo):
+		self.bot.set_can_move(bo)
+		self.set_move_btn(bo)
+
+
+	#io qui ho creato una variabile booleana doppione, invece di interrogare e settare quella che è nella logica (botana.py)
+	#andrebbe cambiato tipo "trigger_move"
 	def trigger_mute(self):
 		if self.is_muted:
 			self.set_mute(False)
 		else:
 			self.set_mute(True)
+
+	def trigger_move(self):
+		if self.bot.get_can_move():
+			self.set_move(False)
+		else:
+			self.set_move(True)
 
 	def afk(self):
 		if self.is_afk:

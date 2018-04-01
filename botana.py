@@ -10,46 +10,47 @@ from sound import Sound
 from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-# Key pressing
-# import ctypes
-#
-# SendInput = ctypes.windll.user32.SendInput
-#
-# # C struct redefinitions
-# PUL = ctypes.POINTER(ctypes.c_ulong)
-# class KeyBdInput(ctypes.Structure):
-#     _fields_ = [("wVk", ctypes.c_ushort),
-#                 ("wScan", ctypes.c_ushort),
-#                 ("dwFlags", ctypes.c_ulong),
-#                 ("time", ctypes.c_ulong),
-#                 ("dwExtraInfo", PUL)]
-#
-# class HardwareInput(ctypes.Structure):
-#     _fields_ = [("uMsg", ctypes.c_ulong),
-#                 ("wParamL", ctypes.c_short),
-#                 ("wParamH", ctypes.c_ushort)]
-#
-# class MouseInput(ctypes.Structure):
-#     _fields_ = [("dx", ctypes.c_long),
-#                 ("dy", ctypes.c_long),
-#                 ("mouseData", ctypes.c_ulong),
-#                 ("dwFlags", ctypes.c_ulong),
-#                 ("time",ctypes.c_ulong),
-#                 ("dwExtraInfo", PUL)]
-#
-# class Input_I(ctypes.Union):
-#     _fields_ = [("ki", KeyBdInput),
-#                  ("mi", MouseInput),
-#                  ("hi", HardwareInput)]
-#
-# class Input(ctypes.Structure):
-#     _fields_ = [("type", ctypes.c_ulong),
-#                 ("ii", Input_I)]
+#Key pressing
+import ctypes
+
+SendInput = ctypes.windll.user32.SendInput
+
+# C struct redefinitions
+PUL = ctypes.POINTER(ctypes.c_ulong)
+class KeyBdInput(ctypes.Structure):
+    _fields_ = [("wVk", ctypes.c_ushort),
+                ("wScan", ctypes.c_ushort),
+                ("dwFlags", ctypes.c_ulong),
+                ("time", ctypes.c_ulong),
+                ("dwExtraInfo", PUL)]
+
+class HardwareInput(ctypes.Structure):
+    _fields_ = [("uMsg", ctypes.c_ulong),
+                ("wParamL", ctypes.c_short),
+                ("wParamH", ctypes.c_ushort)]
+
+class MouseInput(ctypes.Structure):
+    _fields_ = [("dx", ctypes.c_long),
+                ("dy", ctypes.c_long),
+                ("mouseData", ctypes.c_ulong),
+                ("dwFlags", ctypes.c_ulong),
+                ("time",ctypes.c_ulong),
+                ("dwExtraInfo", PUL)]
+
+class Input_I(ctypes.Union):
+    _fields_ = [("ki", KeyBdInput),
+                 ("mi", MouseInput),
+                 ("hi", HardwareInput)]
+
+class Input(ctypes.Structure):
+    _fields_ = [("type", ctypes.c_ulong),
+                ("ii", Input_I)]
 
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
     sign2 = pyqtSignal(str)
     sign3 = pyqtSignal(bool)
+    sign4 = pyqtSignal(bool)
 
     def __init__(self):
         super().__init__()
@@ -128,6 +129,7 @@ class BotAna(QtCore.QThread):
 
         self.lock = threading.RLock()
         self.lock2 = threading.RLock()
+        self.lock3 = threading.RLock()
 
         self.vodded = []
 
@@ -151,6 +153,9 @@ class BotAna(QtCore.QThread):
 
         self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
         self.multi_spam_index = -1
+
+        self.can_move = False
+        self.move_dict = dict()
 
     def run(self):
         try:
@@ -209,7 +214,7 @@ class BotAna(QtCore.QThread):
                         for line in rec:
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-
+                #'''
                 elif tmponline["stream"]["stream_type"] == "rerun":
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
@@ -241,6 +246,8 @@ class BotAna(QtCore.QThread):
                         self.vodded = []
 
                 if rec:
+                # '''
+                # if True:
                     for line in rec:
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
@@ -264,8 +271,8 @@ class BotAna(QtCore.QThread):
 
                             self.print_message(self.username+": "+self.message)
 
-                            # Key pressing
-                            # self.TriggerKey(self.message)
+                            if self.can_move:
+                                self.trigger_key(self.message)
 
                             if self.message.startswith('!'):
                                 message_list = self.message.split(' ')
@@ -299,84 +306,141 @@ class BotAna(QtCore.QThread):
         self.exiting = True
         self.wait()
 
-    # Key pressing
-    # def Mouse(self, x, y, code=""):
-    #     if code == "PressLeft":
-    #         cd = 0x0002;
-    #     elif code == "ReleaseLeft":
-    #         cd = 0x0004;
-    #     elif code == "PressRight":
-    #         cd = 0x0008;
-    #     elif code == "ReleaseRight":
-    #         cd = 0x0010;
-    #     else:
-    #         cd = 0x0001;
-    #     extra = ctypes.c_ulong(0)
-    #     ii_ = Input_I()
-    #     ii_.mi = MouseInput(x, y, 0, cd, 0, ctypes.pointer(extra))
-    #     x = Input(ctypes.c_ulong(0), ii_)
-    #     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-    #
-    # def PressKey(self, hexKeyCode):
-    #     extra = ctypes.c_ulong(0)
-    #     ii_ = Input_I()
-    #     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008, 0, ctypes.pointer(extra) )
-    #     x = Input( ctypes.c_ulong(1), ii_ )
-    #     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-    #
-    # def ReleaseKey(self, hexKeyCode):
-    #     extra = ctypes.c_ulong(0)
-    #     ii_ = Input_I()
-    #     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
-    #     x = Input( ctypes.c_ulong(1), ii_ )
-    #     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-    #
-    # def TriggerKey(self, text):
-    #     if "marmellata" in text.lower():
-    #         self.PressKey(0x21) #F
-    #         self.ReleaseKey(0x21) #F
-    #         time.sleep(0.5)
-    #         self.Mouse(0,0,"PressLeft")
-    #
-    #         self.Mouse(0,0,"ReleaseLeft")
-    #     #elif "0" in text.lower():
-    #         #self.PressKey(0x14) #T
-    #         #self.ReleaseKey(0x14)
-    #         #self.Mouse(0,0,"PressLeft")
-    #     elif "unico" in text.lower():
-    #         self.PressKey(0x02) #1
-    #         self.ReleaseKey(0x02)
-    #         self.Mouse(0,0,"PressLeft")
-    #     elif "decente" in text.lower():
-    #         self.PressKey(0x03) #2
-    #         self.ReleaseKey(0x03)
-    #         self.Mouse(0,0,"PressLeft")
-    #     elif "trans" in text.lower():
-    #         self.PressKey(0x04) #3
-    #         self.ReleaseKey(0x04)
-    #         self.Mouse(0,0,"PressLeft")
-    #     elif "culo" in text.lower():
-    #         self.PressKey(0x05) #4
-    #         self.ReleaseKey(0x05)
-    #         self.Mouse(0,0,"PressLeft")
-    #     elif "cicogna" in text.lower():
-    #         self.PressKey(0x06) #5
-    #         self.ReleaseKey(0x06)
-    #         self.Mouse(0,0,"PressLeft")
-    #     elif "zaino" in text.lower():
-    #         self.PressKey(0x2C) #Z
-    #         self.ReleaseKey(0x2C)
-    #         self.Mouse(0,0,"PressLeft")
-    #     elif "supremo" in text.lower():
-    #         self.Mouse(0,-1500) #Top
-    #     elif "sticazzi" in text.lower():
-    #         self.Mouse(0,1500) #Bottom
-    #     elif "leggo" in text.lower():
-    #         self.Mouse(-1500,0) #Left
-    #     elif "roccia" in text.lower():
-    #         self.Mouse(1500,0) #Right
-    #     elif "spezia" in text.lower():
-    #         self.Mouse(0,0,"PressLeft") #Left Click
+#    Key pressing
+    def mouse(self, x, y, code=""):
+        if code == "PressLeft":
+            cd = 0x0002;
+        elif code == "ReleaseLeft":
+            cd = 0x0004;
+        elif code == "PressRight":
+            cd = 0x0008;
+        elif code == "ReleaseRight":
+            cd = 0x0010;
+        else:
+            cd = 0x0001;
+        extra = ctypes.c_ulong(0)
+        ii_ = Input_I()
+        ii_.mi = MouseInput(x, y, 0, cd, 0, ctypes.pointer(extra))
+        x = Input(ctypes.c_ulong(0), ii_)
+        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
+    def press_key(self, hexKeyCode):
+        extra = ctypes.c_ulong(0)
+        ii_ = Input_I()
+        ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008, 0, ctypes.pointer(extra) )
+        x = Input( ctypes.c_ulong(1), ii_ )
+        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
+    def release_key(self, hexKeyCode):
+        extra = ctypes.c_ulong(0)
+        ii_ = Input_I()
+        ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
+        x = Input( ctypes.c_ulong(1), ii_ )
+        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
+    def press_whait_release(self, type, time, code):
+        threading.Thread(target=self.thread_press, args=(type, time, code,)).start()
+
+    def thread_press(self, type, tim, code):
+        tmp = str(code)
+        self.lock3.acquire()
+        if tmp in self.move_dict:
+            print("+1")
+            self.move_dict[tmp] = self.move_dict[tmp] + 1
+        else:
+            print("=1")
+            self.move_dict[tmp] = 1
+        self.lock3.release()
+        if type == "Mouse":
+            self.mouse(0,0,"Press" + code)
+            time.sleep(tim)
+            self.lock3.acquire()
+            if self.move_dict[tmp] == 1:
+                self.mouse(0,0,"Release" + code)
+            self.move_dict[tmp] = self.move_dict[tmp] - 1
+            self.lock3.release()
+        elif type == "Key":
+            if code in [0x11, 0x1F, 0x1E, 0x20]: # w a s d
+                self.press_key(0x2A) #shift per correre
+            self.press_key(code)
+            time.sleep(tim)
+            self.lock3.acquire()
+            if self.move_dict[tmp] == 1:
+                if code in [0x11, 0x1F, 0x1E, 0x20]: # w a s d
+                    self.release_key(0x2A) #shift per correre
+                self.release_key(code)
+            self.move_dict[tmp] = self.move_dict[tmp] - 1
+            self.lock3.release()
+
+    def trigger_key(self, text):
+        # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
+
+        if not len(text) == 1:
+            return
+
+        if text.lower() == "q":
+            self.press_key(0x21) #F
+            self.release_key(0x21) #F
+            time.sleep(0.1)
+            self.mouse(0,0,"PressLeft")
+            self.mouse(0,0,"ReleaseLeft")
+        #elif text.lower() == "f":
+            #TODO piazzare scale
+            #self.press_key(0x14) #T
+            #self.release_key(0x14)
+            #time.sleep(0.5)
+            #self.mouse(0,0,"PressLeft")
+        elif text.lower() == "1":
+            self.press_key(0x02) #1
+            self.release_key(0x02)
+            # self.mouse(0,0,"PressLeft")
+            self.press_whait_release("Mouse", 3, "Left")
+        elif text.lower() == "2":
+            self.press_key(0x03) #2
+            self.release_key(0x03)
+            self.press_whait_release("Mouse", 3, "Left")
+        elif text.lower() == "3":
+            self.press_key(0x04) #3
+            self.release_key(0x04)
+            self.press_whait_release("Mouse", 3, "Left")
+        elif text.lower() == "4":
+            self.press_key(0x05) #4
+            self.release_key(0x05)
+            self.press_whait_release("Mouse", 3, "Left")
+        elif text.lower() == "5":
+            self.press_key(0x06) #5
+            self.release_key(0x06)
+            self.press_whait_release("Mouse", 3, "Left")
+        elif text.lower() == "6":
+            self.press_key(0x2C) #Z
+            self.release_key(0x2C)
+            self.press_whait_release("Mouse", 3, "Left")
+        elif text.lower() == "u":
+            self.mouse(0,-1500) #Top
+        elif text.lower() == "j":
+            self.mouse(0,1500) #Bottom
+        elif text.lower() == "h":
+            self.mouse(-1500,0) #Left
+        elif text.lower() == "k":
+            self.mouse(1500,0) #Right
+        elif text.lower() == "w":
+            self.press_whait_release("Key", 10, 0x11)
+            # self.press_key(0x11)
+        elif text.lower() == "s":
+            self.press_whait_release("Key", 10, 0x1F)
+            # self.press_key(0x1F)
+        elif text.lower() == "a":
+            self.press_whait_release("Key", 10, 0x1E)
+            # self.press_key(0x1E)
+        elif text.lower() == "d":
+            self.press_whait_release("Key", 10, 0x20)
+            # self.press_key(0x20)
+
+    def set_can_move(self, can):
+        self.can_move = can
+
+    def get_can_move(self):
+        return self.can_move
 
     def afk(self):
         try:
@@ -905,6 +969,20 @@ class BotAna(QtCore.QThread):
                 self.send_message("Non ho voglia di parlare, ora ResidentSleeper")
             else:
                 self.whisper("SeemsGood")
+
+        elif self.message == "!activatemove":
+            if self.get_can_move() == True:
+                return
+            self.set_can_move(True)
+            self.sign4.emit(True)
+            self.send_message("La chat ha il comando!!!")
+
+        elif self.message == "!deactivatemove":
+            if self.get_can_move() == False:
+                return
+            self.set_can_move(False)
+            self.sign4.emit(False)
+            self.send_message("La chat non ha più il comando!!!")
 
         else:
             for com in self.commandsMod.values():
