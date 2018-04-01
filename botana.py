@@ -381,7 +381,7 @@ class BotAna(QtCore.QThread):
         if text.lower() == "q":
             self.press_key(0x21) #F
             self.release_key(0x21) #F
-            time.sleep(0.1)
+            time.sleep(0.2)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
         #elif text.lower() == "f":
@@ -435,6 +435,9 @@ class BotAna(QtCore.QThread):
         elif text.lower() == "d":
             self.press_whait_release("Key", 10, 0x20)
             # self.press_key(0x20)
+        elif text.lower() == "b":
+            self.press_key(0x39) #space
+            self.release_key(0x39)
 
     def set_can_move(self, can):
         self.can_move = can
