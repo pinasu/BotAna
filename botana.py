@@ -381,7 +381,7 @@ class BotAna(QtCore.QThread):
         if text.lower() == "q":
             self.press_key(0x21) #F
             self.release_key(0x21) #F
-            time.sleep(0.2)
+            time.sleep(0.5)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
         #elif text.lower() == "f":
@@ -394,7 +394,7 @@ class BotAna(QtCore.QThread):
             self.press_key(0x02) #1
             self.release_key(0x02)
             # self.mouse(0,0,"PressLeft")
-            self.press_whait_release("Mouse", 3, "Left")
+            self.press_whait_release("Mouse", 5, "Left")
         elif text.lower() == "2":
             self.press_key(0x03) #2
             self.release_key(0x03)
@@ -416,28 +416,31 @@ class BotAna(QtCore.QThread):
             self.release_key(0x2C)
             self.press_whait_release("Mouse", 3, "Left")
         elif text.lower() == "u":
-            self.mouse(0,-1500) #Top
+            self.mouse(0,-1000) #Top
         elif text.lower() == "j":
-            self.mouse(0,1500) #Bottom
+            self.mouse(0,1000) #Bottom
         elif text.lower() == "h":
-            self.mouse(-1500,0) #Left
+            self.mouse(-1000,0) #Left
         elif text.lower() == "k":
-            self.mouse(1500,0) #Right
+            self.mouse(1000,0) #Right
         elif text.lower() == "w":
-            self.press_whait_release("Key", 10, 0x11)
+            self.press_whait_release("Key", 5, 0x11)
             # self.press_key(0x11)
         elif text.lower() == "s":
-            self.press_whait_release("Key", 10, 0x1F)
+            self.press_whait_release("Key", 5, 0x1F)
             # self.press_key(0x1F)
         elif text.lower() == "a":
-            self.press_whait_release("Key", 10, 0x1E)
+            self.press_whait_release("Key", 5, 0x1E)
             # self.press_key(0x1E)
         elif text.lower() == "d":
-            self.press_whait_release("Key", 10, 0x20)
+            self.press_whait_release("Key", 5, 0x20)
             # self.press_key(0x20)
         elif text.lower() == "b":
             self.press_key(0x39) #space
             self.release_key(0x39)
+        elif text.lower() == "e":
+            self.press_key(0x12) #e
+            self.release_key(0x12)
 
     def set_can_move(self, can):
         self.can_move = can
