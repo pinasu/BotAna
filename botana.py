@@ -333,8 +333,8 @@ class BotAna(QtCore.QThread):
     # def TriggerKey(self, text):
     #     if "marmellata" in text.lower():
     #         self.PressKey(0x21) #F
-    #         time.sleep(0.1)
     #         self.ReleaseKey(0x21) #F
+    #         time.sleep(0.5)
     #         self.Mouse(0,0,"PressLeft")
     #
     #         self.Mouse(0,0,"ReleaseLeft")
