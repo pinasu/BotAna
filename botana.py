@@ -214,7 +214,7 @@ class BotAna(QtCore.QThread):
                         for line in rec:
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-                #'''
+                '''
                 elif tmponline["stream"]["stream_type"] == "rerun":
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
@@ -246,8 +246,8 @@ class BotAna(QtCore.QThread):
                         self.vodded = []
 
                 if rec:
-                # '''
-                # if True:
+                 '''
+                if True:
                     for line in rec:
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
@@ -307,6 +307,16 @@ class BotAna(QtCore.QThread):
         self.wait()
 
 #    Key pressing
+
+    def mouse_move_abs(self, x, y):
+        extra = ctypes.c_ulong(0)
+        ii_ = Input_I()
+        x = int(x*(65536/ctypes.windll.user32.GetSystemMetrics(0))+1)
+        y = int(y*(65536/ctypes.windll.user32.GetSystemMetrics(1))+1)
+        ii_.mi = MouseInput(x, y, 0, 0x0001 | 0x8000, 0, ctypes.pointer(extra))
+        x = Input(ctypes.c_ulong(0), ii_)
+        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
     def mouse(self, x, y, code=""):
         if code == "PressLeft":
             cd = 0x0002;
@@ -318,6 +328,7 @@ class BotAna(QtCore.QThread):
             cd = 0x0010;
         else:
             cd = 0x0001;
+
         extra = ctypes.c_ulong(0)
         ii_ = Input_I()
         ii_.mi = MouseInput(x, y, 0, cd, 0, ctypes.pointer(extra))
@@ -441,6 +452,14 @@ class BotAna(QtCore.QThread):
         elif text.lower() == "e":
             self.press_key(0x12) #e
             self.release_key(0x12)
+        elif text.lower() == "r":
+            self.mouse_move_abs(1790,1050)
+            self.mouse(0,0,"PressLeft")
+            self.mouse(0,0,"ReleaseLeft")
+        elif text.lower() == "t":
+            self.mouse_move_abs(1600,950)
+            self.mouse(0,0,"PressLeft")
+            self.mouse(0,0,"ReleaseLeft")
 
     def set_can_move(self, can):
         self.can_move = can
