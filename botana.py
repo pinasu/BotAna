@@ -456,11 +456,11 @@ class BotAna(QtCore.QThread):
             self.press_key(0x01) #esc
             self.release_key(0x01)
         elif text.lower() == "r":
-            self.mouse_move_abs(1920 + 1790, 1080 + 1050)
+            self.mouse_move_abs(1920 + 1790, 1050)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
         elif text.lower() == "t":
-            self.mouse_move_abs(1920 + 1600, 1080 + 950)
+            self.mouse_move_abs(1920 + 1600, 950)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
 
