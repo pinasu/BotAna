@@ -462,7 +462,8 @@ class BotAna(QtCore.QThread):
             self.press_whait_release("Key", 5, 0x20)
             # self.press_key(0x20)
         elif text.lower() == "m":
-            self.press_whait_release("Key", 3, 0x32)
+            self.press_key(0x32) #4
+            self.release_key(0x32)
         elif text.lower() == "b":
             self.press_key(0x39) #space
             self.release_key(0x39)
