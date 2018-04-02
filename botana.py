@@ -308,6 +308,15 @@ class BotAna(QtCore.QThread):
 
 #    Key pressing
 
+    def mouse_move_from_bottom_right(self, x, y):
+        extra = ctypes.c_ulong(0)
+        ii_ = Input_I()
+        x = int((ctypes.windll.user32.GetSystemMetrics(0) - x) * (65536/ctypes.windll.user32.GetSystemMetrics(0))+1)
+        y = int((ctypes.windll.user32.GetSystemMetrics(1) - y) * (65536/ctypes.windll.user32.GetSystemMetrics(1))+1)
+        ii_.mi = MouseInput(x, y, 0, 0x0001 | 0x8000, 0, ctypes.pointer(extra))
+        x = Input(ctypes.c_ulong(0), ii_)
+        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
     def mouse_move_abs(self, x, y):
         extra = ctypes.c_ulong(0)
         ii_ = Input_I()
@@ -464,11 +473,11 @@ class BotAna(QtCore.QThread):
             self.press_key(0x01) #esc
             self.release_key(0x01)
         elif text.lower() == "r":
-            self.mouse_move_abs(1920 + 1790, 1050)
+            self.mouse_move_from_bottom_right(130, 30)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
         elif text.lower() == "t":
-            self.mouse_move_abs(1920 + 1600, 950)
+            self.mouse_move_from_bottom_right(220, 130)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
 
