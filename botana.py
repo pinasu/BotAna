@@ -395,6 +395,12 @@ class BotAna(QtCore.QThread):
             time.sleep(0.5)
             self.mouse(0,0,"PressLeft")
             self.mouse(0,0,"ReleaseLeft")
+        elif text.lower() == "g":
+            self.press_key(0x22) #g
+            self.release_key(0x22)
+            time.sleep(0.5)
+            self.mouse(0,0,"PressLeft")
+            self.mouse(0,0,"ReleaseLeft")
         #elif text.lower() == "f":
             #TODO piazzare scale
             #self.press_key(0x14) #T
