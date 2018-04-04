@@ -203,6 +203,7 @@ class BotAna(QtCore.QThread):
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
 
+                '''
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -214,7 +215,6 @@ class BotAna(QtCore.QThread):
                         for line in rec:
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
-                '''
                 elif tmponline["stream"]["stream_type"] == "rerun":
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
@@ -1214,6 +1214,7 @@ class BotAna(QtCore.QThread):
         resp = requests.get(URL)
         soup = BeautifulSoup(resp.text, 'html.parser')
         self.speak_text(soup.find(title="Clicca per spedire questa Barzelletta").get_text())
+        self.send_message("haHAA")
 
     def find(self, s, first, last):
         start = s.index(first) + len(first)
@@ -1323,14 +1324,16 @@ class BotAna(QtCore.QThread):
                         self.play_sound("spiketrap")
 
         elif self.message == "!barza" and not self.is_in_timeout("!barza"):
-            self.send_message("haHAA")
             threading.Thread(target=self.get_random_barza, args=()).start()
 
         elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
+                self.print_message(self.arguments)
                 if len(args) == 1:
                     threading.Thread(target=self.get_stats, args=(args[-1].lower(), "pc")).start()
+                elif self.arguments.count(' ') >= 1:
+                    threading.Thread(target=self.get_stats, args=(' '.join(args).lower(), "pc")).start()
                 else:
                     threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
@@ -1341,6 +1344,8 @@ class BotAna(QtCore.QThread):
                 args = self.arguments.split(' ')
                 if len(args) == 1:
                     threading.Thread(target=self.get_kd, args=(args[-1].lower(), "pc",)).start()
+                elif self.arguments.count(' ') >= 1:
+                    threading.Thread(target=self.get_kd, args=(' '.join(args).lower(), "pc")).start()
                 else:
                     threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
             else:
@@ -1387,7 +1392,7 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.start_roulette, args=([self.username])).start()
 
         elif self.message == "!emotes":
-            self.get_emotes("stockhausen_l2p")
+            self.get_emotes(self.NICK)
 
         elif self.message == "!salta":
             if len(self.skippers) == 0 or time.time() - self.timeSkip > 60:
