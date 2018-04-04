@@ -203,7 +203,6 @@ class BotAna(QtCore.QThread):
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
 
-                '''
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -246,8 +245,6 @@ class BotAna(QtCore.QThread):
                         self.vodded = []
 
                 if rec:
-                 '''
-                if True:
                     for line in rec:
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
