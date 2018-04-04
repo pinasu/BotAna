@@ -197,7 +197,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-
+                '''
                 if not hasattr(tmponline, "__getitem__"):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
@@ -238,6 +238,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -520,7 +522,8 @@ class BotAna(QtCore.QThread):
             }
             resp = requests.get(url=url, headers=params)
             user = json.loads(resp.text)
-            return user['users'][0]['_id']
+            if user:
+                return user['users'][0]['_id']
         except:
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
@@ -835,6 +838,23 @@ class BotAna(QtCore.QThread):
         elif self.message == "!stop":
             self.send_message("HeyGuys")
             os._exit(0)
+
+        elif self.message == "!shout":
+            args = self.arguments.split(' ')
+            if len(args) == 1:
+                try:
+                    URL = "https://api.twitch.tv/kraken/channels/"+self.get_user_id(''.join(args))
+                    params = {
+                        "Accept": "application/vnd.twitchtv.v5+json",
+                        "Client-ID" : ""+self.CLIENT_ID+""
+                    }
+
+                    resp = requests.get(url=URL, headers=params)
+                    self.send_message("Andate a mettere un like a "+self.arguments+" su https://www.twitch.tv/"+self.arguments+" KappaPride")
+                except:
+                    self.send_whisper("Errore. Il canale non esiste.")
+            else:
+                self.send_whisper("Errore. Il canale contiene spazi.")
 
         elif self.message == "!multi":
             args = self.arguments.split(' ')
