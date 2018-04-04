@@ -214,6 +214,7 @@ class BotAna(QtCore.QThread):
                         for line in rec:
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
+
                 elif tmponline["stream"]["stream_type"] == "rerun":
                     if self.state_string != "vodcast":
                         self.print_message(self.NICK+" is in a vodcast.")
@@ -253,7 +254,7 @@ class BotAna(QtCore.QThread):
 
                             if len(parts) < 3: continue
                             if "QUIT" not in parts[1] and "JOIN" not in parts[1] and "PARTS" not in parts[1]:
-                                self.message = parts[2].lower()
+                                self.message = parts[2]
 
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
@@ -274,7 +275,7 @@ class BotAna(QtCore.QThread):
                             if self.message.startswith('!'):
                                 message_list = self.message.split(' ')
 
-                                self.message = message_list[0].lower()
+                                self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
 
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
@@ -820,6 +821,7 @@ class BotAna(QtCore.QThread):
             file.close()
 
     def call_command_mod(self):
+        self.message = self.message.lower()
         raffled = ""
 
         if self.message == "!restart":
@@ -1287,6 +1289,8 @@ class BotAna(QtCore.QThread):
             self.print_message("Error reading patch.txt")
 
     def call_command_pleb(self):
+        self.message = self.message.lower()
+
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
             self.add_in_timeout("!cit")
             if self.arguments:
@@ -1458,7 +1462,7 @@ class BotAna(QtCore.QThread):
                 else:
                     self.send_message("GivePLZ "+str(args[0]).upper()+" "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
             else:
-                self.send_message("GivePLZ ALESSIANA  "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
+                self.send_message("GivePLZ "+self.NICK.upper()+" "+self.username.upper()+" TI DONA LA SUA ENERGIA GivePLZ")
 
         else:
             for com in self.commandsPleb.values():
