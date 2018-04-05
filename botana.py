@@ -152,7 +152,6 @@ class BotAna(QtCore.QThread):
         self.trap_count = 0
 
         self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
-        self.multi_spam_index = -1
 
         self.can_move = False
         self.move_dict = dict()
@@ -860,10 +859,8 @@ class BotAna(QtCore.QThread):
             args = self.arguments.split(' ')
 
             if args[0] == "reset":
-                if self.multi_spam_index != -1:
-                    self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
-                    self.remove_spam_phrase(self.multi_spam_index)
-                    self.send_whisper("Multi-Twitch resettato ("+self.multi_twitch+")")
+                self.multi_twitch = "https://multistre.am/"+self.NICK+"/"
+                self.send_whisper("Multi-Twitch resettato ("+self.multi_twitch+")")
             elif args[0] == "":
                 if "Segui" in self.multi_twitch:
                     self.send_message(self.multi_twitch)
@@ -872,8 +869,6 @@ class BotAna(QtCore.QThread):
             else:
                 chans = "/".join(args)
                 self.multi_twitch = "Segui tutti gli streamer nello stesso momento! https://multistre.am/"+self.NICK+"/"+chans+" FeelsGoodMan"
-                self.add_spam_phrase(self.multi_twitch)
-                self.multi_spam_index = len(self.msg_spam)
                 self.send_message(self.multi_twitch)
 
         elif self.message == "!addspam":
