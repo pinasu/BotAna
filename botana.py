@@ -304,7 +304,6 @@ class BotAna(QtCore.QThread):
         self.wait()
 
     #Key pressing
-
     # non funge su doppio schermo, prende sempre solo il primo
     def mouse_move_from_bottom_right(self, x, y):
         extra = ctypes.c_ulong(0)
