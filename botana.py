@@ -196,7 +196,7 @@ class BotAna(QtCore.QThread):
                 self.lock.release()
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-                '''
+
                 if not hasattr(tmponline, "__getitem__"):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
@@ -237,8 +237,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
-                '''
-                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -305,7 +303,7 @@ class BotAna(QtCore.QThread):
         self.exiting = True
         self.wait()
 
-#    Key pressing
+    #Key pressing
 
     # non funge su doppio schermo, prende sempre solo il primo
     def mouse_move_from_bottom_right(self, x, y):
