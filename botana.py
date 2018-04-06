@@ -1348,27 +1348,22 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                self.print_message(self.arguments)
-                if len(args) == 1:
-                    threading.Thread(target=self.get_stats, args=(args[-1].lower(), "pc")).start()
-                elif self.arguments.count(' ') >= 1:
-                    threading.Thread(target=self.get_stats, args=(' '.join(args).lower(), "pc")).start()
+                if args[-1] != "pc":
+                    threading.Thread(target=self.get_stats, args=('%20'.join(args).lower(), "pc")).start()
                 else:
-                    threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
+                    threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["alessiana", "pc"])).start()
 
         elif self.message == "!kd" and self.is_for_current_game(self.commandsPleb["!kd"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if len(args) == 1:
-                    threading.Thread(target=self.get_kd, args=(args[-1].lower(), "pc",)).start()
-                elif self.arguments.count(' ') >= 1:
-                    threading.Thread(target=self.get_kd, args=(' '.join(args).lower(), "pc")).start()
+                if args[-1] != "pc":
+                    threading.Thread(target=self.get_kd, args=('%20'.join(args).lower(), "pc")).start()
                 else:
-                    threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]), args[-1].lower(),)).start()
+                    threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
             else:
-                threading.Thread(target=self.get_kd, args=(["Alessiana", "pc"])).start()
+                threading.Thread(target=self.get_kd, args=(["alessiana", "pc"])).start()
 
         elif self.message == "!winoggi" and not self.is_in_timeout("!winoggi") and self.is_for_current_game(self.commandsPleb["!winoggi"]):
             if self.arguments:
