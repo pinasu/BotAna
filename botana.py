@@ -201,7 +201,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-
+                '''
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -237,6 +237,8 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -1149,6 +1151,8 @@ class BotAna(QtCore.QThread):
                 self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
     def get_stats(self, user, platform):
+        self.print_message("USER :"+user+" PLAT :"+platform)
+
         URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
         if '%20' in user:
             user = user.replace('%20', ' ')
@@ -1345,20 +1349,20 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if args[-1] != "pc":
-                    threading.Thread(target=self.get_stats, args=('%20'.join(args).lower(), "pc")).start()
-                else:
+                if args[-1] == "pc" or args[-1] == "ps4" or args[-1] == "xbox":
                     threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
+                else:
+                    threading.Thread(target=self.get_stats, args=('%20'.join(args).lower(), "pc")).start()
             else:
                 threading.Thread(target=self.get_stats, args=(["alessiana", "pc"])).start()
 
         elif self.message == "!kd" and self.is_for_current_game(self.commandsPleb["!kd"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if args[-1] != "pc":
-                    threading.Thread(target=self.get_kd, args=('%20'.join(args).lower(), "pc")).start()
-                else:
+                if args[-1] == "pc" or args[-1] == "ps4" or args[-1] == "xbox":
                     threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
+                else:
+                    threading.Thread(target=self.get_kd, args=('%20'.join(args).lower(), "pc")).start()
             else:
                 threading.Thread(target=self.get_kd, args=(["alessiana", "pc"])).start()
 
