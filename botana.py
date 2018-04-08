@@ -821,6 +821,7 @@ class BotAna(QtCore.QThread):
         finally:
             #non mi quadra tanto questa cosa
             #dio cane maiale
+            #perchè verificare se pullare? pulliamo e basta sempre...
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
                 os._exit(0)
