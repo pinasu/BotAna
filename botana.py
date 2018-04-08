@@ -813,13 +813,20 @@ class BotAna(QtCore.QThread):
 
     def restart(self):
         try:
-            subprocess.Popen("botanaUserInterface.pyw", shell=True)
-            os._exit(0)
-        except:
-            file = open("LogError.txt", "a")
-            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-            traceback.print_exc()
-            file.close()
+            need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
+            out, err = need_pull.communicate()
+            if out != 'b':
+                process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+                out = "r"
+        finally:
+            try:
+                subprocess.Popen("botanaUserInterface.pyw", shell=True)
+                os._exit(0)
+            except:
+                file = open("LogError.txt", "a")
+                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                traceback.print_exc()
+                file.close()
 
     def call_command_mod(self):
         raffled = ""
