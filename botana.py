@@ -158,9 +158,6 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            process = subprocess.Popen(["git", "checkout master"], stdout=subprocess.PIPE, shell=True)
-            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick('config.ini', config)
@@ -277,6 +274,8 @@ class BotAna(QtCore.QThread):
                                 self.trigger_key(self.message)
 
                             if self.message.startswith('!'):
+                                self.message = self.message.lower()
+                                
                                 message_list = self.message.split(' ')
 
                                 self.message = message_list[0]
@@ -826,12 +825,18 @@ class BotAna(QtCore.QThread):
             file.close()
 
     def call_command_mod(self):
-        self.message = self.message.lower()
         raffled = ""
 
         if self.message == "!restart":
-            subprocess.Popen("botanaUserInterface.pyw", shell=True)
-            os._exit(0)
+            try:
+                need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
+                out, err = need_pull.communicate()
+                if out != 'b':
+                    process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+                    out = "r"
+            finally:
+                subprocess.Popen("botanaUserInterface.pyw", shell=True)
+                os._exit(0)
 
         elif self.message == "!stopbarza":
             self.speak.Pause()
@@ -1309,8 +1314,6 @@ class BotAna(QtCore.QThread):
             self.print_message("Error reading patch.txt")
 
     def call_command_pleb(self):
-        self.message = self.message.lower()
-
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
             self.add_in_timeout("!cit")
             if self.arguments:
@@ -1353,7 +1356,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if args[-1] == "ps4" or args[-1] == "xbox":
+                if args[-1] == "pc" or args[-1] == "ps4" or args[-1] == "xbox":
                     threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
                 else:
                     threading.Thread(target=self.get_stats, args=('%20'.join(args).lower(), "pc")).start()
@@ -1363,7 +1366,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!kd" and self.is_for_current_game(self.commandsPleb["!kd"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if args[-1] == "ps4" or args[-1] == "xbox":
+                if args[-1] == "pc" or args[-1] == "ps4" or args[-1] == "xbox":
                     threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
                 else:
                     threading.Thread(target=self.get_kd, args=('%20'.join(args).lower(), "pc")).start()
