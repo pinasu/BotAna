@@ -812,16 +812,10 @@ class BotAna(QtCore.QThread):
         return True
 
     def restart(self):
+        # se prima di pullare si verifica che ci sia qualche pull da fare sorge il problema che se si fetcha da qualche altra parte senza pullare, per botana è tutto apposto e lei non pulla
         try:
-            need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
-            out, err = need_pull.communicate()
-            if out != 'b':
-                process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-                out = "r"
+            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
         finally:
-            #non mi quadra tanto questa cosa
-            #dio cane maiale
-            #perchè verificare se pullare? pulliamo e basta sempre...
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
                 os._exit(0)
