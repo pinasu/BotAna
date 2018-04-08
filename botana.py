@@ -820,6 +820,7 @@ class BotAna(QtCore.QThread):
                 out = "r"
         finally:
             #non mi quadra tanto questa cosa
+            #dio cane maiale
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
                 os._exit(0)
