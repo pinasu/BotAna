@@ -833,15 +833,7 @@ class BotAna(QtCore.QThread):
         raffled = ""
 
         if self.message == "!restart":
-            try:
-                need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
-                out, err = need_pull.communicate()
-                if out != 'b':
-                    process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-                    out = "r"
-            finally:
-                subprocess.Popen("botanaUserInterface.pyw", shell=True)
-                os._exit(0)
+            self.restart()
 
         elif self.message == "!stopbarza":
             self.speak.Pause()
