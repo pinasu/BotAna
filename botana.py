@@ -813,6 +813,7 @@ class BotAna(QtCore.QThread):
 
     def restart(self):
         # se prima di pullare si verifica che ci sia qualche pull da fare sorge il problema che se si fetcha da qualche altra parte senza pullare, per botana è tutto apposto e lei non pulla
+        #dio scancanato
         try:
             process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
         finally:
