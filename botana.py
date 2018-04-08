@@ -819,6 +819,7 @@ class BotAna(QtCore.QThread):
                 process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
                 out = "r"
         finally:
+            #non mi quadra tanto questa cosa
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
                 os._exit(0)
