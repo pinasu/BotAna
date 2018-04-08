@@ -275,7 +275,7 @@ class BotAna(QtCore.QThread):
 
                             if self.message.startswith('!'):
                                 self.message = self.message.lower()
-                                
+
                                 message_list = self.message.split(' ')
 
                                 self.message = message_list[0]
@@ -309,7 +309,6 @@ class BotAna(QtCore.QThread):
 
     #Key pressing
     # non funge su doppio schermo, prende sempre solo il primo
-    #mannaggia la madonna del signore
     def mouse_move_from_bottom_right(self, x, y):
         extra = ctypes.c_ulong(0)
         ii_ = Input_I()

@@ -146,7 +146,7 @@ class Window(QtWidgets.QWidget):
 		self.moveBtn.setIconSize(QtCore.QSize(40,40))
 		self.moveBtn.setCursor (Qt.PointingHandCursor)
 		self.moveBtn.setProperty('class','button gridButton')
-		self.moveBtn.setToolTip("Attiva/disattiva audio")
+		self.moveBtn.setToolTip("Attiva/disattiva comandi chat")
 
 
 		g_box = QtWidgets.QGridLayout()
