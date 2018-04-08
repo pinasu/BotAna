@@ -1,5 +1,4 @@
-import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading
-import pythoncom
+import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
 from bs4 import BeautifulSoup
 from pygame import mixer
@@ -10,6 +9,7 @@ from sound import Sound
 from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
+
 #Key pressing
 import ctypes
 
@@ -158,6 +158,9 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
+            process = subprocess.Popen(["git", "checkout master"], stdout=subprocess.PIPE, shell=True)
+            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick('config.ini', config)
