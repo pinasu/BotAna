@@ -1031,9 +1031,9 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!ismute":
             if self.is_muted:
-                self.send_message("caramella gommosa, Non ho voglia di parlare, ora ResidentSleeper")
+                self.send_message("Non ho voglia di parlare, ora ResidentSleeper")
             else:
-                self.send_whisper("SeemsGood, swine puzza")
+                self.send_whisper("SeemsGood")
 
         elif self.message == "!activatemove":
             if self.get_can_move() == True:
