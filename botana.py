@@ -822,6 +822,7 @@ class BotAna(QtCore.QThread):
     def restart(self):
         try:
             process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+            retcode = process.wait()
         finally:
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
