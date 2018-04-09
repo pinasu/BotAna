@@ -166,6 +166,8 @@ class BotAna(QtCore.QThread):
             if out != 'b''' and err != None:
                 self.restart()
 
+            self.play_sound("ammore")
+
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick('config.ini', config)
