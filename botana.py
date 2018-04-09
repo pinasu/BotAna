@@ -158,6 +158,14 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
+            need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
+            out, err = need_pull.communicate()
+            print(out)
+
+            if out != 'b':
+                process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+                self.restart()
+
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick('config.ini', config)
@@ -812,8 +820,6 @@ class BotAna(QtCore.QThread):
         return True
 
     def restart(self):
-        # se prima di pullare si verifica che ci sia qualche pull da fare sorge il problema che se si fetcha da qualche altra parte senza pullare, per botana è tutto apposto e lei non pulla
-        #dio scancanato
         try:
             process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
         finally:
