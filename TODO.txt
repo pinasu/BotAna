@@ -1,5 +1,5 @@
 1) Aggiungere i punti: per ogni minuto si guadagnano punti, per ogni citazione e comando vocale si spendono punti
-	[Stato]: aspetto la risposta da Streamlabs.
+	[Stato]:eh
 
 2) Aggiungere il comando per settare il titolo dello stream.
 	[Stato]: eh
