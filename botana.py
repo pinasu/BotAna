@@ -15,7 +15,7 @@ import ctypes
 
 SendInput = ctypes.windll.user32.SendInput
 
-# C struct redefinitions monkaS
+# C struct redefinitions monkaGIGA
 PUL = ctypes.POINTER(ctypes.c_ulong)
 class KeyBdInput(ctypes.Structure):
     _fields_ = [("wVk", ctypes.c_ushort),
