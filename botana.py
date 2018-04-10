@@ -162,7 +162,7 @@ class BotAna(QtCore.QThread):
             #out, err = need_pull.communicate()
             #print(out)
             #print(err)
-            print(need_pull.check_output())
+            print(check_output(need_pull))
 
             if str(out) != "b''":
                 self.restart()
