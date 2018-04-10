@@ -160,8 +160,9 @@ class BotAna(QtCore.QThread):
         try:
             need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
-            print(out)
-            print(err)
+            #print(out)
+            #print(err)
+            print(need_pull)
 
             if str(out) != "b''":
                 self.restart()
