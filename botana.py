@@ -163,7 +163,7 @@ class BotAna(QtCore.QThread):
             print(out)
             print(err)
 
-            if out != 'b''' and err != None:
+            if out != "":
                 self.restart()
 
             config = configparser.ConfigParser()
