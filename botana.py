@@ -157,13 +157,16 @@ class BotAna(QtCore.QThread):
         self.can_move = False
         self.move_dict = dict()
 
+        self.changes = ""
+
     def run(self):
         try:
             repo = Repo('')
             for item in repo.index.diff(None):
-                changes = item.a_path
-            if changes != "":
-                self.restart()
+                self.changes = item.a_path
+            if self.changes != "":
+                print(self.changes)
+#                self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
