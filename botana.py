@@ -1,6 +1,6 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
-from git import Repo, RemoteProgress
+#from git import Repo
 from bs4 import BeautifulSoup
 from pygame import mixer
 from random import randint
@@ -161,12 +161,6 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            repo = Repo('')
-            for item in repo.index.diff(None):
-                self.changes = item.a_path
-            if self.changes != "":
-                print(self.changes)
-#                self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
