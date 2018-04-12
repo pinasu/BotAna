@@ -166,7 +166,7 @@ class BotAna(QtCore.QThread):
             process = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
             print(str(out))
-            if str(out) != "b''":
+            if "up to date" not in str(out):
                 self.restart()
 
             config = configparser.ConfigParser()
