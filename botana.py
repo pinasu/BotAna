@@ -162,8 +162,12 @@ class BotAna(QtCore.QThread):
     def run(self):
         try:
             process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
+            process.wait()
+            process = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
-            print("------------"+str(out))
+            print(str(out))
+            if str(out) != "b''":
+                self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
