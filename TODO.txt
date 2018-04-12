@@ -2,7 +2,7 @@
 	[Stato]: Testing
 
 2) Aggiungere il comando per settare il titolo dello stream.
-	[Stato]: eh
+	[Stato]: Probabilmente abbiamo bisogno di una istanza del Browser per chiedere all'utente la conferma
 
 3) Aggiungere un comando per settare il gioco dello stream.
 	[Stato]: eh
