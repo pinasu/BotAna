@@ -158,13 +158,13 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
-            out, err = need_pull.communicate()
+            need_pull = subprocess.Popen(["git", "fetch", "-v", "--dry-run"], stderr=subprocess.PIPE, shell=True)
+            need_pull.wait()
+            print(str(need_pull.stderr.read()))
             #print(out)
             #print(err)
-            print(need_pull.returncode)
 
-            #if str(need_pull.returncode) != "":
+            #if str(out) != "b''":
             #    self.restart()
 
             config = configparser.ConfigParser()
