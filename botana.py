@@ -16,7 +16,7 @@ import ctypes
 
 SendInput = ctypes.windll.user32.SendInput
 
-# C struct redefinitions monkaGIGA
+# C struct redefinitions 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 class KeyBdInput(ctypes.Structure):
     _fields_ = [("wVk", ctypes.c_ushort),
@@ -162,10 +162,10 @@ class BotAna(QtCore.QThread):
     def run(self):
         try:
             process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
-            process.wait()
-            process = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
-            out, err = process.communicate()
-            print(str(out))
+            process.communicate()
+            need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
+            out, err = need_pull.communicate()
+            
             if "up to date" not in str(out):
                 self.restart()
 
@@ -825,7 +825,7 @@ class BotAna(QtCore.QThread):
     def restart(self):
         try:
             process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            retcode = process.wait()
+            retcode = process.communicate()
         finally:
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
