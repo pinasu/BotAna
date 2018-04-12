@@ -159,14 +159,13 @@ class BotAna(QtCore.QThread):
     def run(self):
         try:
             need_pull = subprocess.Popen(["git", "fetch", "--dry-run"], stdout=subprocess.PIPE, shell=True)
-            need_pull.wait()
-            #out, err = need_pull.communicate()
+            out, err = need_pull.communicate()
             #print(out)
             #print(err)
-            print(need_pull.stdout)
+            print(need_pull.returncode)
 
-            if str(need_pull.stdout) != "":
-                self.restart()
+            #if str(need_pull.returncode) != "":
+            #    self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
