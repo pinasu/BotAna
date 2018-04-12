@@ -1,4 +1,4 @@
-1) Aggiungere i punti: per ogni minuto si guadagnano punti, per ogni citazione e comando vocale si spendono punti
+1) Aggiungere i punti: per ogni minuto si guadagnano punti.
 	[Stato]:eh
 
 2) Aggiungere il comando per settare il titolo dello stream.
