@@ -1,5 +1,5 @@
 1) Aggiungere i punti: per ogni minuto si guadagnano punti.
-	[Stato]:eh
+	[Stato]: Testing
 
 2) Aggiungere il comando per settare il titolo dello stream.
 	[Stato]: eh
