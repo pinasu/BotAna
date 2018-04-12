@@ -56,11 +56,6 @@ class BotAna(QtCore.QThread):
     def __init__(self):
         super().__init__()
 
-        repo = git.Repo('')
-        print(repo.git.status())
-        fetch_info = repo.git.fetch()
-        print("1) "+fetch_info)
-
         self.sock = socket.socket()
         self.HOST = "irc.twitch.tv"
         self.PORT = 6667
@@ -166,6 +161,9 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
+            process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
+            out, err = process.communicate()
+            print("------------"+str(out))
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
