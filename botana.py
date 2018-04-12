@@ -161,9 +161,9 @@ class BotAna(QtCore.QThread):
         try:
             repo = Repo('')
             for item in repo.index.diff(None):
-                print(item.a_path)
-#            if changes != "":
-#                self.restart()
+                changes = item.a_path
+            if changes != "":
+                self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
