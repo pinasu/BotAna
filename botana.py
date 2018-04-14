@@ -1,6 +1,6 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
-import git
+# import git
 from git import Repo
 from bs4 import BeautifulSoup
 from pygame import mixer
