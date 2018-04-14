@@ -167,7 +167,7 @@ class BotAna(QtCore.QThread):
 
             print(out)
 
-            if "up-to-date" not in str(out) or "up to date" not in str(out):
+            if "up-to-date" not in str(out) and "up to date" not in str(out):
                 self.fast_restart()
 
             self.get_app_access_token()
