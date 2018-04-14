@@ -159,23 +159,23 @@ class BotAna(QtCore.QThread):
         self.move_dict = dict()
 
         self.changes = ""
-        print(os.path.dirname(os.path.realpath(__file__)))
         self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
     def run(self):
         try:
-            commits_behind = self.repo.iter_commits('master..origin/master')
-            commits_ahead = self.repo.iter_commits('origin/master..master')
-            count = sum(1 for c in commits_ahead)
-            if count > 0:
-                self.restart()
-            # process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
-            # process.communicate()
-            # need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
-            # out, err = need_pull.communicate()
-            #
-            # if "up to date" not in str(out):
+            # commits_behind = self.repo.iter_commits('master..origin/master')
+            # commits_ahead = self.repo.iter_commits('origin/master..master')
+            # count = sum(1 for c in commits_ahead)
+            # if count > 0:
             #     self.restart()
+
+            process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
+            process.communicate()
+            need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
+            out, err = need_pull.communicate()
+            print("up to date: " + str(out))
+            if "up to date" not in str(out):
+                self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
@@ -383,10 +383,8 @@ class BotAna(QtCore.QThread):
         tmp = str(code)
         self.lock3.acquire()
         if tmp in self.move_dict:
-            print("+1")
             self.move_dict[tmp] = self.move_dict[tmp] + 1
         else:
-            print("=1")
             self.move_dict[tmp] = 1
         self.lock3.release()
         if type == "Mouse":
@@ -832,10 +830,10 @@ class BotAna(QtCore.QThread):
 # dio cane
     def restart(self):
         try:
-            # process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            # retcode = process.communicate()
-            o = self.repo.remotes.origin
-            o.pull()
+            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+            retcode = process.communicate()
+            # o = self.repo.remotes.origin
+            # o.pull()
         finally:
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
