@@ -11,7 +11,7 @@ from sound import Sound
 from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-
+#dio
 #Key pressing
 import ctypes
 
