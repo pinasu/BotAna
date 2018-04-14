@@ -1,5 +1,10 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
+<<<<<<< HEAD
+=======
+# import git
+from git import Repo
+>>>>>>> 12d9572a5f5f7bfb594a5fadd974ce71f85129dc
 from bs4 import BeautifulSoup
 from pygame import mixer
 from random import randint
@@ -158,16 +163,28 @@ class BotAna(QtCore.QThread):
         self.move_dict = dict()
 
         self.changes = ""
+        self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
     def run(self):
         try:
-            process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
+            # commits_behind = self.repo.iter_commits('master..origin/master')
+            # commits_ahead = self.repo.iter_commits('origin/master..master')
+            # count = sum(1 for c in commits_ahead)
+            # if count > 0:
+            #     self.restart()
+
+            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
             process.communicate()
             need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
+<<<<<<< HEAD
 
             if "up to date" not in str(out):
                 self.restart()
+=======
+            if "up-to-date" not in str(out):
+                self.fast_restart()
+>>>>>>> 12d9572a5f5f7bfb594a5fadd974ce71f85129dc
 
             self.get_app_access_token()
 
@@ -378,10 +395,8 @@ class BotAna(QtCore.QThread):
         tmp = str(code)
         self.lock3.acquire()
         if tmp in self.move_dict:
-            print("+1")
             self.move_dict[tmp] = self.move_dict[tmp] + 1
         else:
-            print("=1")
             self.move_dict[tmp] = 1
         self.lock3.release()
         if type == "Mouse":
@@ -838,19 +853,24 @@ class BotAna(QtCore.QThread):
                 return False
         return True
 
+    def fast_restart(self):
+        try:
+            subprocess.Popen("botanaUserInterface.pyw", shell=True)
+            os._exit(0)
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
+
     def restart(self):
         try:
             process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
             retcode = process.communicate()
+            # o = self.repo.remotes.origin
+            # o.pull()
         finally:
-            try:
-                subprocess.Popen("botanaUserInterface.pyw", shell=True)
-                os._exit(0)
-            except:
-                file = open("LogError.txt", "a")
-                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-                traceback.print_exc()
-                file.close()
+            self.fast_restart()
 
     def call_command_mod(self):
         raffled = ""
