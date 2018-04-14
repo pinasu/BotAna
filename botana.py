@@ -1,6 +1,7 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
 import git
+from git import Repo
 from bs4 import BeautifulSoup
 from pygame import mixer
 from random import randint
@@ -16,7 +17,7 @@ import ctypes
 
 SendInput = ctypes.windll.user32.SendInput
 
-# C struct redefinitions 
+# C struct redefinitions
 PUL = ctypes.POINTER(ctypes.c_ulong)
 class KeyBdInput(ctypes.Structure):
     _fields_ = [("wVk", ctypes.c_ushort),
@@ -158,16 +159,23 @@ class BotAna(QtCore.QThread):
         self.move_dict = dict()
 
         self.changes = ""
+        print(os.path.dirname(os.path.realpath(__file__)))
+        self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
     def run(self):
         try:
-            process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
-            process.communicate()
-            need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
-            out, err = need_pull.communicate()
-            
-            if "up to date" not in str(out):
+            commits_behind = self.repo.iter_commits('master..origin/master')
+            commits_ahead = self.repo.iter_commits('origin/master..master')
+            count = sum(1 for c in commits_ahead)
+            if count > 0:
                 self.restart()
+            # process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
+            # process.communicate()
+            # need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
+            # out, err = need_pull.communicate()
+            #
+            # if "up to date" not in str(out):
+            #     self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
@@ -824,8 +832,10 @@ class BotAna(QtCore.QThread):
 
     def restart(self):
         try:
-            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            retcode = process.communicate()
+            # process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+            # retcode = process.communicate()
+            o = self.repo.remotes.origin
+            o.pull()
         finally:
             try:
                 subprocess.Popen("botanaUserInterface.pyw", shell=True)
