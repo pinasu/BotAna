@@ -169,13 +169,12 @@ class BotAna(QtCore.QThread):
             # if count > 0:
             #     self.restart()
 
-            process = subprocess.Popen(["git", "remote", "-v", "update"], stdout=subprocess.PIPE, shell=True)
+            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
             process.communicate()
             need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
-            print("up to date: " + str(out))
             if "up-to-date" not in str(out):
-                self.restart()
+                self.fast_restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
@@ -828,6 +827,16 @@ class BotAna(QtCore.QThread):
                 return False
         return True
 
+    def fast_restart(self):
+        try:
+            subprocess.Popen("botanaUserInterface.pyw", shell=True)
+            os._exit(0)
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
+
     def restart(self):
         try:
             process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
@@ -835,14 +844,7 @@ class BotAna(QtCore.QThread):
             # o = self.repo.remotes.origin
             # o.pull()
         finally:
-            try:
-                subprocess.Popen("botanaUserInterface.pyw", shell=True)
-                os._exit(0)
-            except:
-                file = open("LogError.txt", "a")
-                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-                traceback.print_exc()
-                file.close()
+            self.fast_restart()
 
     def call_command_mod(self):
         raffled = ""
