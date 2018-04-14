@@ -1,6 +1,5 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
-import git
 from bs4 import BeautifulSoup
 from pygame import mixer
 from random import randint
@@ -16,7 +15,7 @@ import ctypes
 
 SendInput = ctypes.windll.user32.SendInput
 
-# C struct redefinitions 
+# C struct redefinitions
 PUL = ctypes.POINTER(ctypes.c_ulong)
 class KeyBdInput(ctypes.Structure):
     _fields_ = [("wVk", ctypes.c_ushort),
@@ -65,6 +64,7 @@ class BotAna(QtCore.QThread):
         self.CHAN = ""
         self.CLIENT_ID = ""
         self.USER_ID = ""
+        self.CLIENT_SECRET = ""
 
         self.username = ""
         self.message = ""
@@ -165,9 +165,11 @@ class BotAna(QtCore.QThread):
             process.communicate()
             need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
-            
+
             if "up to date" not in str(out):
                 self.restart()
+
+            self.get_app_access_token()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
@@ -175,6 +177,7 @@ class BotAna(QtCore.QThread):
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_clientID('config.ini', config)
             self.USER_ID = self.get_userID('config.ini', config)
+            self.CLIENT_SECRET = self.get_clientSECRET('config.ini', config)
 
             self.load_commands()
             self.load_sounds()
@@ -720,6 +723,19 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error finding " + path + "\n")
 
+    def get_clientID(self, path, config):
+        if os.path.exists(path):
+            try:
+                config.read(path)
+                return config['DEFAULT']['client_id']
+            except:
+                    file = open("LogError.txt", "a")
+                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+                    traceback.print_exc()
+                    file.close()
+        else:
+            self.print_message("Error finding " + path + "\n")
+
     def get_nick(self, path, config):
         if os.path.exists(path):
             try:
@@ -733,11 +749,11 @@ class BotAna(QtCore.QThread):
         else:
             self.print_message("Error reading " + path + "\n")
 
-    def get_clientID(self, path, config):
+    def get_clientSECRET(self, path, config):
         if os.path.exists(path):
             try:
                 config.read(path)
-                return config['DEFAULT']['client_id']
+                return config['DEFAULT']['client_secret']
             except:
                 file = open("LogError.txt", "a")
                 file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
@@ -1309,13 +1325,15 @@ class BotAna(QtCore.QThread):
 
     def get_patch(self):
         self.add_in_timeout("!patch")
-        try:
-            file = open("patch.txt", "r")
-            patch = file.read()
-            self.send_message(self.username+", ecco l'ulima patch di Fortnite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
-            file.close()
-        except:
-            self.print_message("Error reading patch.txt")
+        #try:
+        file = open("patch.txt", "r")
+        patch = file.read()
+        date = os.path.getatime("patch.txt")
+        print(date)
+        self.send_message(self.username+", ecco l'ulima patch di Fortnite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
+        file.close()
+    #    except:
+    #        self.print_message("Error reading patch.txt")
 
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
@@ -1629,3 +1647,11 @@ class BotAna(QtCore.QThread):
         if command.get_game().lower() == curr_game.lower():
             return True
         return False
+
+    def get_app_access_token(self):
+        try:
+            URL = 'https://id.twitch.tv/oauth2/token?client_id='+self.CLIENT_ID+'&client_secret='+self.CLIENT_SECRET+'&grant_type=client_credentials&scope=user:edit'
+            resp = requests.post(url).json()
+            self.print_message(resp)
+        except:
+            self.print_message("Error getting App Access Token.")
