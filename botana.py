@@ -829,7 +829,7 @@ class BotAna(QtCore.QThread):
                 self.image_add_in_timeout(img)
                 return False
         return True
-# dio cane
+
     def restart(self):
         try:
             # process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
