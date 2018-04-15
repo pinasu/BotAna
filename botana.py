@@ -11,7 +11,6 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 import git
 from git import Repo
-#dio scancanato in croce bestia
 #Key pressing
 import ctypes
 
@@ -167,6 +166,7 @@ class BotAna(QtCore.QThread):
             branch_name = 'master'
             commits_ahead = self.repo.iter_commits('origin/master..%s' % branch_name)
             commits_ahead_count = sum(1 for c in commits_ahead)
+            self.print_message(commits_ahead_count)
             is_merged = (commits_ahead_count == 0)
             if not is_merged:
                 self.restart()
