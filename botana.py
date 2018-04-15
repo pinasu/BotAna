@@ -158,16 +158,10 @@ class BotAna(QtCore.QThread):
         self.can_move = False
         self.move_dict = dict()
 
-<<<<<<< HEAD
-        self.repo = git.Repo('')
-=======
         self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
->>>>>>> a0e7c7791a2942fa7e033674885ee9ca5128e0b4
 
     def run(self):
         try:
-            o = self.repo.remotes.origin
-            o.pull()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
