@@ -9,7 +9,8 @@ from sound import Sound
 from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-
+import git
+from git import Repo
 #Key pressing
 import ctypes
 
@@ -157,7 +158,11 @@ class BotAna(QtCore.QThread):
         self.can_move = False
         self.move_dict = dict()
 
+<<<<<<< HEAD
         self.repo = git.Repo('')
+=======
+        self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
+>>>>>>> a0e7c7791a2942fa7e033674885ee9ca5128e0b4
 
     def run(self):
         try:
@@ -841,8 +846,11 @@ class BotAna(QtCore.QThread):
 
     def restart(self):
         try:
-            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            retcode = process.communicate()
+            # process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+            # retcode = process.communicate()
+
+            o = self.repo.remotes.origin
+            o.pull()
         finally:
             self.fast_restart()
 
