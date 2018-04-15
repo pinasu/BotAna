@@ -159,18 +159,13 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-
-            process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            process.communicate()
+            #process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
+            #process.communicate()
             need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
 
-            print(out)
-
             if "up-to-date" not in str(out) and "up to date" not in str(out):
-                self.fast_restart()
-
-            self.get_app_access_token()
+                self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
@@ -859,6 +854,9 @@ class BotAna(QtCore.QThread):
 
         if self.message == "!restart":
             self.restart()
+
+        if self.message == "!title":
+            self.change_stream_title(self.arguments)
 
         elif self.message == "!stopbarza":
             self.speak.Pause()
@@ -1650,10 +1648,37 @@ class BotAna(QtCore.QThread):
             return True
         return False
 
+    def change_stream_title(self, title):
+        url = "https://api.twitch.tv/kraken/channels/"+self.NICK+""
+        params = {"Client-ID" : ""+self.CLIENT_ID+""}
+        resp = requests.get(url=url, headers=params)
+        game = json.loads(resp.text)['game']
+
+        URL = 'https://api.twitch.tv/helix/channels/'+self.get_user_id(self.NICK)
+        params = {
+            'Client-ID : '+self.CLIENT_ID,
+            'Accept: application/vnd.twitchtv.v5+json',
+            'Authorization: Bearer '+self.get_app_access_token()+"",
+            'Content-Type: application/json'
+        }
+        data = {
+            "channel": {
+                "status": ""+title+"",
+                "game": ""+game+"",
+                "channel_feed_enabled": "true"
+            }
+        }
+
+        #try:
+        r = requests.put(url=URL, headers=params, data=data)
+        self.send_message("Titolo aggiornato in -"+title+"-")
+#        except:
+#            self.print_message("Error")
+
     def get_app_access_token(self):
         try:
             URL = 'https://id.twitch.tv/oauth2/token?client_id='+self.CLIENT_ID+'&client_secret='+self.CLIENT_SECRET+'&grant_type=client_credentials&scope=user:edit'
-            resp = requests.post(url).json()
-            self.print_message(resp)
+            resp = requests.post(URL).json()
+            return resp['access_token']
         except:
             self.print_message("Error getting App Access Token.")
