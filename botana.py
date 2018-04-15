@@ -1,5 +1,6 @@
 import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
+from datetime import datetime as dt
 from bs4 import BeautifulSoup
 from pygame import mixer
 from random import randint
@@ -163,13 +164,13 @@ class BotAna(QtCore.QThread):
     def run(self):
         try:
 
-            branch_name = 'master'
-            commits_ahead = self.repo.iter_commits('origin/master..%s' % branch_name)
-            commits_ahead_count = sum(1 for c in commits_ahead)
-            self.print_message(commits_ahead_count)
-            is_merged = (commits_ahead_count == 0)
-            if not is_merged:
-                self.restart()
+            #branch_name = 'master'
+            #commits_ahead = self.repo.iter_commits('origin/master..%s' % branch_name)
+            #commits_ahead_count = sum(1 for c in commits_ahead)
+            #self.print_message(commits_ahead_count)
+            #is_merged = (commits_ahead_count == 0)
+            #if not is_merged:
+            #    self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
@@ -848,9 +849,6 @@ class BotAna(QtCore.QThread):
 
     def restart(self):
         try:
-            # process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            # retcode = process.communicate()
-
             o = self.repo.remotes.origin
             o.pull()
         finally:
@@ -1332,15 +1330,14 @@ class BotAna(QtCore.QThread):
 
     def get_patch(self):
         self.add_in_timeout("!patch")
-        #try:
-        file = open("patch.txt", "r")
-        patch = file.read()
-        date = os.path.getatime("patch.txt")
-        print(date)
-        self.send_message(self.username+", ecco l'ulima patch di Fortnite (al "+time.strftime("%d/%m/%Y")+"): "+str(patch)+" FeelsGoodMan")
-        file.close()
-    #    except:
-    #        self.print_message("Error reading patch.txt")
+        try:
+            file = open("patch.txt", "r")
+            patch = file.read()
+
+            self.send_message(self.username+", ecco l'ulima patch di Fortnite (al "+dt.fromtimestamp(os.path.getmtime('patch.txt')).strftime('%d-%m-%Y')+"): "+str(patch)+" FeelsGoodMan")
+            file.close()
+        except:
+            self.print_message("Error reading patch.txt")
 
     def call_command_pleb(self):
         if self.message == "!cit" and not self.is_in_timeout("!cit"):
