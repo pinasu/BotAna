@@ -11,7 +11,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 import git
 from git import Repo
-#dio
+#dio scancanato in croce bestia
 #Key pressing
 import ctypes
 
