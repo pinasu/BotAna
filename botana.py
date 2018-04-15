@@ -161,7 +161,7 @@ class BotAna(QtCore.QThread):
         try:
             #process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
             #process.communicate()
-            need_pull = subprocess.Popen(["git", "status",], stdout=subprocess.PIPE, shell=True)
+            need_pull = subprocess.Popen(["git", "diff",], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
 
             if "up-to-date" not in str(out) and "up to date" not in str(out):
