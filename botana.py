@@ -163,6 +163,13 @@ class BotAna(QtCore.QThread):
     def run(self):
         try:
 
+            branch_name = 'master'
+            commits_ahead = self.repo.iter_commits('origin/master..%s' % branch_name)
+            commits_ahead_count = sum(1 for c in commits_ahead)
+            is_merged = (commits_ahead_count == 0)
+            if not is_merged:
+                self.restart()
+
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick('config.ini', config)
