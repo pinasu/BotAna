@@ -95,7 +95,7 @@ class BotAna(QtCore.QThread):
 
                         "Non ci contare LUL",
                         "Le mie fonti dicono di no FeelsBadMan",
-                        "Diciamo che le prospettive non sono per niente buone :/",
+                        "Diciamo che le prospettive non sono per niente buone FeelsBadMan",
                         "Molto... Molto... improbabile haHAA",
                         "Ma proprio no LUL"
                         ]
