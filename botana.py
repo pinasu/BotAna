@@ -172,11 +172,6 @@ class BotAna(QtCore.QThread):
             #if not is_merged:
             #    self.restart()
 
-            first = subprocess.Popen('pip3 install gitdb', shell=True, stdout=subprocess.PIPE)
-            first.communicate()
-            first = subprocess.Popen('pip3 install gitpython', shell=True, stdout=subprocess.PIPE)
-            first.communicate()
-
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
             self.NICK = self.get_nick('config.ini', config)
