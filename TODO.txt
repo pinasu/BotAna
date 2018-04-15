@@ -5,4 +5,4 @@
 	[Stato]: Probabilmente abbiamo bisogno di una istanza del Browser per chiedere all'utente la conferma
 
 3) Aggiungere un comando per settare il gioco dello stream.
-	[Stato]: Come sop
+	[Stato]: Come sopra
