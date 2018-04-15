@@ -162,13 +162,13 @@ class BotAna(QtCore.QThread):
             #process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
             #process.communicate()
 
-            #Mi sto rompendo il cazzo
-            need_pull = subprocess.Popen(["git", "remote", "update"], stdout=subprocess.PIPE, shell=True)
-            out, err = need_pull.communicate()
-            print(out)
+            #Mi sto rompendo il cazzo dio merda
+            #need_pull = subprocess.Popen(["git", "remote", "update"], stdout=subprocess.PIPE, shell=True)
+            #out, err = need_pull.communicate()
+            #print(out)
 
-            if str(out) != "Fetching origin":
-                self.restart()
+            #if str(out) != "b'Fetching origin\n'":
+                #self.restart()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
