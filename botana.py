@@ -164,8 +164,8 @@ class BotAna(QtCore.QThread):
             need_pull = subprocess.Popen(["git", "diff",], stdout=subprocess.PIPE, shell=True)
             out, err = need_pull.communicate()
             print(out)
-            
-            if str(out) != "":
+
+            if str(out) != "b''":
                 self.restart()
 
             config = configparser.ConfigParser()
