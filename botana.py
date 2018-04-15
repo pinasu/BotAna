@@ -157,18 +157,12 @@ class BotAna(QtCore.QThread):
         self.can_move = False
         self.move_dict = dict()
 
+        self.repo = git.Repo('')
+
     def run(self):
         try:
-            #process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
-            #process.communicate()
-
-            #Mi sto rompendo il cazzo dio merda
-            #need_pull = subprocess.Popen(["git", "remote", "update"], stdout=subprocess.PIPE, shell=True)
-            #out, err = need_pull.communicate()
-            #print(out)
-
-            #if str(out) != "b'Fetching origin\n'":
-                #self.restart()
+            o = self.repo.remotes.origin
+            o.pull()
 
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
