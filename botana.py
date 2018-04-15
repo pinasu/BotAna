@@ -161,12 +161,8 @@ class BotAna(QtCore.QThread):
         try:
             #process = subprocess.Popen(["git", "pull"], stdout=subprocess.PIPE, shell=True)
             #process.communicate()
-<<<<<<< HEAD
+
             need_pull = subprocess.Popen(["git", "diff", "origin/master"], stdout=subprocess.PIPE, shell=True)
-=======
-            #Forse funziona, test
-            need_pull = subprocess.Popen(["git", "diff",], stdout=subprocess.PIPE, shell=True)
->>>>>>> c8e1b19b668e1c541fbc56f0fb87dfb7bf41b854
             out, err = need_pull.communicate()
             print(out)
 
