@@ -194,7 +194,7 @@ class BotAna(QtCore.QThread):
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
-            threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
+            #threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
             threading.Thread(target=self.reset_trap, args=()).start()
 
