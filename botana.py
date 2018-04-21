@@ -60,7 +60,7 @@ class BotAna(QtCore.QThread):
         self.sock = socket.socket()
         self.HOST = "irc.twitch.tv"
         self.PORT = 6667
-        self.botName = "BotAna__"
+        self.botName = ""
         self.BOT_OAUTH = ""
         self.NICK = ""
         self.CHAN = ""
@@ -74,7 +74,7 @@ class BotAna(QtCore.QThread):
 
         self.RATE = 20/30
 
-        self.mods = ["boomtvmod", "botana__", "boxyes", "ilmarcana", "iltegame", "logviewer", "lusyoo", "moobot", "nightbot", "pinasu", "revlobot", "stockhausen_l2p", "vivbot", "xuneera"]
+        self.mods = ""
 
         self.to_ban = ""
 
@@ -173,12 +173,14 @@ class BotAna(QtCore.QThread):
             #    self.restart()
 
             config = configparser.ConfigParser()
-            self.BOT_OAUTH = self.get_bot_oauth('config.ini', config)
-            self.NICK = self.get_nick('config.ini', config)
+            self.BOT_OAUTH = self.get_config('config.ini', config, 'bot_oauth')
+            self.NICK = self.get_config('config.ini', config, 'nick')
             self.CHAN = "#"+self.NICK
-            self.CLIENT_ID = self.get_clientID('config.ini', config)
-            self.USER_ID = self.get_userID('config.ini', config)
-            self.CLIENT_SECRET = self.get_clientSECRET('config.ini', config)
+            self.CLIENT_ID = self.get_config('config.ini', config, 'client_id')
+            self.USER_ID = self.get_config('config.ini', config, 'user_id')
+            self.CLIENT_SECRET = self.get_config('config.ini', config, 'client_secret')
+            self.botName = self.get_config('config.ini', config, 'bot_name')
+            self.mods = self.get_config('config.ini', config, 'mods')
 
             self.load_commands()
             self.load_sounds()
@@ -696,63 +698,11 @@ class BotAna(QtCore.QThread):
             traceback.print_exc()
             file.close()
 
-    def get_userID(self, path, config):
+    def get_config(self, path, config, name):
         if os.path.exists(path):
             try:
                 config.read(path)
-                return config['DEFAULT']['user_id']
-            except:
-                file = open("LogError.txt", "a")
-                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-                traceback.print_exc()
-                file.close()
-        else:
-            self.print_message("Error reading " + path + "\n")
-
-    def get_bot_oauth(self, path, config):
-        if os.path.exists(path):
-            try:
-                config.read(path)
-                return config['DEFAULT']['bot_oauth']
-            except:
-                    file = open("LogError.txt", "a")
-                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-                    traceback.print_exc()
-                    file.close()
-        else:
-            self.print_message("Error finding " + path + "\n")
-
-    def get_clientID(self, path, config):
-        if os.path.exists(path):
-            try:
-                config.read(path)
-                return config['DEFAULT']['client_id']
-            except:
-                    file = open("LogError.txt", "a")
-                    file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-                    traceback.print_exc()
-                    file.close()
-        else:
-            self.print_message("Error finding " + path + "\n")
-
-    def get_nick(self, path, config):
-        if os.path.exists(path):
-            try:
-                config.read(path)
-                return config['DEFAULT']['nick']
-            except:
-                file = open("LogError.txt", "a")
-                file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
-                traceback.print_exc()
-                file.close()
-        else:
-            self.print_message("Error reading " + path + "\n")
-
-    def get_clientSECRET(self, path, config):
-        if os.path.exists(path):
-            try:
-                config.read(path)
-                return config['DEFAULT']['client_secret']
+                return config['DEFAULT'][name]
             except:
                 file = open("LogError.txt", "a")
                 file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
