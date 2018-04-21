@@ -177,10 +177,10 @@ class BotAna(QtCore.QThread):
             self.NICK = self.get_config('config.ini', config, 'nick')
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_config('config.ini', config, 'client_id')
-            self.USER_ID = self.get_config('config.ini', config, 'user_id')
             self.CLIENT_SECRET = self.get_config('config.ini', config, 'client_secret')
-            self.botName = self.get_config('config.ini', config, 'bot_name')
+            self.botName = self.get_bot_username() #self.get_config('config.ini', config, 'bot_name')
             self.mods = self.get_config('config.ini', config, 'mods')
+            self.USER_ID = self.get_user_id(self.NICK)
 
             self.load_commands()
             self.load_sounds()
@@ -537,6 +537,23 @@ class BotAna(QtCore.QThread):
             user = json.loads(resp.text)
             if user:
                 return user['users'][0]['_id']
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
+
+    def get_bot_username(self):
+        try:
+            url = "https://api.twitch.tv/kraken?oauth_token="+str(self.BOT_OAUTH.split(':')[1])
+            params = {
+                "Accept": "application/vnd.twitchtv.v5+json",
+                "Client-ID" : ""+self.CLIENT_ID+""
+            }
+            resp = requests.get(url=url, headers=params)
+            username = json.loads(resp.text)
+            if username:
+                return username['token']['user_name']
         except:
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
@@ -1588,7 +1605,7 @@ class BotAna(QtCore.QThread):
         if not command.is_for_specific_game():
             return True
         try:
-            url = 'https://api.twitch.tv/kraken/channels/'+self.get_user_id(self.NICK)
+            url = 'https://api.twitch.tv/kraken/channels/'+self.USER_ID
             headers = {
                 'Accept': 'application/vnd.twitchtv.v5+json',
                 'Client-ID': self.CLIENT_ID
@@ -1608,7 +1625,7 @@ class BotAna(QtCore.QThread):
         resp = requests.get(url=url, headers=params)
         game = json.loads(resp.text)['game']
 
-        URL = 'https://api.twitch.tv/helix/channels/'+self.get_user_id(self.NICK)
+        URL = 'https://api.twitch.tv/helix/channels/'+self.USER_ID
         params = {
             'Client-ID : '+self.CLIENT_ID,
             'Accept: application/vnd.twitchtv.v5+json',
