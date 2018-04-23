@@ -161,9 +161,10 @@ class BotAna(QtCore.QThread):
 
         self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
+        self.blocked = []
+
     def run(self):
         try:
-
             #branch_name = 'master'
             #commits_ahead = self.repo.iter_commits('origin/master..%s' % branch_name)
             #commits_ahead_count = sum(1 for c in commits_ahead)
@@ -178,7 +179,7 @@ class BotAna(QtCore.QThread):
             self.CHAN = "#"+self.NICK
             self.CLIENT_ID = self.get_config('config.ini', config, 'client_id')
             self.CLIENT_SECRET = self.get_config('config.ini', config, 'client_secret')
-            self.botName = self.get_bot_username() #self.get_config('config.ini', config, 'bot_name')
+            self.botName = self.get_bot_username()
             self.mods = self.get_config('config.ini', config, 'mods')
             self.USER_ID = self.get_user_id(self.NICK)
 
@@ -190,9 +191,12 @@ class BotAna(QtCore.QThread):
             self.sock.connect((self.HOST, self.PORT))
             self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
             self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
+            self.sock.send(bytes("REQ :twitch.tv/commands\r\n", "UTF-8"))
             self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
 
             self.print_message("I'm now connected to "+ self.NICK + ".")
+
+            #self.get_channel_mods()
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
@@ -218,7 +222,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-
+                '''
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -252,8 +256,9 @@ class BotAna(QtCore.QThread):
                                         self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è un Alessiana del passato ( monkaS ), ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! Pigia follow! cmonBruh ")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
-
                 else:
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -298,12 +303,12 @@ class BotAna(QtCore.QThread):
 
                                 if self.message in self.commandsMod.keys() and self.username in self.mods:
                                     self.call_command_mod()
-                                elif self.message in self.commandsPleb.keys():
+                                elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
                                     self.call_command_pleb()
 
-                                if len(message_list) == 1 and self.message in self.sounds.keys():
+                                if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
                                     self.call_sound(self.message)
-                                elif len(message_list) == 1 and self.message in self.images.keys():
+                                elif len(message_list) == 1 and self.message in self.images.keys() and self.username not in self.blocked:
                                     self.call_image(self.message)
 
                             self.check_words(self.message)
@@ -560,6 +565,11 @@ class BotAna(QtCore.QThread):
             traceback.print_exc()
             file.close()
 
+    def get_channel_mods(self):
+        self.sock.send(".mods tmi.twitch.tv\r\n".encode("utf-8"))
+        rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
+        self.print_message(str(rec))
+
     def reset_trap(self):
         try:
             file = open("trap.txt", "w")
@@ -614,6 +624,30 @@ class BotAna(QtCore.QThread):
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
             file.close()
+
+    def add_to_blocked(self, name):
+        if name in self.mods:
+            return
+        try:
+            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
+            resp = requests.get(url=url)
+            lst = json.loads(resp.text)['chatters']['viewers']
+            #if name in lst:
+            self.blocked.append(name)
+        except:
+            file = open("LogError.txt", "a")
+            file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
+            traceback.print_exc()
+            file.close()
+
+    def cd_blocked(self, name, cooldown):
+        start_time = 0
+        while start_time < cooldown:
+            start_time = start_time + 1
+            time.sleep(1)
+
+        self.blocked.remove(name)
+        self.send_message(name+" ora può riutilizzare i comandi SeemsGood")
 
     def check_new_follows(self, old):
         while True:
@@ -837,6 +871,13 @@ class BotAna(QtCore.QThread):
         elif self.message == "!stop":
             self.send_message("HeyGuys")
             os._exit(0)
+
+        elif self.message == "!block":
+            args = self.arguments.split(' ')
+            if self.arguments not in self.blocked:
+                self.add_to_blocked(args[0])
+                self.send_message(args[0]+" è stato bloccato e non potrà usare alcun comando per "+args[1]+" secondi LUL")
+                threading.Thread(target=self.cd_blocked, args=(args[0], float(args[1]),)).start()
 
         elif self.message == "!shout":
             args = self.arguments.split(' ')
