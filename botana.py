@@ -632,8 +632,8 @@ class BotAna(QtCore.QThread):
             url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
             resp = requests.get(url=url)
             lst = json.loads(resp.text)['chatters']['viewers']
-            #if name in lst:
-            self.blocked.append(name)
+            if name in lst:
+                self.blocked.append(name)
         except:
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
@@ -1666,30 +1666,25 @@ class BotAna(QtCore.QThread):
         resp = requests.get(url=url, headers=params)
         game = json.loads(resp.text)['game']
 
-        URL = 'https://api.twitch.tv/helix/channels/'+self.USER_ID
+        URL = 'https://api.twitch.tv/kraken/channels/'+self.USER_ID
         params = {
-            'Client-ID : '+self.CLIENT_ID,
-            'Accept: application/vnd.twitchtv.v5+json',
-            'Authorization: Bearer '+self.get_app_access_token()+"",
-            'Content-Type: application/json'
+            'Client-ID' : ''+self.CLIENT_ID+'',
+            'Accept' : 'application/vnd.twitchtv.v5+json',
+            'Authorization' : 'OAuth '+self.get_app_access_token()+'',
+            'Content-Type' : 'application/json'
         }
-        data = {
-            "channel": {
-                "status": ""+title+"",
-                "game": ""+game+"",
-                "channel_feed_enabled": "true"
-            }
-        }
+        data = { 'channel': { 'status': title, 'channel_feed_enabled': 'true'} }
 
-        #try:
-        r = requests.put(url=URL, headers=params, data=data)
-        self.send_message("Titolo aggiornato in -"+title+"-")
-#        except:
-#            self.print_message("Error")
+        try:
+            r = requests.put(url=URL, data=json.dumps(data), headers=params)
+            self.print_message(r.text)
+            self.send_message("Titolo aggiornato in -"+title+"-")
+        except:
+            self.print_message("Error")
 
     def get_app_access_token(self):
         try:
-            URL = 'https://id.twitch.tv/oauth2/token?client_id='+self.CLIENT_ID+'&client_secret='+self.CLIENT_SECRET+'&grant_type=client_credentials&scope=user:edit'
+            URL = 'https://id.twitch.tv/oauth2/token?client_id='+self.CLIENT_ID+'&client_secret='+self.CLIENT_SECRET+'&grant_type=client_credentials&scope=channel_editor'
             resp = requests.post(URL).json()
             return resp['access_token']
         except:
