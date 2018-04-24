@@ -222,7 +222,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-                '''
+
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -257,8 +257,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("Ciao "+self.username+"! Questo è un Alessiana del passato ( monkaS ), ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! Pigia follow! cmonBruh ")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
                 else:
-                '''
-                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -625,15 +623,14 @@ class BotAna(QtCore.QThread):
             traceback.print_exc()
             file.close()
 
-    def add_to_blocked(self, name):
+    def add_to_blocked(self, name, time):
         if name in self.mods:
+            self.send_whisper("Non puoi bloccare un moderatore dall'uso dei comandi.")
             return
         try:
-            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
-            resp = requests.get(url=url)
-            lst = json.loads(resp.text)['chatters']['viewers']
-            if name in lst:
-                self.blocked.append(name)
+            self.blocked.append(name)
+            self.send_message(name+" è stato bloccato e non potrà usare alcun comando per "+str(time)+" secondi LUL")
+            threading.Thread(target=self.cd_blocked, args=(name, float(time),)).start()
         except:
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
@@ -874,10 +871,11 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!block":
             args = self.arguments.split(' ')
-            if self.arguments not in self.blocked:
-                self.add_to_blocked(args[0])
-                self.send_message(args[0]+" è stato bloccato e non potrà usare alcun comando per "+args[1]+" secondi LUL")
-                threading.Thread(target=self.cd_blocked, args=(args[0], float(args[1]),)).start()
+            if args[0] not in self.blocked:
+                if len(args) > 1:
+                    self.add_to_blocked(args[0], args[1])
+                else:
+                    self.add_to_blocked(args[0], 120)
 
         elif self.message == "!shout":
             args = self.arguments.split(' ')
