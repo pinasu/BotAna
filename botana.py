@@ -190,8 +190,8 @@ class BotAna(QtCore.QThread):
 
             self.sock.connect((self.HOST, self.PORT))
             self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
+            self.sock.send(bytes("CAP REQ :twitch.tv/commands\r\n", "UTF-8"))
             self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
-            self.sock.send(bytes("REQ :twitch.tv/commands\r\n", "UTF-8"))
             self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
 
             self.print_message("I'm now connected to "+ self.NICK + ".")
@@ -218,6 +218,8 @@ class BotAna(QtCore.QThread):
 
                 rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
 
+                self.print_message(rec)
+                '''
                 if not hasattr(tmponline, "__getitem__"):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
@@ -256,6 +258,7 @@ class BotAna(QtCore.QThread):
                                         self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è un Alessiana del passato ( monkaS ), ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! Pigia follow! cmonBruh ")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
+
                 else:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
@@ -263,6 +266,7 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
+                '''
 
                 if rec:
                     for line in rec:
