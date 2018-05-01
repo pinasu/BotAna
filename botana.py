@@ -278,7 +278,7 @@ class BotAna(QtCore.QThread):
                                 if len(a) == 2:
                                     self.user_info[a[0]] = a[1]
 
-                            self.print_message(self.user_info)
+                            #self.print_message(self.user_info)
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
