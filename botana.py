@@ -179,6 +179,7 @@ class BotAna(QtCore.QThread):
             self.botName = self.get_bot_username()
             self.mods = self.get_config('config.ini', config, 'mods')
             self.USER_ID = self.get_user_id(self.NICK)
+            self.TELEGRAM = self.get_config('config.ini', config, 'telegram')
 
             self.load_commands()
             self.load_sounds()
@@ -277,6 +278,7 @@ class BotAna(QtCore.QThread):
                                 if len(a) == 2:
                                     self.user_info[a[0]] = a[1]
 
+                            self.print_message(self.user_info)
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
@@ -307,7 +309,7 @@ class BotAna(QtCore.QThread):
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
 
-                                if self.message in self.commandsMod.keys() and( self.user_info['mod'] == 1 or self.user_info['@badges'] == 'broadcaster/1'):
+                                if self.message in self.commandsMod.keys() and(self.user_info['mod'] == '1' or 'broadcaster/1' in self.user_info['@badges']):
                                     self.call_command_mod()
                                 elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
                                     self.call_command_pleb()
@@ -1369,7 +1371,7 @@ class BotAna(QtCore.QThread):
 
         elif self.message == "!telegram":
             if self.user_info['subscriber'] == '1':
-                self.send_whisper(self.username+"! Ecco l'invito per il gruppo telegram dei sub: https://t.me/joinchat/GtjPd0gwTVH99Cvc3lV5Tg FeelsGoodMan")
+                self.send_whisper(self.username+"! Ecco l'invito per il gruppo telegram dei sub: "+self.TELEGRAM+" FeelsGoodMan")
 
         elif self.message == "!multi":
             if "Segui" in self.multi_twitch:
