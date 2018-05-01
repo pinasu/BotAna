@@ -1372,6 +1372,8 @@ class BotAna(QtCore.QThread):
         elif self.message == "!telegram":
             if self.user_info['subscriber'] == '1':
                 self.send_whisper(self.username+"! Ecco l'invito per il gruppo telegram dei sub: "+self.TELEGRAM+" FeelsGoodMan")
+            else:
+                self.send_whisper(self.username+"! Vuoi entrare nel gruppo telegram dei sub? Subba Kappa ")
 
         elif self.message == "!multi":
             if "Segui" in self.multi_twitch:
