@@ -58,6 +58,11 @@ class BotAna(QtCore.QThread):
         super().__init__()
 
         self.sock = socket.socket()
+
+        self.rec = ""
+
+        self.user_info = dict()
+
         self.HOST = "irc.twitch.tv"
         self.PORT = 6667
         self.botName = ""
@@ -165,14 +170,6 @@ class BotAna(QtCore.QThread):
 
     def run(self):
         try:
-            #branch_name = 'master'
-            #commits_ahead = self.repo.iter_commits('origin/master..%s' % branch_name)
-            #commits_ahead_count = sum(1 for c in commits_ahead)
-            #self.print_message(commits_ahead_count)
-            #is_merged = (commits_ahead_count == 0)
-            #if not is_merged:
-            #    self.restart()
-
             config = configparser.ConfigParser()
             self.BOT_OAUTH = self.get_config('config.ini', config, 'bot_oauth')
             self.NICK = self.get_config('config.ini', config, 'nick')
@@ -190,7 +187,7 @@ class BotAna(QtCore.QThread):
 
             self.sock.connect((self.HOST, self.PORT))
             self.sock.send(bytes("PASS " + self.BOT_OAUTH + "\r\n", "UTF-8"))
-            self.sock.send(bytes("CAP REQ :twitch.tv/commands\r\n", "UTF-8"))
+            self.sock.send(bytes("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership\r\n", "UTF-8"))
             self.sock.send(bytes("NICK " + self.NICK + "\r\n", "UTF-8"))
             self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
 
@@ -216,10 +213,12 @@ class BotAna(QtCore.QThread):
                 tmponline = self.online
                 self.lock.release()
 
-                rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
+                #Raw Twitch data
+                rcv = str(self.sock.recv(1024).decode('utf-8'))
 
-                self.print_message(rec)
-                '''
+                #Message and username
+                self.rec = rcv.split("\r\n")
+
                 if not hasattr(tmponline, "__getitem__"):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
@@ -232,8 +231,8 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
-                    if rec:
-                        for line in rec:
+                    if self.rec:
+                        for line in self.rec:
                             if "PING" in line:
                                 self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
 
@@ -266,13 +265,18 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
-                '''
 
-                if rec:
-                    for line in rec:
+                if self.rec:
+                    for line in self.rec:
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
+                            #User's badges and roles
+                            for x in (" ".join(self.rec)).split(";"):
+                                a = x.split("=")
+                                if len(a) == 2:
+                                    self.user_info[a[0]] = a[1]
+
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
@@ -303,7 +307,7 @@ class BotAna(QtCore.QThread):
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
 
-                                if self.message in self.commandsMod.keys() and self.username in self.mods:
+                                if self.message in self.commandsMod.keys() and( self.user_info['mod'] == 1 or self.user_info['@badges'] == 'broadcaster/1'):
                                     self.call_command_mod()
                                 elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
                                     self.call_command_pleb()
@@ -314,6 +318,8 @@ class BotAna(QtCore.QThread):
                                     self.call_image(self.message)
 
                             self.check_words(self.message)
+
+                            self.user_info.clear()
 
                 time.sleep(1/self.RATE)
 
@@ -569,8 +575,8 @@ class BotAna(QtCore.QThread):
 
     def get_channel_mods(self):
         self.sock.send(".mods tmi.twitch.tv\r\n".encode("utf-8"))
-        rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-        self.print_message(str(rec))
+        self.rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
+        self.print_message(str(self.rec))
 
     def reset_trap(self):
         try:
@@ -952,7 +958,8 @@ class BotAna(QtCore.QThread):
             if len(self.players) > 0:
                 raffle = random.sample(self.players, 1)
                 raffled = ", ".join(raffle)
-                self.send_message("Ho scelto "+raffled+" PogChamp")
+                self.players = set(self.players) - set(raffle)
+                self.send_message("Ho   scelto "+raffled+" PogChamp")
             else:
                 self.send_message("Non ci sono persone da scegliere BibleThump")
 
@@ -1360,11 +1367,13 @@ class BotAna(QtCore.QThread):
             else:
                 self.get_rand_quote()
 
+        elif self.message == "!telegram":
+            if self.user_info['subscriber'] == '1':
+                self.send_whisper(self.username+"! Ecco l'invito per il gruppo telegram dei sub: https://t.me/joinchat/GtjPd0gwTVH99Cvc3lV5Tg FeelsGoodMan")
+
         elif self.message == "!multi":
             if "Segui" in self.multi_twitch:
                 self.send_message(self.multi_twitch)
-            else:
-                self.send_message("Non ci sono streamer amici da guardare, per ora KappaPride")
 
         elif self.message == "!trap":
             MAX_TIME = 20
