@@ -79,7 +79,7 @@ class BotAna(QtCore.QThread):
 
         self.RATE = 20/30
 
-        self.mods = ""
+        #self.mods = ""
 
         self.to_ban = ""
 
@@ -177,7 +177,7 @@ class BotAna(QtCore.QThread):
             self.CLIENT_ID = self.get_config('config.ini', config, 'client_id')
             self.CLIENT_SECRET = self.get_config('config.ini', config, 'client_secret')
             self.botName = self.get_bot_username()
-            self.mods = self.get_config('config.ini', config, 'mods')
+            #self.mods = self.get_config('config.ini', config, 'mods')
             self.USER_ID = self.get_user_id(self.NICK)
             self.TELEGRAM = self.get_config('config.ini', config, 'telegram')
 
@@ -224,7 +224,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-
+                '''
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -254,12 +254,14 @@ class BotAna(QtCore.QThread):
                                     usernamesplit = parts[1].split("!")
                                     self.username = usernamesplit[0]
 
-                                    if "tmi.twitch.tv" not in self.username and self.username not in self.vodded and self.username not in self.mods:
+                                    if "tmi.twitch.tv" not in self.username and self.username not in self.vodded and not(self.user_info['mod'] == '1' or 'broadcaster/1' in self.user_info['@badges']):
                                         self.vodded.append(self.username)
                                         self.send_message("Ciao "+self.username+"! Questo è un Alessiana del passato ( monkaS ), ma Stockhausen_L2P torna (quasi) tutte le sere alle 20:00! Pigia follow! cmonBruh ")
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
+                '''
+                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -279,6 +281,8 @@ class BotAna(QtCore.QThread):
                                     self.user_info[a[0]] = a[1]
 
                             #self.print_message(self.user_info)
+                            #self.print_message(self.user_info['user-type'])
+
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
@@ -291,7 +295,7 @@ class BotAna(QtCore.QThread):
                             if "tmi.twitch.tv" in self.username:
                                 continue
 
-                            if self.username not in self.mods:
+                            if not(self.user_info['mod'] == '1' or 'broadcaster/1' in self.user_info['@badges']):
                                 self.lock2.acquire()
                                 self.msg_count += 1
                                 self.lock2.release()
@@ -302,14 +306,12 @@ class BotAna(QtCore.QThread):
                                 self.trigger_key(self.message)
 
                             if self.message.startswith('!'):
-                                self.message = self.message.lower()
-
                                 message_list = self.message.split(' ')
 
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
 
-                                if self.message in self.commandsMod.keys() and(self.user_info['mod'] == '1' or 'broadcaster/1' in self.user_info['@badges']):
+                                if self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or "broadcaster" in self.user_info['@badges']):
                                     self.call_command_mod()
                                 elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
                                     self.call_command_pleb()
@@ -636,9 +638,6 @@ class BotAna(QtCore.QThread):
             file.close()
 
     def add_to_blocked(self, name, time):
-        if name in self.mods:
-            self.send_whisper("Non puoi bloccare un moderatore dall'uso dei comandi.")
-            return
         try:
             self.blocked.append(name)
             self.send_message(name+" è stato bloccato e non potrà usare alcun comando per "+str(time)+" secondi LUL")
@@ -865,6 +864,7 @@ class BotAna(QtCore.QThread):
             self.fast_restart()
 
     def call_command_mod(self):
+        self.message = self.message.lower()
         raffled = ""
 
         if self.message == "!restart":
@@ -928,6 +928,10 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.add_spam_phrase, args=(args,)).start()
             else:
                 self.send_whisper("Impossibile aggiungere lo spam (frase troppo breve).")
+
+        elif self.message == "!removecit":
+            args = self.arguments
+            threading.Thread(target=self.remove_quote, args=(args,)).start()
 
         elif self.message == "!removespam":
             args = self.arguments
@@ -1090,7 +1094,7 @@ class BotAna(QtCore.QThread):
                 return
             self.set_can_move(True)
             self.sign4.emit(True)
-            self.send_message("La chat ha il comando!!!")
+            self.send_message("La chat ha il comando!")
 
         elif self.message == "!deactivatemove":
             if self.get_can_move() == False:
@@ -1309,8 +1313,8 @@ class BotAna(QtCore.QThread):
 
     def get_rand_quote(self):
         rand = randint(0, len(self.quotes)-1)
-        q = self.quotes[rand]
-        self.send_message("#"+str(str(q.get_index()))+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date()))
+        q = self.quotes[int(rand)]
+        self.send_message("#"+str(str(rand)+": ''"+str(q.get_quote())+" '' - "+str(q.get_author())+" "+str(q.get_date())))
         if time.time() - self.text_to_speech > 20:
             if " e " in str(q.get_author()):
                 threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
@@ -1318,11 +1322,11 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta disse: "+str(q.get_quote()),)).start()
 
     def get_quote(self, args):
-        if int(args) > len(self.quotes):
+        if int(args) > len(self.quotes)-1:
             self.send_message("Non ho tutte quelle citazioni HotPokket")
         else:
-            q = self.quotes[int(args)-1]
-            self.send_message("#"+str(q.get_index())+": ''"+str(q.get_quote())+" '' - "+q.get_author()+" "+str(q.get_date()))
+            q = self.quotes[int(args)]
+            self.send_message("#"+str(str(args))+": ''"+str(q.get_quote())+" '' - "+q.get_author()+" "+str(q.get_date()))
             if time.time() - self.text_to_speech > 20:
                 if " e " in q.get_author().lower():
                     threading.Thread(target=self.speak_text, args=(str(q.get_author())+" una volta dissero: "+str(q.get_quote()),)).start()
@@ -1336,16 +1340,39 @@ class BotAna(QtCore.QThread):
             self.send_message("A questa citazione manca l'autore: aggiungilo alla fine dopo un trattino! SeemsGood")
             return
 
-        self.quotes.append(Quote(len(self.quotes)+1, args[0], args[1], time.strftime("[%d/%m/%Y]")))
-
-        fields = [len(self.quotes), args[0], args[1], time.strftime("[%d/%m/%Y]")]
+        self.quotes.append(Quote(args[0], args[1], time.strftime("[%d/%m/%Y]")))
+        fields = [args[0], args[1], time.strftime("[%d/%m/%Y]")]
 
         with open('quotes.csv', 'a', encoding='utf-8') as f:
             writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
             writer.writerow(fields)
 
-        self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes))+" FeelsAmazingMan")
-        self.get_quote(len(self.quotes))
+        #self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes)-1)+" FeelsAmazingMan")
+        self.print_message(len(self.quotes))
+        self.get_quote(len(self.quotes)-1)
+
+    def remove_quote(self, id):
+        if int(id) > len(self.quotes):
+            self.send_whisper("Impossibile eliminare citazione #"+id+" (non presente).")
+            return
+
+        self.quotes.remove(self.quotes[int(id)])
+        subprocess.run("copy quotes.csv quotes_bkp.csv", shell=True)
+        f = open('quotes.csv', "w+")
+        f.close()
+        try:
+            with open('quotes.csv', 'a', encoding='utf-8') as f:
+                writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
+                for q in self.quotes:
+                    writer.writerow([q.get_quote(), q.get_author(), q.get_date()])
+
+            self.send_whisper("Citazione " + id + " eliminata FeelsGoodMan")
+        except:
+            subprocess.run("del quotes.csv", shell=True)
+            subprocess.run("ren quotes_bkp.csv quotes.csv", shell=True)
+            self.send_whisper("Impossibile eliminare la citazione " +id+" FeelsBadMan")
+        finally:
+            subprocess.run("del quotes_bkp.csv", shell=True)
 
     def get_patch(self):
         self.add_in_timeout("!patch")
@@ -1369,9 +1396,11 @@ class BotAna(QtCore.QThread):
             else:
                 self.get_rand_quote()
 
-        elif self.message == "!telegram":
+        self.message = self.message.lower()
+
+        if self.message == "!telegram":
             if self.user_info['subscriber'] == '1':
-                self.send_whisper(self.username+"! Ecco l'invito per il gruppo telegram dei sub: "+self.TELEGRAM+" FeelsGoodMan")
+                self.send_whisper(self.username+"! Ecco l'invito per il gruppo Telegram dei sub: "+self.TELEGRAM+" FeelsGoodMan")
             else:
                 self.send_whisper(self.username+"! Vuoi entrare nel gruppo telegram dei sub? Subba Kappa ")
 
@@ -1583,7 +1612,7 @@ class BotAna(QtCore.QThread):
         with open('quotes.csv', encoding='utf-8') as quotes:
             reader = csv.reader(quotes, delimiter=';', quotechar='|')
             for row in reader:
-                self.quotes.append(Quote(row[0], row[1], row[2], row[3]))
+                self.quotes.append(Quote(row[0], row[1], row[2]))
 
     def load_commands(self):
         with open('commands.csv', encoding='utf-8') as commands:

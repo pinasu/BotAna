@@ -1,13 +1,9 @@
 class Quote(object):
 
-    def __init__(self, index, quote, author, date):
-        self.index = index
+    def __init__(self, quote, author, date):
         self.quote = quote
         self.author = author
         self.date = date
-
-    def get_index(self):
-        return self.index
 
     def get_quote(self):
         return self.quote
