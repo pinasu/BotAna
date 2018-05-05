@@ -12,7 +12,7 @@
 
 <div>
   <h2>Comandi</h2>
-<font size="90%">
+<font size="9%">
 <table>
     <tr>
       <th>Comando</th>
