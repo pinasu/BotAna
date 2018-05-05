@@ -12,8 +12,7 @@
 
 <div>
   <h2>Comandi</h2>
-<center>
-<table style="width:120%;">
+<table>
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
@@ -140,7 +139,6 @@
     <td>120</td>
   </tr>
   </table>
-    </center>
 </div>
 
 <div>
