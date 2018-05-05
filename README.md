@@ -3,7 +3,7 @@
 <h2>
   <a href="https://clips.twitch.tv/TalentedEnticingVultureImGlitch">La nuova BotAna è qui</a>
 </h2>
-<div style="width:120%;">
+<div>
   <h2>Comandi</h2>
   <table>
     <tr>
@@ -136,7 +136,7 @@
 
 <div>
   <h2>Suoni</h2>
-  <table>
+  <table style="width:120%;">
     <th>Suono</th>
     <th>Cooldown</th>
   <tr>
