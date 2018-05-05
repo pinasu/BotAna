@@ -12,6 +12,7 @@
 
 <div>
   <h2>Comandi</h2>
+<font size="90%">
 <table>
     <tr>
       <th>Comando</th>
@@ -139,6 +140,7 @@
     <td>120</td>
   </tr>
   </table>
+  </font>
 </div>
 
 <div>
