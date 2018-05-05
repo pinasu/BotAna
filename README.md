@@ -1,11 +1,18 @@
-<center><h1>Il bot di <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a></h1></center>
+<center>
+  <h1>Il bot di 
+    <a href="https://www.twitch.tv/stockhausen_l2p/">Stockhausen_L2P</a>
+  </h1>
+</center>
 
-<h2>
-  <a href="https://clips.twitch.tv/TalentedEnticingVultureImGlitch">La nuova BotAna è qui</a>
-</h2>
+<center>
+  <h2>
+    <a href="https://clips.twitch.tv/TalentedEnticingVultureImGlitch">La nuova BotAna è qui</a>
+  </h2>
+</center>
+
 <div>
   <h2>Comandi</h2>
-  <table>
+  <table style="width:120%;">
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
