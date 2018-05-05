@@ -10,6 +10,7 @@
   </h2>
 </center>
 
+<center>
 <div>
   <h2>Comandi</h2>
   <table style="width:120%;">
@@ -140,6 +141,7 @@
   </tr>
   </table>
 </div>
+  <center>
 
 <div>
   <h2>Suoni</h2>
