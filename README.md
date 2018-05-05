@@ -3,7 +3,7 @@
 <h2>
   <a href="https://clips.twitch.tv/TalentedEnticingVultureImGlitch">La nuova BotAna è qui</a>
 </h2>
-<div style="width:80%;">
+<div style="width:120%;">
   <h2>Comandi</h2>
   <table>
     <tr>
