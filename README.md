@@ -10,10 +10,10 @@
   </h2>
 </center>
 
-<center>
 <div>
   <h2>Comandi</h2>
-  <table style="width:120%;">
+<center>
+<table style="width:120%;">
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
@@ -140,8 +140,8 @@
     <td>120</td>
   </tr>
   </table>
+    </center>
 </div>
-  <center>
 
 <div>
   <h2>Suoni</h2>
