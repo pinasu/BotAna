@@ -12,7 +12,6 @@
 
 <div>
   <h2>Comandi</h2>
-<font size="2">
 <table>
     <tr>
       <th>Comando</th>
@@ -140,12 +139,10 @@
     <td>120</td>
   </tr>
   </table>
-  </font>
 </div>
 
 <div>
   <h2>Suoni</h2>
-  <font size="2">
   <table>
     <th>Suono</th>
     <th>Cooldown</th>
@@ -214,7 +211,7 @@
     <td>20</td>
   </tr>
   </table>
-  </font>
+
 </div>
 <br>
 <h2>Alcune info su BotAna</h2>
