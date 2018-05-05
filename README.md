@@ -3,7 +3,6 @@
 <h2>
   <a href="https://clips.twitch.tv/TalentedEnticingVultureImGlitch">La nuova BotAna è qui</a>
 </h2>
-
 <div>
   <h2>Comandi</h2>
   <table>
@@ -18,6 +17,11 @@
       <td>0</td>
     </tr>
     <tr>
+      <td>!play</td>
+      <td>Per giocare con noi</td>
+      <td>0</td>
+    </tr>
+    <tr>
       <td>!wins []/[nomeutente]</td>
       <td>Numero delle vincite a Fortnite in solo, duo e squad di [nomeutente]</td>
       <td>0</td>
@@ -29,7 +33,7 @@
     </tr>
     <tr>
       <td>!energia []/[nomeutente]</td>
-      <td>༼ つ ◕_◕ ༽つ ALESSIANA/[nomeutente] PRENDI LA MIA ENERGIA ༼ つ ◕_◕ ༽つ</td>
+      <td>GivePLZ ALESSIANA/[nomeutente] PRENDI LA MIA ENERGIA GivePLZ</td>
       <td>0</td>
     </tr>
     <tr>
@@ -48,7 +52,7 @@
       <td>10</td>
     </tr>
     <tr>
-      <td>!love  []/[nomeutente]</td>
+      <td>!love []/[nomeutente]</td>
       <td>Quanto ami [un viewer random]/[nomeutente] da 1 a 100?</td>
       <td>10</td>
     </tr>
@@ -59,7 +63,7 @@
     </tr>
     <tr>
       <td>!trap</td>
-      <td>Ogni 3, fa partire un overlay per la trappola che ha ucciso un buodiulo!</td>
+      <td>Ogni 3, fa partire un suono per la trappola che ha ucciso un buodiulo!</td>
       <td>20</td>
     </tr>
     <tr>
@@ -70,11 +74,6 @@
     <tr>
       <td>!marcomattucci</td>
       <td>Don't be a matteomattuci guys anaLove</td>
-      <td>20</td>
-    </tr>
-    <tr>
-      <td>!3valli</td>
-      <td>Living meme PogChamp</td>
       <td>20</td>
     </tr>
     <tr>
@@ -123,11 +122,6 @@
     <td>20</td>
   </tr>
   <tr>
-    <td>!refereum</td>
-    <td>Guadagna punti per comprare i tuoi giochi preferiti con Refereum e Stockhausen_L2P! FeelsGoodMan https://earn.refereum.com/?refid=stockhausen_l2p</td>
-    <td>20</td>
-  </tr>
-  <tr>
     <td>!twitchmoments</td>
     <td>Alessiana è stato avvistato in questi video di Twitch Moment UNO: https://youtu.be/ATAUIyBUjdU?t=56s DUE: https://youtu.be/08wUZ1eSAQI?t=3m5s PogChamp</td>
     <td>20</td>
@@ -139,13 +133,12 @@
   </tr>
   </table>
 </div>
+
 <div>
   <h2>Suoni</h2>
   <table>
-  <tr>
     <th>Suono</th>
     <th>Cooldown</th>
-  </tr>
   <tr>
     <td>!gg</td>
     <td>7 per ogni utente</td>
@@ -202,11 +195,9 @@
     <td>!icchece</td>
     <td>20</td>
   </tr>
-  </tr>
     <tr>
     <td>!camper</td>
     <td>20</td>
-  </tr>
   </tr>
     <tr>
     <td>!lurkerz</td>
