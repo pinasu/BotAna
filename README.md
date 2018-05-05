@@ -12,7 +12,7 @@
 
 <div>
   <h2>Comandi</h2>
-<table class="table table-striped">
+<table>
     <tr>
       <th>Comando</th>
       <th>Risposta o azione</th>
