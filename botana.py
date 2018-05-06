@@ -1012,7 +1012,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!addcommand":
             tmp = self.arguments.split(";")
             if (tmp[0] in self.commandsMod.keys() and tmp[3] == "mod") or (tmp[0] in self.commandsPleb.keys() and tmp[3] == "pleb"):
-                self.send_whisper("Non posso aggiungere un comando uguale a uno che esiste già, stupido babbuino LUL")
+                self.send_whisper("Non posso aggiungere un comando uguale a uno che esiste già.")
                 return
             if ((len(tmp) == 4 or len(tmp) == 5) and len(tmp[0].split(" ")) == 1):
                 if len(tmp) == 4:
@@ -1101,7 +1101,7 @@ class BotAna(QtCore.QThread):
                 return
             self.set_can_move(False)
             self.sign4.emit(False)
-            self.send_message("La chat non ha più il comando!!!")
+            self.send_message("La chat non ha più il comando!")
 
         else:
             for com in self.commandsMod.values():
@@ -1347,8 +1347,6 @@ class BotAna(QtCore.QThread):
             writer = csv.writer(f, delimiter=';', quotechar='|', lineterminator='\n')
             writer.writerow(fields)
 
-        #self.send_message("Citazione aggiunta con indice #"+str(len(self.quotes)-1)+" FeelsAmazingMan")
-        self.print_message(len(self.quotes))
         self.get_quote(len(self.quotes)-1)
 
     def remove_quote(self, id):
