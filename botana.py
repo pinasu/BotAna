@@ -1432,7 +1432,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!wins" and self.is_for_current_game(self.commandsPleb["!wins"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if args[-1] == "pc" or args[-1] == "ps4" or args[-1] == "xbox":
+                if args[-1].lower() == "pc" or args[-1].lower() == "ps4" or args[-1].lower() == "xbox":
                     threading.Thread(target=self.get_stats, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
                 else:
                     threading.Thread(target=self.get_stats, args=('%20'.join(args).lower(), "pc")).start()
@@ -1442,7 +1442,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!kd" and self.is_for_current_game(self.commandsPleb["!kd"]):
             if self.arguments:
                 args = self.arguments.split(' ')
-                if args[-1] == "pc" or args[-1] == "ps4" or args[-1] == "xbox":
+                if args[-1].lower() == "pc" or args[-1].lower() == "ps4" or args[-1].lower() == "xbox":
                     threading.Thread(target=self.get_kd, args=('%20'.join(args[:-1]).lower(), args[-1].lower(),)).start()
                 else:
                     threading.Thread(target=self.get_kd, args=('%20'.join(args).lower(), "pc")).start()
