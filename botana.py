@@ -954,7 +954,7 @@ class BotAna(QtCore.QThread):
             if len(self.players) > 3:
                 raffle = random.sample(self.players, 3)
                 raffled = ', '.join(raffle)
-                self.players = set(self.players) - set(raffle)
+                self.players = list(set(self.players) - set(raffle))
             else:
                 raffled = ', '.join(self.players)
                 self.players = []
@@ -964,7 +964,7 @@ class BotAna(QtCore.QThread):
             if len(self.players) > 0:
                 raffle = random.sample(self.players, 1)
                 raffled = ", ".join(raffle)
-                self.players = set(self.players) - set(raffle)
+                self.players = list(set(self.players) - set(raffle))
                 self.send_message("Ho   scelto "+raffled+" PogChamp")
             else:
                 self.send_message("Non ci sono persone da scegliere BibleThump")
