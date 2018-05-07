@@ -5,3 +5,4 @@ pip3 install bs4
 pip3 install lxml
 pip3 install gitdb
 pip3 install gitpython
+pip3 install requests

@@ -295,7 +295,7 @@ class BotAna(QtCore.QThread):
                             if "tmi.twitch.tv" in self.username:
                                 continue
 
-                            if not(self.user_info['mod'] == '1' or 'broadcaster/1' in self.user_info['@badges']):
+                            if self.user_info['mod'] != '1':
                                 self.lock2.acquire()
                                 self.msg_count += 1
                                 self.lock2.release()
@@ -311,10 +311,10 @@ class BotAna(QtCore.QThread):
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
 
-                                if self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or "broadcaster" in self.user_info['@badges']):
-                                    self.call_command_mod()
-                                elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
+                                if self.message in self.commandsPleb.keys() and self.username not in self.blocked:
                                     self.call_command_pleb()
+                                elif self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or "broadcaster" in self.user_info['@badges']):
+                                    self.call_command_mod()
 
                                 if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
                                     self.call_sound(self.message)
