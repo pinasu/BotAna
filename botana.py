@@ -166,7 +166,7 @@ class BotAna(QtCore.QThread):
 
         self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
-        self.blocked = []
+        self.blocked = ["swine_tv"]
 
     def run(self):
         try:
