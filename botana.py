@@ -310,12 +310,12 @@ class BotAna(QtCore.QThread):
 
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
-
-                                if self.message in self.commandsPleb.keys() and self.username not in self.blocked:
-                                    self.call_command_pleb()
-                                elif self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or "broadcaster" in self.user_info['@badges']):
+                           
+                                if self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or self.username == self.NICK):
                                     self.call_command_mod()
-
+                                elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
+                                    self.call_command_pleb()
+                                
                                 if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
                                     self.call_sound(self.message)
                                 elif len(message_list) == 1 and self.message in self.images.keys() and self.username not in self.blocked:
