@@ -278,9 +278,6 @@ class BotAna(QtCore.QThread):
                                 if len(a) == 2:
                                     self.user_info[a[0]] = a[1]
 
-                            #self.print_message(self.user_info)
-                            #self.print_message(self.user_info['user-type'])
-
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
@@ -289,6 +286,13 @@ class BotAna(QtCore.QThread):
 
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
+
+                            if "USERNOTICE" in self.rec:
+                                if self.user_info['msg-id']:
+                                    if self.user_info['msg-id'] == 'sub':
+                                        self.send_message(self.user_info['display-name']+" SUB? -4.99€ OMEGALUL")
+                                    elif self.user_info['msg-id'] == 'resub':
+                                        self.send_message(self.user_info['display-name']+" SUB DI NUOVO? -4.99€ OMEGALUL")
 
                             if "tmi.twitch.tv" in self.username:
                                 continue
