@@ -1249,28 +1249,36 @@ class BotAna(QtCore.QThread):
             return
 
     def get_today_stats(self):
-        URL = "https://fortnitetracker.com/profile/pc/alessiana"
+        URL = "https://api.fortnitetracker.com/v1/profile/"+"pc"+"/"+"alessiana"
+        params = {'TRN-Api-Key' : '95c42bd4-cbdb-4bad-9349-6ebc3be79b8d'}
+
         wins = 0
         matches = 0
         kills = 0
+        
         try:
             try:
-                resp = requests.get(URL)
-            except requests.exceptions.Timeout:
+                resp = requests.get(URL, headers=params)
+
+
+                data = json.loads(resp.text)['recentMatches']
+                self.print_message(wins)
+
+                today = time.strftime("20%y-%m-%d")
+                for match in data:
+                    if today == (match['dateCollected']).split('T')[0]:
+                        wins += match['top1']
+                        matches += match['matches']
+                        kills += match['kills']
+                        self.print_message(wins+"/"+matches+"/"+kills)
+
+                if matches == 0:
+                    self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
+                else:
+                    self.send_message(str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
+            except:
                 self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
                 return
-
-            data = json.loads(self.find(resp.text, 'var Matches = ', ';</script>'))
-            today = time.strftime("20%y-%m-%d")
-            for match in data:
-                if today == (match['DateCollected']).split('T')[0]:
-                    wins += match['Top1']
-                    matches += match['Matches']
-                    kills += match['Kills']
-            if matches == 0:
-                self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
-            else:
-                self.send_message(str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
         except:
             self.send_message("Non riesco ad accedere ai dati FeelsBadMan")
 
