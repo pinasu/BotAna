@@ -177,9 +177,9 @@ class BotAna(QtCore.QThread):
             self.CLIENT_ID = self.get_config('config.ini', config, 'client_id')
             self.CLIENT_SECRET = self.get_config('config.ini', config, 'client_secret')
             self.botName = self.get_bot_username()
-            #self.mods = self.get_config('config.ini', config, 'mods')
             self.USER_ID = self.get_user_id(self.NICK)
             self.TELEGRAM = self.get_config('config.ini', config, 'telegram')
+            self.TRN_Api_Key = self.get_config('config.ini', config, 'TRN-Api-Key')
 
             self.load_commands()
             self.load_sounds()
@@ -193,8 +193,6 @@ class BotAna(QtCore.QThread):
             self.sock.send(bytes("JOIN " + self.CHAN + "\r\n", "UTF-8"))
 
             self.print_message("I'm now connected to "+ self.NICK + ".")
-
-            #self.get_channel_mods()
 
             self.send_message("Don't even worry guys, BotAna is here anaLove")
 
@@ -576,11 +574,6 @@ class BotAna(QtCore.QThread):
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
             file.close()
-
-    def get_channel_mods(self):
-        self.sock.send(".mods tmi.twitch.tv\r\n".encode("utf-8"))
-        self.rec = (str(self.sock.recv(1024).decode('utf-8'))).split("\r\n")
-        self.print_message(str(self.rec))
 
     def reset_trap(self):
         try:
@@ -1174,7 +1167,7 @@ class BotAna(QtCore.QThread):
 
     def get_kd(self, user, platform): #11
         URL = "https://api.fortnitetracker.com/v1/profile/"+platform+"/"+user
-        params = {'TRN-Api-Key' : '95c42bd4-cbdb-4bad-9349-6ebc3be79b8d'}
+        params = {'TRN-Api-Key' : self.TRN_Api_Key}
 
         if '%20' in user:
             user = user.replace('%20', ' ')
@@ -1212,7 +1205,7 @@ class BotAna(QtCore.QThread):
 
     def get_stats(self, user, platform):
         URL = "https://api.fortnitetracker.com/v1/profile/"+platform+"/"+user
-        params = {'TRN-Api-Key' : '95c42bd4-cbdb-4bad-9349-6ebc3be79b8d'}
+        params = {'TRN-Api-Key' : self.TRN_Api_Key}
 
         if '%20' in user:
             user = user.replace('%20', ' ')
@@ -1250,12 +1243,12 @@ class BotAna(QtCore.QThread):
 
     def get_today_stats(self):
         URL = "https://api.fortnitetracker.com/v1/profile/"+"pc"+"/"+"alessiana"
-        params = {'TRN-Api-Key' : '95c42bd4-cbdb-4bad-9349-6ebc3be79b8d'}
+        params = {'TRN-Api-Key' : self.TRN_Api_Key}
 
         wins = 0
         matches = 0
         kills = 0
-        
+
         try:
             try:
                 resp = requests.get(URL, headers=params)
