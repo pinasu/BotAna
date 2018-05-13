@@ -310,12 +310,12 @@ class BotAna(QtCore.QThread):
 
                                 self.message = message_list[0]
                                 self.arguments = ' '.join(message_list[1:])
-                           
+
                                 if self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or self.username == self.NICK):
                                     self.call_command_mod()
                                 elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
                                     self.call_command_pleb()
-                                
+
                                 if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
                                     self.call_sound(self.message)
                                 elif len(message_list) == 1 and self.message in self.images.keys() and self.username not in self.blocked:
@@ -1172,83 +1172,81 @@ class BotAna(QtCore.QThread):
 
         self.send_message("C'è il "+str(rand)+"% <3 tra "+username+" e "+random.choice(ret_list)+" "+emote)
 
-    def get_kd(self, user, platform):
-        URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
+    def get_kd(self, user, platform): #11
+        URL = "https://api.fortnitetracker.com/v1/profile/"+platform+"/"+user
+        params = {'TRN-Api-Key' : '95c42bd4-cbdb-4bad-9349-6ebc3be79b8d'}
+
         if '%20' in user:
             user = user.replace('%20', ' ')
         try:
+            resp = requests.get(URL, headers=params, timeout=3)
+            json_wins = json.loads(resp.text)
+
             try:
-                resp = requests.get(URL, timeout=3)
-            except requests.exceptions.Timeout:
-                self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
-                return
+                solo = json_wins['stats']['p2']['kd']['value']
+                duo = json_wins['stats']['p10']['kd']['value']
+                squad = json_wins['stats']['p9']['kd']['value']
 
-            lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
-            player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
+                if user == "alessiana":
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
 
-            solo = player_data['p2'][9]['value'] if "p2" in player_data else "OMEGALUL"
-            duo = player_data['p10'][9]['value'] if "p10" in player_data else "OMEGALUL"
-            squad = player_data['p9'][9]['value'] if "p9" in player_data else "OMEGALUL"
-
-            if user == "alessiana":
-                self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
-
-            elif user == "zizory":
-                if self.username != "zizory":
-                    self.send_message("Questi non sono affari tuoi HotPokket")
+                elif user == "zizory":
+                    if self.username != "zizory":
+                        self.send_message("Questi non sono affari tuoi HotPokket")
+                    else:
+                        self.send_whisper("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+json_wins['lifeTimeStats'][7]['value']+" partite) KappaPride ")
                 else:
-                    self.send_whisper("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
-            else:
-                self.send_message("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
+                    self.send_message("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+json_wins['lifeTimeStats'][7]['value']+" partite) KappaPride ")
 
-        except ValueError:
-            if platform == "ps4" or platform == "xbox":
-                self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
-            else:
-                self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
+            except KeyError:
+                if platform == "ps4":
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 a quello di EpicGames!")
+                elif platform == "xb1":
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account XBOX a quello di EpicGames!")
+                else:
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
+
+        except requests.exceptions.Timeout:
+            self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
+            return
 
     def get_stats(self, user, platform):
-        self.print_message("USER :"+user+" PLAT :"+platform)
+        URL = "https://api.fortnitetracker.com/v1/profile/"+platform+"/"+user
+        params = {'TRN-Api-Key' : '95c42bd4-cbdb-4bad-9349-6ebc3be79b8d'}
 
-        URL = "https://fortnitetracker.com/profile/"+platform+"/"+user
         if '%20' in user:
             user = user.replace('%20', ' ')
         try:
+            resp = requests.get(URL, headers=params, timeout=3)
+            json_wins = json.loads(resp.text)
+
             try:
-                resp = requests.get(URL, timeout=3)
-            except requests.exceptions.Timeout:
-                self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
-                return
+                solo = json_wins['stats']['p2']['top1']['value']
+                duo = json_wins['stats']['p10']['top1']['value']
+                squad = json_wins['stats']['p9']['top1']['value']
 
-            lifetime_stats = json.loads(self.find(resp.text, 'var LifeTimeStats = ', ';</script>'))
-            player_data = json.loads(self.find(resp.text, 'var playerData = ', ';</script>'))
-            solo = player_data['p2'][2]['value'] if "p2" in player_data else "0"
-            duo = player_data['p10'][2]['value'] if "p10" in player_data else "0"
-            squad = player_data['p9'][2]['value'] if "p9" in player_data else "0"
+                if user == "alessiana":
+                    self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
 
-            if user == "alessiana":
-                self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
+                elif user == "zizory":
+                    if self.username != "zizory":
+                        self.send_message("Questi non sono affari tuoi HotPokket")
+                    else:
+                        self.send_whisper("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+json_wins['lifeTimeStats'][7]['value']+" partite) KappaPride ")
 
-            elif user == "zizory":
-                if self.username != "zizory":
-                    self.send_message("Questi non sono affari tuoi HotPokket")
                 else:
-                    self.send_whisper("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
-            else:
-                if solo == "0":
-                    solo = "OMEGALUL"
-                if duo == "0":
-                    duo = "OMEGALUL"
-                if squad == "0":
-                    squad = "OMEGALUL"
+                    self.send_message("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+json_wins['lifeTimeStats'][7]['value']+" partite) KappaPride ")
+            except KeyError:
+                if platform == "ps4":
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 a quello di EpicGames!")
+                elif platform == "xb1":
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account XBOX a quello di EpicGames!")
+                else:
+                    self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
-                self.send_message("["+user+"] Solo: "+solo+" , Duo: "+duo+" , Squad: "+squad+" ("+lifetime_stats[7]['Value']+" partite) KappaPride ")
-
-        except ValueError:
-            if platform == "ps4" or platform == "xbox":
-                self.send_message("Utente <"+user+"> non trovato BibleThump Assicurati di aver collegato il tuo account PS4 Xbox a quello di EpicGames!")
-            else:
-                self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
+        except requests.exceptions.Timeout:
+            self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
+            return
 
     def get_today_stats(self):
         URL = "https://fortnitetracker.com/profile/pc/alessiana"
