@@ -222,7 +222,7 @@ class BotAna(QtCore.QThread):
                     file = open("LogError.txt", "a")
                     file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + "\n" + "-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)" + "\n" + "\n")
                     continue
-                '''
+
                 if tmponline['stream'] == None:
                     if self.state_string != "offline":
                         self.print_message(self.NICK+" is offline.")
@@ -258,8 +258,6 @@ class BotAna(QtCore.QThread):
                                         self.send_message("PS: puoi comunque attaccarte a StoDiscord nel frattempo: https://goo.gl/2QSx3V KappaPride")
 
                 else:
-                '''
-                if True:
                     if self.state_string != "live":
                         self.print_message(self.NICK+" is online.")
                         self.state_string = "live"
@@ -268,15 +266,15 @@ class BotAna(QtCore.QThread):
                         self.vodded = []
 
                 if self.rec:
-                    for x in (" ".join(self.rec)).split(";"):
-                        a = x.split("=")
-                        if len(a) == 2:
-                            self.user_info[a[0]] = a[1]
-
                     for line in self.rec:
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
+                            for x in (" ".join(self.rec)).split(";"):
+                                a = x.split("=")
+                                if len(a) == 2:
+                                    self.user_info[a[0]] = a[1]
+
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
@@ -285,14 +283,14 @@ class BotAna(QtCore.QThread):
 
                             usernamesplit = parts[1].split("!")
                             self.username = usernamesplit[0]
-                            '''
+
                             if "USERNOTICE" in self.rec:
                                 if self.user_info['msg-id']:
                                     if self.user_info['msg-id'] == 'sub':
                                         self.send_message(self.user_info['display-name']+" SUB? -4.99€ OMEGALUL")
                                     elif self.user_info['msg-id'] == 'resub':
                                         self.send_message(self.user_info['display-name']+" SUB DI NUOVO? -4.99€ OMEGALUL")
-                            '''
+
                             if "tmi.twitch.tv" in self.username:
                                 continue
 
@@ -324,13 +322,13 @@ class BotAna(QtCore.QThread):
 
                             self.check_words(self.message)
 
-                        self.user_info.clear()
+                            self.user_info.clear()
 
                 time.sleep(1/self.RATE)
 
         except:
             self.play_sound("crash")
-            self.print_message("----Sono explosa----")
+            self.print_message("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
@@ -726,6 +724,7 @@ class BotAna(QtCore.QThread):
             f = open("spam.txt", "w", encoding="utf-8")
             for line in d:
                 if line != self.msg_spam[int(id)-1]+"\n":
+                    self.print_message("LINE: *"+line+"* MSG: *"+self.msg_spam[int(id)]+"*")
                     f.write(line)
             f.close()
             self.send_whisper("Spam con id "+str(id)+" rimosso.")
@@ -993,8 +992,10 @@ class BotAna(QtCore.QThread):
                 return
 
             PATH = 'res\\Sounds\\'
+            self.print_message(PATH)
             snd = str(tmp[0])[1:]+".wav"
             if not os.path.isfile(PATH+snd):
+                self.print_message(PATH+snd)
                 self.send_whisper("Errore. Aggiungi il file "+snd+" alla cartella "+PATH+" .")
                 return
 
@@ -1252,7 +1253,10 @@ class BotAna(QtCore.QThread):
         try:
             try:
                 resp = requests.get(URL, headers=params)
+
+
                 data = json.loads(resp.text)['recentMatches']
+                self.print_message(wins)
 
                 today = time.strftime("20%y-%m-%d")
                 for match in data:
@@ -1260,6 +1264,7 @@ class BotAna(QtCore.QThread):
                         wins += match['top1']
                         matches += match['matches']
                         kills += match['kills']
+                        self.print_message(wins+"/"+matches+"/"+kills)
 
                 if matches == 0:
                     self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
@@ -1584,17 +1589,13 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if "classic" in message.lower() and not self.is_word_in_timeout("classic"):
+        if " classic" in message.lower() and not self.is_word_in_timeout("classic"):
             self.word_in_timeout("classic")
             self.send_message("CLASSIC LUL")
 
         elif "anche io" in message.lower() and not self.is_word_in_timeout("anche io"):
             self.word_in_timeout("anche io")
             self.send_message("Anche io KappaPride")
-
-        elif "TTours" in message and not self.is_word_in_timeout("TTours"):
-            self.word_in_timeout("TTours")
-            self.send_message("TTours PogChamp TTours PogChamp TTours PogChamp ")
 
         elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
             self.word_in_timeout("omg")
