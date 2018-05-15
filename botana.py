@@ -297,35 +297,36 @@ class BotAna(QtCore.QThread):
                             if "tmi.twitch.tv" in self.username:
                                 continue
 
-                            if self.user_info['mod'] != '1':
-                                self.lock2.acquire()
-                                self.msg_count += 1
-                                self.lock2.release()
+                            if 'mod' in self.user_info:
+                                if self.user_info['mod'] != '1':
+                                    self.lock2.acquire()
+                                    self.msg_count += 1
+                                    self.lock2.release()
 
-                            self.print_message(self.username+": "+self.message)
+                                self.print_message(self.username+": "+self.message)
 
-                            if self.can_move:
-                                self.trigger_key(self.message)
+                                if self.can_move:
+                                    self.trigger_key(self.message)
 
-                            if self.message.startswith('!'):
-                                message_list = self.message.split(' ')
+                                if self.message.startswith('!'):
+                                    message_list = self.message.split(' ')
 
-                                self.message = message_list[0]
-                                self.arguments = ' '.join(message_list[1:])
+                                    self.message = message_list[0]
+                                    self.arguments = ' '.join(message_list[1:])
 
-                                if self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or self.username == self.NICK):
-                                    self.call_command_mod()
-                                elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
-                                    self.call_command_pleb()
+                                    if self.message in self.commandsMod.keys() and(self.user_info['mod'] == "1" or self.username == self.NICK):
+                                        self.call_command_mod()
+                                    elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
+                                        self.call_command_pleb()
 
-                                if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
-                                    self.call_sound(self.message)
-                                elif len(message_list) == 1 and self.message in self.images.keys() and self.username not in self.blocked:
-                                    self.call_image(self.message)
+                                    if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
+                                        self.call_sound(self.message)
+                                    elif len(message_list) == 1 and self.message in self.images.keys() and self.username not in self.blocked:
+                                        self.call_image(self.message)
 
-                            self.check_words(self.message)
+                                self.check_words(self.message)
 
-                            self.user_info.clear()
+                                self.user_info.clear()
 
                 time.sleep(1/self.RATE)
 
