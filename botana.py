@@ -268,12 +268,6 @@ class BotAna(QtCore.QThread):
                         self.vodded = []
 
                 if self.rec:
-                    #User's badges and roles
-                    for x in (" ".join(self.rec)).split(";"):
-                        a = x.split("=")
-                        if len(a) == 2:
-                            self.user_info[a[0]] = a[1]
-
                     for line in self.rec:
                         if "USERNOTICE" in self.rec:
                                 if self.user_info['msg-id']:
@@ -285,6 +279,12 @@ class BotAna(QtCore.QThread):
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
+                            #User's badges and roles
+                            for x in (" ".join(self.rec)).split(";"):
+                                a = x.split("=")
+                                if len(a) == 2:
+                                    self.user_info[a[0]] = a[1]
+                                    
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
