@@ -268,19 +268,23 @@ class BotAna(QtCore.QThread):
                         self.vodded = []
 
                 if self.rec:
+                    #User's badges and roles
+                    for x in (" ".join(self.rec)).split(";"):
+                        a = x.split("=")
+                        if len(a) == 2:
+                            self.user_info[a[0]] = a[1]
+
                     for line in self.rec:
+                        if "USERNOTICE" in self.rec:
+                                if self.user_info['msg-id']:
+                                    if self.user_info['msg-id'] == 'sub':
+                                        self.send_message(self.user_info['display-name']+" SUB? -4.99€ OMEGALUL")
+                                    elif self.user_info['msg-id'] == 'resub':
+                                        self.send_message(self.user_info['display-name']+" SUB DI NUOVO? -4.99€ OMEGALUL")
+
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
                         else:
-                            #User's badges and roles
-                            for x in (" ".join(self.rec)).split(";"):
-                                a = x.split("=")
-                                if len(a) == 2:
-                                    self.user_info[a[0]] = a[1]
-
-                            #self.print_message(self.user_info)
-                            #self.print_message(self.user_info['user-type'])
-
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
@@ -327,7 +331,7 @@ class BotAna(QtCore.QThread):
 
         except:
             self.play_sound("crash")
-            self.print_message("----SI E' VERIFICATO UN ERRORE, TI PREGO RIAVVIAMI CON IL BOTTONE APPOSITO-----")
+            self.print_message("----Sono esplosa----")
             file = open("LogError.txt", "a")
             file.write(time.strftime("[%d/%m/%Y - %H:%M:%S] ") + traceback.format_exc() + "\n")
             traceback.print_exc()
@@ -1199,7 +1203,7 @@ class BotAna(QtCore.QThread):
                 else:
                     self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
-        except requests.exceptions.Timeout:
+        except:
             self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
             return
 
@@ -1217,6 +1221,13 @@ class BotAna(QtCore.QThread):
                 solo = json_wins['stats']['p2']['top1']['value']
                 duo = json_wins['stats']['p10']['top1']['value']
                 squad = json_wins['stats']['p9']['top1']['value']
+
+                if solo == '0':
+                    solo = "OMEGALUL"
+                if duo == '0':
+                    duo = "OMEGALUL"
+                if squad == '0':
+                    squad = "OMEGALUL"
 
                 if user == "alessiana":
                     self.send_message("["+user+"] Solo: "+solo+", Duo: "+duo+", Squad: "+squad+" KappaPride ")
@@ -1237,7 +1248,7 @@ class BotAna(QtCore.QThread):
                 else:
                     self.send_message("Utente <"+user+"> non trovato BibleThump Sicuro di aver scritto bene?")
 
-        except requests.exceptions.Timeout:
+        except:
             self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
             return
 
@@ -1250,30 +1261,27 @@ class BotAna(QtCore.QThread):
         kills = 0
 
         try:
-            try:
-                resp = requests.get(URL, headers=params)
+            resp = requests.get(URL, headers=params)
 
 
-                data = json.loads(resp.text)['recentMatches']
-                self.print_message(wins)
+            data = json.loads(resp.text)['recentMatches']
+            self.print_message(wins)
 
-                today = time.strftime("20%y-%m-%d")
-                for match in data:
-                    if today == (match['dateCollected']).split('T')[0]:
-                        wins += match['top1']
-                        matches += match['matches']
-                        kills += match['kills']
-                        self.print_message(wins+"/"+matches+"/"+kills)
+            today = time.strftime("20%y-%m-%d")
+            for match in data:
+                if today == (match['dateCollected']).split('T')[0]:
+                    wins += match['top1']
+                    matches += match['matches']
+                    kills += match['kills']
+                    self.print_message(wins+"/"+matches+"/"+kills)
 
-                if matches == 0:
-                    self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
-                else:
-                    self.send_message(str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
-            except:
-                self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
-                return
+            if matches == 0:
+                self.send_message("Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan")
+            else:
+                self.send_message(str(wins)+" vincite e "+str(kills)+" buidiulo uccisi oggi LUL")
         except:
-            self.send_message("Non riesco ad accedere ai dati FeelsBadMan")
+            self.send_message("Non riesco a ottenere i dati, meglio riprovare più tardi! FeelsBadMan")
+            return
 
     def get_emotes(self, channel):
         URL = "https://twitch.center/customapi/bttvemotes?channel="+channel
