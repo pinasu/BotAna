@@ -194,7 +194,7 @@ class BotAna(QtCore.QThread):
 
             self.print_message("I'm now connected to "+ self.NICK + ".")
 
-            self.send_message("Don't even worry guys, BotAna is here anaLove")
+            self.send_message("Don't even worry guys, "+self.botName+" is back anaLove")
 
             #threading.Thread(target=self.check_new_follows, args=(self.get_follower_list(),)).start()
 
@@ -212,7 +212,6 @@ class BotAna(QtCore.QThread):
                 tmponline = self.online
                 self.lock.release()
 
-                #Raw Twitch data
                 rcv = str(self.sock.recv(1024).decode('utf-8'))
 
                 #Message and username
@@ -284,7 +283,7 @@ class BotAna(QtCore.QThread):
                                 a = x.split("=")
                                 if len(a) == 2:
                                     self.user_info[a[0]] = a[1]
-                                    
+
                             parts = line.split(':', 2)
 
                             if len(parts) < 3: continue
