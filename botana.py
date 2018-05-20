@@ -1413,6 +1413,13 @@ class BotAna(QtCore.QThread):
             if "Segui" in self.multi_twitch:
                 self.send_message(self.multi_twitch)
 
+        elif self.message == "!pompa":
+            self.add_in_timeout("!pompa")
+            if self.arguments:
+                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni di pompa a "+ str(self.arguments) +" LUL")
+            else:
+                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni di pompa a "+ self.NICK +" LUL")
+
         elif self.message == "!trap":
             MAX_TIME = 20
 
@@ -1607,11 +1614,11 @@ class BotAna(QtCore.QThread):
         elif "omg" in message.lower() and not self.is_word_in_timeout("omg"):
             self.word_in_timeout("omg")
             self.send_message("IT'S OVER 9000 THOUSAND SwiftRage")
-        
+
         elif "TTours" in message and not self.is_word_in_timeout("TTours"):
             self.word_in_timeout("TTours")
             self.send_message("TTours PogChamp TTours PogChamp TTours PogChamp")
-        
+
         elif "denti" in message.lower() and not self.is_word_in_timeout("denti"):
             if self.username == "xuneera":
                 self.word_in_timeout("denti")
