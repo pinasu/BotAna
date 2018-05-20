@@ -860,37 +860,6 @@ class BotAna(QtCore.QThread):
         finally:
             self.fast_restart()
 
-    def perform_pompa(self, username):
-        try:
-            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
-            params = dict(user = "na")
-            resp = requests.get(url=url, params=params, timeout=10)
-        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
-            self.send_message("Mi dispiace "+username+", ma tu non pomperai nessuno oggi FeelsBadMan")
-            return
-
-        json_str = json.loads(resp.text)
-        self.print_message(json_str)
-
-        ret_list = []
-        rand_mod = username
-        if json_str['chatters']['moderators']:
-            while rand_mod == username:
-                rand_mod = random.choice(json_str['chatters']['moderators'])
-
-        ret_list.append(rand_mod)
-        self.print_message("aggiunto "+str(rand_mod))
-
-        rand_user = username
-        if json_str['chatters']['viewers']:
-            while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
-                rand_user = random.choice(json_str['chatters']['viewers'])
-
-        ret_list.append(rand_user)
-        self.print_message("aggiunto "+str(rand_user))
-
-        self.send_message(self.username+" ha fatto "+ str(randint(1, 220))+" danni col pompa a "+random.choice(ret_list)+" LUL")
-
     def call_command_mod(self):
         self.message = self.message.lower()
         raffled = ""
@@ -1172,6 +1141,37 @@ class BotAna(QtCore.QThread):
         else:
             self.send_message("/timeout "+user+" 60")
             self.send_message(user+" si è suicidato monkaS Press F to pay respect BibleThump")
+
+    def perform_pompa(self, username):
+        try:
+            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
+            params = dict(user = "na")
+            resp = requests.get(url=url, params=params, timeout=10)
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
+            self.send_message("Mi dispiace "+username+", ma tu non pomperai nessuno oggi FeelsBadMan")
+            return
+
+        json_str = json.loads(resp.text)
+        self.print_message(json_str)
+
+        ret_list = []
+        rand_mod = username
+        if json_str['chatters']['moderators']:
+            while rand_mod == username:
+                rand_mod = random.choice(json_str['chatters']['moderators'])
+
+        ret_list.append(rand_mod)
+        self.print_message("aggiunto "+str(rand_mod))
+
+        rand_user = username
+        if json_str['chatters']['viewers']:
+            while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
+                rand_user = random.choice(json_str['chatters']['viewers'])
+
+        ret_list.append(rand_user)
+        self.print_message("aggiunto "+str(rand_user))
+
+        self.send_message(self.username+" ha fatto "+ str(randint(1, 220))+" danni in testa col pompa a "+random.choice(ret_list)+" LUL")
 
     def perform_love(self, username, rand, emote):
         try:
