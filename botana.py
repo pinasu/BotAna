@@ -1577,7 +1577,7 @@ class BotAna(QtCore.QThread):
         elif self.message == "!pompa":
             self.add_in_timeout("!pompa")
             if self.arguments:
-                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni di pompa a "+ str(self.arguments) +" LUL")
+                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni in testa col pompa a "+ str(self.arguments) +" LUL")
             else:
                 threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
