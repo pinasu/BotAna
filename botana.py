@@ -860,6 +860,37 @@ class BotAna(QtCore.QThread):
         finally:
             self.fast_restart()
 
+    def perform_pompa(self, username):
+        try:
+            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
+            params = dict(user = "na")
+            resp = requests.get(url=url, params=params, timeout=10)
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
+            self.send_message("Mi dispiace "+username+", ma tu non pomperai nessuno oggi FeelsBadMan")
+            return
+
+        json_str = json.loads(resp.text)
+        self.print_message(json_str)
+
+        ret_list = []
+        rand_mod = username
+        if json_str['chatters']['moderators']:
+            while rand_mod == username:
+                rand_mod = random.choice(json_str['chatters']['moderators'])
+
+        ret_list.append(rand_mod)
+        self.print_message("aggiunto "+str(rand_mod))
+
+        rand_user = username
+        if json_str['chatters']['viewers']:
+            while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
+                rand_user = random.choice(json_str['chatters']['viewers'])
+
+        ret_list.append(rand_user)
+        self.print_message("aggiunto "+str(rand_user))
+
+        self.send_message(self.username+" ha fatto "+ str(randint(1, 220))+" danni col pompa a "+random.choice(ret_list)+" LUL")
+
     def call_command_mod(self):
         self.message = self.message.lower()
         raffled = ""
@@ -1144,7 +1175,7 @@ class BotAna(QtCore.QThread):
 
     def perform_love(self, username, rand, emote):
         try:
-            url = "https://tmi.twitch.tv/group/user/stockhausen_l2p/chatters"
+            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
             params = dict(user = "na")
             resp = requests.get(url=url, params=params, timeout=10)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
@@ -1152,6 +1183,7 @@ class BotAna(QtCore.QThread):
             return
 
         json_str = json.loads(resp.text)
+
         ret_list = []
         rand_mod = username
         if json_str['chatters']['moderators']:
@@ -1166,10 +1198,9 @@ class BotAna(QtCore.QThread):
                 rand_user = random.choice(json_str['chatters']['viewers'])
 
         ret_list.append(rand_user)
+        self.send_message("C'è il "+str(rand)+"% <3 tra "+self.username+" e "+random.choice(ret_list)+" "+emote)
 
-        self.send_message("C'è il "+str(rand)+"% <3 tra "+username+" e "+random.choice(ret_list)+" "+emote)
-
-    def get_kd(self, user, platform): #11
+    def get_kd(self, user, platform):
         URL = "https://api.fortnitetracker.com/v1/profile/"+platform+"/"+user
         params = {'TRN-Api-Key' : self.TRN_Api_Key}
 
@@ -1413,13 +1444,6 @@ class BotAna(QtCore.QThread):
             if "Segui" in self.multi_twitch:
                 self.send_message(self.multi_twitch)
 
-        elif self.message == "!pompa":
-            self.add_in_timeout("!pompa")
-            if self.arguments:
-                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni di pompa a "+ str(self.arguments) +" LUL")
-            else:
-                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni di pompa a "+ self.NICK +" LUL")
-
         elif self.message == "!trap":
             MAX_TIME = 20
 
@@ -1550,11 +1574,12 @@ class BotAna(QtCore.QThread):
             else:
                 threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
-        elif self.message == "!ban" and not self.is_in_timeout("!ban"):
-            if self.arguments != "":
-                self.send_message(self.username+" ha bandito "+self.arguments+" dalla chat PogChamp")
+        elif self.message == "!pompa":
+            self.add_in_timeout("!pompa")
+            if self.arguments:
+                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni di pompa a "+ str(self.arguments) +" LUL")
             else:
-                self.send_message(self.username+" non posso bandire il nulla,  stupido babbuino LUL")
+                threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
         elif self.message == "!comandi" and not self.is_in_timeout("!comandi"):
             self.send_message(self.username+", la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp")
