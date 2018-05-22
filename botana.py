@@ -268,12 +268,17 @@ class BotAna(QtCore.QThread):
 
                 if self.rec:
                     for line in self.rec:
-                        if "USERNOTICE" in self.rec:
-                                if self.user_info['msg-id']:
-                                    if self.user_info['msg-id'] == 'sub':
-                                        self.send_message(self.user_info['display-name']+" SUB? -4.99€ OMEGALUL")
-                                    elif self.user_info['msg-id'] == 'resub':
-                                        self.send_message(self.user_info['display-name']+" SUB DI NUOVO? -4.99€ OMEGALUL")
+                        if "USERNOTICE" in line:
+                            #User's badges and roles
+                            for x in (" ".join(self.rec)).split(";"):
+                                a = x.split("=")
+                                if len(a) == 2:
+                                    self.user_info[a[0]] = a[1]
+
+                            if self.user_info['msg-id'] == 'sub':
+                                self.send_message(self.user_info['display-name']+" SUB? -4.99€ OMEGALUL")
+                            elif self.user_info['msg-id'] == 'resub':
+                                self.send_message(self.user_info['display-name']+" SUB DI NUOVO? (x"+self.user_info['msg-param-months']+") PogChamp")
 
                         if "PING" in line:
                             self.sock.send("PONG tmi.twitch.tv\r\n".encode("utf-8"))
@@ -590,7 +595,7 @@ class BotAna(QtCore.QThread):
     def check_new_hosts(self, old):
         while True:
             new = self.get_host_list()
-            if(new or old):
+            if new or old:
                 new_st = set(new)
                 old_st = set(old)
                 diff = new_st - old_st
@@ -1142,63 +1147,60 @@ class BotAna(QtCore.QThread):
             self.send_message("/timeout "+user+" 60")
             self.send_message(user+" si è suicidato monkaS Press F to pay respect BibleThump")
 
-    def perform_pompa(self, username):
+    def get_chatters(self):
         try:
             url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
             params = dict(user = "na")
             resp = requests.get(url=url, params=params, timeout=10)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
-            self.send_message("Mi dispiace "+username+", ma tu non pomperai nessuno oggi FeelsBadMan")
-            return
+            return []
 
-        json_str = json.loads(resp.text)
-        self.print_message(json_str)
+        return json.loads(resp.text)
 
-        ret_list = []
-        rand_mod = username
-        if json_str['chatters']['moderators']:
-            while rand_mod == username:
-                rand_mod = random.choice(json_str['chatters']['moderators'])
+    def perform_pompa(self, username):
+        json_str = self.get_chatters()
 
-        ret_list.append(rand_mod)
-        self.print_message("aggiunto "+str(rand_mod))
+        if not json_str:
+            ret_list = []
+            rand_mod = username
+            if json_str['chatters']['moderators']:
+                while rand_mod == username:
+                    rand_mod = random.choice(json_str['chatters']['moderators'])
 
-        rand_user = username
-        if json_str['chatters']['viewers']:
-            while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
-                rand_user = random.choice(json_str['chatters']['viewers'])
+            ret_list.append(rand_mod)
 
-        ret_list.append(rand_user)
-        self.print_message("aggiunto "+str(rand_user))
+            rand_user = username
+            if json_str['chatters']['viewers']:
+                while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
+                    rand_user = random.choice(json_str['chatters']['viewers'])
 
-        self.send_message(self.username+" ha fatto "+ str(randint(1, 220))+" danni in testa col pompa a "+random.choice(ret_list)+" LUL")
+            ret_list.append(rand_user)
+
+            self.send_message(username+" ha fatto "+ str(randint(1, 220))+" danni in testa col pompa a "+random.choice(ret_list)+" LUL")
+        else:
+            self.send_message("Mi dispiace "+username+", ma tu non pomperai nessuno oggi LUL")
 
     def perform_love(self, username, rand, emote):
-        try:
-            url = "https://tmi.twitch.tv/group/user/"+self.NICK+"/chatters"
-            params = dict(user = "na")
-            resp = requests.get(url=url, params=params, timeout=10)
-        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
+        json_str = self.get_chatters()
+
+        if json_str:
+            ret_list = []
+            rand_mod = username
+            if json_str['chatters']['moderators']:
+                while rand_mod == username:
+                    rand_mod = random.choice(json_str['chatters']['moderators'])
+
+            ret_list.append(rand_mod)
+
+            rand_user = username
+            if json_str['chatters']['viewers']:
+                while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
+                    rand_user = random.choice(json_str['chatters']['viewers'])
+
+            ret_list.append(rand_user)
+            self.send_message("C'è il "+str(rand)+"% <3 tra "+username+" e "+random.choice(ret_list)+" "+emote)
+        else:
             self.send_message("Mi dispiace "+username+", ma tu non amerai nessuno oggi FeelsBadMan")
-            return
-
-        json_str = json.loads(resp.text)
-
-        ret_list = []
-        rand_mod = username
-        if json_str['chatters']['moderators']:
-            while rand_mod == username:
-                rand_mod = random.choice(json_str['chatters']['moderators'])
-
-        ret_list.append(rand_mod)
-
-        rand_user = username
-        if json_str['chatters']['viewers']:
-            while rand_user == username or rand_user == "nightbot" or rand_user == "logviewer":
-                rand_user = random.choice(json_str['chatters']['viewers'])
-
-        ret_list.append(rand_user)
-        self.send_message("C'è il "+str(rand)+"% <3 tra "+self.username+" e "+random.choice(ret_list)+" "+emote)
 
     def get_kd(self, user, platform):
         URL = "https://api.fortnitetracker.com/v1/profile/"+platform+"/"+user
@@ -1577,7 +1579,14 @@ class BotAna(QtCore.QThread):
         elif self.message == "!pompa":
             self.add_in_timeout("!pompa")
             if self.arguments:
-                self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni in testa col pompa a "+ str(self.arguments) +" LUL")
+                args = str(self.arguments)
+                ctrs = self.get_chatters()
+                lst = ctrs['chatters']['moderators'] + ctrs['chatters']['viewers']
+
+                if args.lower() in lst:
+                    self.send_message(self.username + " ha fatto " + str(randint(1, 220)) + " danni in testa col pompa a "+ str(self.arguments) +" LUL")
+                else:
+                    self.print_message("ENE")
             else:
                 threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
