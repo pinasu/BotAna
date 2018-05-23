@@ -1,4 +1,4 @@
-import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
+import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom, move
 import win32com.client as wincl
 from datetime import datetime as dt
 from bs4 import BeautifulSoup
@@ -12,41 +12,6 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
 import git
 from git import Repo
-#Key pressing
-import ctypes
-
-SendInput = ctypes.windll.user32.SendInput
-
-# C struct redefinitions
-PUL = ctypes.POINTER(ctypes.c_ulong)
-class KeyBdInput(ctypes.Structure):
-    _fields_ = [('wVk', ctypes.c_ushort),
-                ('wScan', ctypes.c_ushort),
-                ('dwFlags', ctypes.c_ulong),
-                ('time', ctypes.c_ulong),
-                ('dwExtraInfo', PUL)]
-
-class HardwareInput(ctypes.Structure):
-    _fields_ = [('uMsg', ctypes.c_ulong),
-                ('wParamL', ctypes.c_short),
-                ('wParamH', ctypes.c_ushort)]
-
-class MouseInput(ctypes.Structure):
-    _fields_ = [('dx', ctypes.c_long),
-                ('dy', ctypes.c_long),
-                ('mouseData', ctypes.c_ulong),
-                ('dwFlags', ctypes.c_ulong),
-                ('time',ctypes.c_ulong),
-                ('dwExtraInfo', PUL)]
-
-class Input_I(ctypes.Union):
-    _fields_ = [('ki', KeyBdInput),
-                 ('mi', MouseInput),
-                 ('hi', HardwareInput)]
-
-class Input(ctypes.Structure):
-    _fields_ = [('type', ctypes.c_ulong),
-                ('ii', Input_I)]
 
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
@@ -304,7 +269,7 @@ class BotAna(QtCore.QThread):
                                 self.print_message(self.username+': '+self.message)
 
                                 if self.can_move:
-                                    self.trigger_key(self.message)
+                                    move.trigger_key(self.message)
 
                                 if self.message.startswith('!'):
                                     message_list = self.message.split(' ')
@@ -337,182 +302,6 @@ class BotAna(QtCore.QThread):
     def __del__(self):
         self.exiting = True
         self.wait()
-
-    #Key pressing
-    # non funge su doppio schermo, prende sempre solo il primo
-    def mouse_move_from_bottom_right(self, x, y):
-        extra = ctypes.c_ulong(0)
-        ii_ = Input_I()
-        x = int((ctypes.windll.user32.GetSystemMetrics(0) - x) * (65536/ctypes.windll.user32.GetSystemMetrics(0))+1)
-        y = int((ctypes.windll.user32.GetSystemMetrics(1) - y) * (65536/ctypes.windll.user32.GetSystemMetrics(1))+1)
-        ii_.mi = MouseInput(x, y, 0, 0x0001 | 0x8000, 0, ctypes.pointer(extra))
-        x = Input(ctypes.c_ulong(0), ii_)
-        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-    def mouse_move_abs(self, x, y):
-        extra = ctypes.c_ulong(0)
-        ii_ = Input_I()
-        x = int(x*(65536/ctypes.windll.user32.GetSystemMetrics(0))+1)
-        y = int(y*(65536/ctypes.windll.user32.GetSystemMetrics(1))+1)
-        ii_.mi = MouseInput(x, y, 0, 0x0001 | 0x8000, 0, ctypes.pointer(extra))
-        x = Input(ctypes.c_ulong(0), ii_)
-        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-    def mouse(self, x, y, code=''):
-        if code == 'PressLeft':
-            cd = 0x0002;
-        elif code == 'ReleaseLeft':
-            cd = 0x0004;
-        elif code == 'PressRight':
-            cd = 0x0008;
-        elif code == 'ReleaseRight':
-            cd = 0x0010;
-        else:
-            cd = 0x0001;
-
-        extra = ctypes.c_ulong(0)
-        ii_ = Input_I()
-        ii_.mi = MouseInput(x, y, 0, cd, 0, ctypes.pointer(extra))
-        x = Input(ctypes.c_ulong(0), ii_)
-        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-    def press_key(self, hexKeyCode):
-        extra = ctypes.c_ulong(0)
-        ii_ = Input_I()
-        ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008, 0, ctypes.pointer(extra) )
-        x = Input( ctypes.c_ulong(1), ii_ )
-        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-    def release_key(self, hexKeyCode):
-        extra = ctypes.c_ulong(0)
-        ii_ = Input_I()
-        ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
-        x = Input( ctypes.c_ulong(1), ii_ )
-        ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-    def press_whait_release(self, type, time, code):
-        threading.Thread(target=self.thread_press, args=(type, time, code,)).start()
-
-    def thread_press(self, type, tim, code):
-        tmp = str(code)
-        self.lock3.acquire()
-        if tmp in self.move_dict:
-            self.move_dict[tmp] = self.move_dict[tmp] + 1
-        else:
-            self.move_dict[tmp] = 1
-        self.lock3.release()
-        if type == 'Mouse':
-            self.mouse(0,0,'Press' + code)
-            time.sleep(tim)
-            self.lock3.acquire()
-            if self.move_dict[tmp] == 1:
-                self.mouse(0,0,'Release' + code)
-            self.move_dict[tmp] = self.move_dict[tmp] - 1
-            self.lock3.release()
-        elif type == 'Key':
-            if code in [0x11, 0x1F, 0x1E, 0x20]: # w a s d
-                self.press_key(0x2A) #shift per correre
-            self.press_key(code)
-            time.sleep(tim)
-            self.lock3.acquire()
-            if self.move_dict[tmp] == 1:
-                if code in [0x11, 0x1F, 0x1E, 0x20]: # w a s d
-                    self.release_key(0x2A) #shift per correre
-                self.release_key(code)
-            self.move_dict[tmp] = self.move_dict[tmp] - 1
-            self.lock3.release()
-
-    def trigger_key(self, text):
-        # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
-
-        if not len(text) == 1:
-            return
-
-        if text.lower() == 'q':
-            self.press_key(0x21) #F
-            self.release_key(0x21) #F
-            time.sleep(0.5)
-            self.mouse(0,0,'PressLeft')
-            self.mouse(0,0,'ReleaseLeft')
-        elif text.lower() == 'g':
-            self.press_key(0x22) #g
-            self.release_key(0x22)
-            time.sleep(0.5)
-            self.mouse(0,0,'PressLeft')
-            self.mouse(0,0,'ReleaseLeft')
-        #elif text.lower() == 'f':
-            #TODO piazzare scale
-            #self.press_key(0x14) #T
-            #self.release_key(0x14)
-            #time.sleep(0.5)
-            #self.mouse(0,0,'PressLeft')
-        elif text.lower() == '1':
-            self.press_key(0x02) #1
-            self.release_key(0x02)
-            # self.mouse(0,0,'PressLeft')
-            self.press_whait_release('Mouse', 5, 'Left')
-        elif text.lower() == '2':
-            self.press_key(0x03) #2
-            self.release_key(0x03)
-            self.press_whait_release('Mouse', 3, 'Left')
-        elif text.lower() == '3':
-            self.press_key(0x04) #3
-            self.release_key(0x04)
-            self.press_whait_release('Mouse', 3, 'Left')
-        elif text.lower() == '4':
-            self.press_key(0x05) #4
-            self.release_key(0x05)
-            self.press_whait_release('Mouse', 3, 'Left')
-        elif text.lower() == '5':
-            self.press_key(0x06) #5
-            self.release_key(0x06)
-            self.press_whait_release('Mouse', 3, 'Left')
-        elif text.lower() == '6':
-            self.press_key(0x2C) #Z
-            self.release_key(0x2C)
-            self.press_whait_release('Mouse', 3, 'Left')
-        elif text.lower() == 'u':
-            self.mouse(0,-1000) #Top
-        elif text.lower() == 'j':
-            self.mouse(0,1000) #Bottom
-        elif text.lower() == 'h':
-            self.mouse(-1000,0) #Left
-        elif text.lower() == 'k':
-            self.mouse(1000,0) #Right
-        elif text.lower() == 'w':
-            self.press_whait_release('Key', 5, 0x11)
-            # self.press_key(0x11)
-        elif text.lower() == 's':
-            self.press_whait_release('Key', 5, 0x1F)
-            # self.press_key(0x1F)
-        elif text.lower() == 'a':
-            self.press_whait_release('Key', 5, 0x1E)
-            # self.press_key(0x1E)
-        elif text.lower() == 'd':
-            self.press_whait_release('Key', 5, 0x20)
-            # self.press_key(0x20)
-        elif text.lower() == 'm':
-            self.press_key(0x32) #4
-            self.release_key(0x32)
-        elif text.lower() == 'b':
-            self.press_key(0x39) #space
-            self.release_key(0x39)
-        elif text.lower() == 'e':
-            self.press_key(0x12) #e
-            self.release_key(0x12)
-        elif text.lower() == 'x':
-            self.press_key(0x01) #esc
-            self.release_key(0x01)
-        elif text.lower() == 'r':
-            self.mouse_move_abs(1920 + 1790, 1050)
-            # self.mouse_move_from_bottom_right(130, 30)
-            self.mouse(0,0,'PressLeft')
-            self.mouse(0,0,'ReleaseLeft')
-        elif text.lower() == 't':
-            self.mouse_move_abs(1920 + 1700, 950)
-            # self.mouse_move_from_bottom_right(220, 130)
-            self.mouse(0,0,'PressLeft')
-            self.mouse(0,0,'ReleaseLeft')
 
     def set_can_move(self, can):
         self.can_move = can
@@ -1612,22 +1401,6 @@ class BotAna(QtCore.QThread):
                     if not self.is_in_timeout(com.get_name()):
                         self.send_message(com.get_response())
 
-    def ana(self, user):
-        new = ''
-
-        if user.endswith('ana'):
-            new = user[:-3]
-        else:
-            lun = (len(user))-1
-            last = user[lun]
-            while last not in 'bcdfghjklmnpqrstvwxyz':
-                lun = lun -1
-                last = user[lun]
-
-            new = user[:lun+1]
-
-        return new + 'ANA';
-
     def word_in_timeout(self, word):
         self.words_cooldown[word] = time.time()
 
@@ -1637,7 +1410,7 @@ class BotAna(QtCore.QThread):
         return True
 
     def check_words(self, message):
-        if ' classic' in message.lower() and not self.is_word_in_timeout('classic'):
+        if 'classic' in message.lower() and not self.is_word_in_timeout('classic'):
             self.word_in_timeout('classic')
             self.send_message('CLASSIC LUL')
 
@@ -1652,11 +1425,6 @@ class BotAna(QtCore.QThread):
         elif 'TTours' in message and not self.is_word_in_timeout('TTours'):
             self.word_in_timeout('TTours')
             self.send_message('TTours PogChamp TTours PogChamp TTours PogChamp')
-
-        elif 'denti' in message.lower() and not self.is_word_in_timeout('denti'):
-            if self.username == 'xuneera':
-                self.word_in_timeout('denti')
-                self.send_message('Quali denti OMEGALUL ')
 
     def load_quotes(self):
         with open('quotes.csv', encoding='utf-8') as quotes:
@@ -1712,29 +1480,30 @@ class BotAna(QtCore.QThread):
 
             sound.play(0)
             clock = pygame.time.Clock()
-            clock.tick(10)
+            clock.tick(6)
             while pygame.mixer.music.get_busy():
                 pygame.event.poll()
-                clock.tick(10)
+                clock.tick(6)
         else:
             self.send_message('Shhhhhh silenzio!')
 
     def call_sound(self, name):
-        if name[:1] == '!':
-            sname = name[1:]
+        if self.user_info['subscriber'] == 1:
+            if name[:1] == '!':
+                sname = name[1:]
 
-        if name == '!gg':
-            self.sound_add_in_timeout(name)
+            if name == '!gg':
+                self.sound_add_in_timeout(name)
 
-            if self.username not in self.gged:
-                self.gged[self.username] = 0
+                if self.username not in self.gged:
+                    self.gged[self.username] = 0
 
-            if time.time() - self.gged[self.username] > 7:
+                if time.time() - self.gged[self.username] > 7:
+                    self.play_sound(sname)
+                    self.gged[self.username] = time.time()
+
+            elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
                 self.play_sound(sname)
-                self.gged[self.username] = time.time()
-
-        elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
-            self.play_sound(sname)
 
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
