@@ -1075,10 +1075,7 @@ class BotAna(QtCore.QThread):
 
         try:
             resp = requests.get(URL, headers=params)
-
-
             data = json.loads(resp.text)['recentMatches']
-            self.print_message(wins)
 
             today = time.strftime('20%y-%m-%d')
             for match in data:
@@ -1086,7 +1083,6 @@ class BotAna(QtCore.QThread):
                     wins += match['top1']
                     matches += match['matches']
                     kills += match['kills']
-                    self.print_message(wins+'/'+matches+'/'+kills)
 
             if matches == 0:
                 self.send_message('Mi dispiace, ma Alessiana non ha ancora giocato oggi FeelsBadMan')
@@ -1270,11 +1266,8 @@ class BotAna(QtCore.QThread):
                 threading.Thread(target=self.get_kd, args=(['alessiana', 'pc'])).start()
 
         elif self.message == '!winoggi' and not self.is_in_timeout('!winoggi') and self.is_for_current_game(self.commandsPleb['!winoggi']):
-            if self.arguments:
-                return
-            else:
-                self.add_in_timeout('!winoggi')
-                threading.Thread(target=self.get_today_stats, args=()).start()
+            self.add_in_timeout('!winoggi')
+            threading.Thread(target=self.get_today_stats, args=()).start()
 
         elif self.message == '!patch' and not self.is_in_timeout('!patch') and self.is_for_current_game(self.commandsPleb['!patch']):
             threading.Thread(target=self.get_patch, args=()).start()
