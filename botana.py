@@ -1,4 +1,4 @@
-import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom, move
+import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
 import win32com.client as wincl
 from datetime import datetime as dt
 from bs4 import BeautifulSoup
@@ -100,7 +100,6 @@ class BotAna(QtCore.QThread):
 
         self.lock = threading.RLock()
         self.lock2 = threading.RLock()
-        self.lock3 = threading.RLock()
 
         self.vodded = []
 
@@ -125,7 +124,6 @@ class BotAna(QtCore.QThread):
         self.multi_twitch = 'https://multistre.am/'+self.NICK+'/'
 
         self.can_move = False
-        self.move_dict = dict()
 
         self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
@@ -184,7 +182,7 @@ class BotAna(QtCore.QThread):
                     file = open('LogError.txt', 'a')
                     file.write(time.strftime('[%d/%m/%Y - %H:%M:%S] ') + '\n' + '-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)' + '\n' + '\n')
                     continue
-
+                '''
                 if tmponline['stream'] == None:
                     if self.state_string != 'offline':
                         self.print_message(self.NICK+' is offline.')
@@ -226,7 +224,7 @@ class BotAna(QtCore.QThread):
 
                     if self.vodded:
                         self.vodded = []
-
+                '''
                 if self.rec:
                     for line in self.rec:
                         if 'USERNOTICE' in line:
@@ -269,6 +267,7 @@ class BotAna(QtCore.QThread):
                                 self.print_message(self.username+': '+self.message)
 
                                 if self.can_move:
+                                    import move
                                     move.trigger_key(self.message)
 
                                 if self.message.startswith('!'):
