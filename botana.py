@@ -939,8 +939,8 @@ class BotAna(QtCore.QThread):
 
     def perform_pompa(self, username):
         json_str = self.get_chatters()
-
-        if not json_str:
+        
+        if json_str:
             ret_list = []
             rand_mod = username
             if json_str['chatters']['moderators']:
@@ -955,8 +955,18 @@ class BotAna(QtCore.QThread):
                     rand_user = random.choice(json_str['chatters']['viewers'])
 
             ret_list.append(rand_user)
-            rand_dmg = randint(1, 220)
-            self.send_message(username+' ha fatto '+ str(rand_dmg)+' danni in testa col pompa a '+random.choice(ret_list)+'['+str(rand_dmg)+'/200] LUL')
+            rand_dmg = randint(1, 200)
+
+            if self.username not in self.life.keys():
+                self.life[self.username] = 200
+            if args in self.life.keys():
+                self.life[args] = self.life[args] - rand_dmg
+            else:
+                self.life[args] = 200 - rand_dmg
+            if self.life[args] <= 0:
+                self.add_to_blocked(args, 120)
+
+            self.send_message(username+' ha fatto '+ str(rand_dmg)+' danni in testa col pompa a '+random.choice(ret_list)+'['+str(self.life[args])+'/200] LUL')
         else:
             self.send_message('Mi dispiace '+username+', ma tu non pomperai nessuno oggi LUL')
 
@@ -1367,7 +1377,7 @@ class BotAna(QtCore.QThread):
                     if self.life[args] <= 0:
                         self.add_to_blocked(args, 120)
 
-                    self.send_message(self.username + ' ha fatto ' + str(rand_dmg) + ' danni in testa col pompa a '+ args +'['+str(rand_dmg)+'/200] LUL')
+                    self.send_message(self.username + ' ha fatto ' + str(rand_dmg) + ' danni in testa col pompa a '+ args +'['+str(self.life(args))+'/200] LUL')
             else:
                 threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
