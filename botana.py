@@ -945,7 +945,7 @@ class BotAna(QtCore.QThread):
             ret_list = []
             rand_mod = username
             if json_str['chatters']['moderators']:
-                while rand_mod == username:
+                while rand_mod == username or rand_mod == 'botana__' or rand_mod == 'nightbot':
                     rand_mod = random.choice(json_str['chatters']['moderators'])
 
             ret_list.append(rand_mod)
@@ -958,7 +958,8 @@ class BotAna(QtCore.QThread):
 
             ret_list.append(rand_user)
             rand_dmg = randint(1, 200)
-            args = random.choice(ret_list)
+
+            args = list(set(random.choice(ret_list) - set(self.blocked)))
 
             if self.username not in self.life.keys():
                 self.life[self.username] = 200
