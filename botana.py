@@ -276,13 +276,14 @@ class BotAna(QtCore.QThread):
                                     self.message = message_list[0]
                                     self.arguments = ' '.join(message_list[1:])
 
-                                    if self.message in self.commandsMod.keys() and(self.user_info['mod'] == '1' or self.username == self.NICK):
-                                        self.call_command_mod()
-                                    elif self.message in self.commandsPleb.keys() and self.username not in self.blocked:
-                                        self.call_command_pleb()
+                                    if self.username not in self.blocked:
+                                        if self.message in self.commandsMod.keys() and(self.user_info['mod'] == '1' or self.username == self.NICK):
+                                            self.call_command_mod()
+                                        elif self.message in self.commandsPleb.keys():
+                                            self.call_command_pleb()
 
-                                    if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
-                                        self.call_sound(self.message)
+                                        if len(message_list) == 1 and self.message in self.sounds.keys():
+                                            self.call_sound(self.message)
 
                                 self.check_words(self.message)
 
@@ -421,9 +422,10 @@ class BotAna(QtCore.QThread):
 
     def add_to_blocked(self, name, time):
         try:
-            self.blocked.append(name)
-            self.send_message(name+' è stato bloccato e non potrà usare alcun comando per '+str(time)+' secondi LUL')
-            threading.Thread(target=self.cd_blocked, args=(name, float(time),)).start()
+            if name not in self.blocked:
+                self.blocked.append(name)
+                self.send_message(name+' è stato bloccato e non potrà usare alcun comando per '+str(time)+' secondi LUL')
+                threading.Thread(target=self.cd_blocked, args=(name, float(time),)).start()
         except:
             file = open('LogError.txt', 'a')
             file.write(time.strftime('[%d/%m/%Y - %H:%M:%S] ') + traceback.format_exc() + '\n')
@@ -665,11 +667,10 @@ class BotAna(QtCore.QThread):
 
         elif self.message == '!block':
             args = self.arguments.split(' ')
-            if args[0] not in self.blocked:
-                if len(args) > 1:
-                    self.add_to_blocked(args[0], args[1])
-                else:
-                    self.add_to_blocked(args[0], 120)
+            if len(args) > 1:
+                self.add_to_blocked(args[0], args[1])
+            else:
+                self.add_to_blocked(args[0], 120)
 
         elif self.message == '!shout':
             args = self.arguments.split(' ')
@@ -1132,7 +1133,7 @@ class BotAna(QtCore.QThread):
         self.is_muted = False
 
     def speak_text(self, text):
-        if self.user_info['subscriber'] == '1':
+        if self.user_info['subscriber'] == '1' or self.user_info['mod'] == '1':
             if not self.is_muted:
                 self.text_to_speech = time.time()
                 pythoncom.CoInitialize()
