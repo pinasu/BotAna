@@ -282,8 +282,8 @@ class BotAna(QtCore.QThread):
                                         self.call_command_pleb()
 
                                     if len(message_list) == 1 and self.message in self.sounds.keys() and self.username not in self.blocked:
-                                        if self.user_info['subscriber'] == '1':
-                                            self.call_sound(self.message)
+                                        self.call_sound(self.message)
+
                                 self.check_words(self.message)
 
                             self.user_info.clear()
@@ -955,8 +955,8 @@ class BotAna(QtCore.QThread):
                     rand_user = random.choice(json_str['chatters']['viewers'])
 
             ret_list.append(rand_user)
-
-            self.send_message(username+' ha fatto '+ str(randint(1, 220))+' danni in testa col pompa a '+random.choice(ret_list)+' LUL')
+            rand_dmg = randint(1, 220)
+            self.send_message(username+' ha fatto '+ str(rand_dmg)+' danni in testa col pompa a '+random.choice(ret_list)+'['+str(rand_dmg)+'/200] LUL')
         else:
             self.send_message('Mi dispiace '+username+', ma tu non pomperai nessuno oggi LUL')
 
@@ -1367,7 +1367,7 @@ class BotAna(QtCore.QThread):
                     if self.life[args] <= 0:
                         self.add_to_blocked(args, 120)
 
-                    self.send_message(self.username + ' ha fatto ' + rand_dmg + ' danni in testa col pompa a '+ args +' LUL')
+                    self.send_message(self.username + ' ha fatto ' + str(rand_dmg) + ' danni in testa col pompa a '+ args +'['+str(rand_dmg)+'/200] LUL')
             else:
                 threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
@@ -1480,7 +1480,7 @@ class BotAna(QtCore.QThread):
             self.send_message('Shhhhhh silenzio!')
 
     def call_sound(self, name):
-        if self.user_info['subscriber'] == 1:
+        if self.user_info['subscriber'] == 1 or self.user_info['mod'] == '1' or self.username == self.NICK:
             if name[:1] == '!':
                 sname = name[1:]
 
@@ -1496,6 +1496,8 @@ class BotAna(QtCore.QThread):
 
             elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
                 self.play_sound(sname)
+        else:
+            self.print_message('NOT A SUB AHAHAH')
 
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
