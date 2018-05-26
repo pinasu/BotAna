@@ -1480,7 +1480,8 @@ class BotAna(QtCore.QThread):
             self.send_message('Shhhhhh silenzio!')
 
     def call_sound(self, name):
-        if self.user_info['subscriber'] == 1 or self.user_info['mod'] == '1' or self.username == self.NICK:
+
+        if self.user_info['subscriber'] == '1' or self.user_info['mod'] == '1' or self.username == self.NICK:
             if name[:1] == '!':
                 sname = name[1:]
 
