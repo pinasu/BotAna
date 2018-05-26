@@ -157,7 +157,7 @@ class BotAna(QtCore.QThread):
 
             self.print_message('I\'m now connected to '+ self.NICK + '.')
 
-            #self.send_message('Don\'t even worry guys, '+self.botName+' is back anaLove')
+            self.send_message('Don\'t even worry guys, '+self.botName+' is back anaLove')
 
             threading.Thread(target=self.reset_trap, args=()).start()
 
