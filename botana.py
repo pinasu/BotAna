@@ -1497,7 +1497,7 @@ class BotAna(QtCore.QThread):
             elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
                 self.play_sound(sname)
         else:
-            self.print_message('NOT A SUB AHAHAH')
+            self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers, subba subito per avere questo vantaggio! Kappa')
 
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
