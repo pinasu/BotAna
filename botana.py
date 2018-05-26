@@ -1365,26 +1365,7 @@ class BotAna(QtCore.QThread):
 
         elif self.message == '!pompa':
             self.add_in_timeout('!pompa')
-            if self.arguments:
-                args = str(self.arguments)
-                ctrs = self.get_chatters()
-                lst = ctrs['chatters']['moderators'] + ctrs['chatters']['viewers']
-
-                if args.lower() in lst:
-                    rand_dmg = randint(1, 220)
-                    if self.username not in self.life.keys():
-                        self.life[self.username] = 200
-                    if args in self.life.keys():
-                        self.life[args] = self.life[args] - rand_dmg
-                    else:
-                        self.life[args] = 200 - rand_dmg
-
-                    self.send_message(self.username + ' ha fatto ' + str(rand_dmg) + ' danni in testa col pompa a '+ args +' ['+str(self.life[args])+'/200] LUL')
-                    if self.life[args] <= 0:
-                        time.sleep(1)
-                        self.add_to_blocked(args, 120)
-            else:
-                threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
+            threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
         elif self.message == '!comandi' and not self.is_in_timeout('!comandi'):
             self.send_message(self.username+', la lista dei comandi è su https://pinasu.github.io/BotAna/ PogChamp')
