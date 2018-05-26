@@ -157,7 +157,7 @@ class BotAna(QtCore.QThread):
 
             self.print_message('I\'m now connected to '+ self.NICK + '.')
 
-            self.send_message('Don\'t even worry guys, '+self.botName+' is back anaLove')
+            #self.send_message('Don\'t even worry guys, '+self.botName+' is back anaLove')
 
             threading.Thread(target=self.reset_trap, args=()).start()
 
@@ -959,7 +959,7 @@ class BotAna(QtCore.QThread):
             ret_list.append(rand_user)
             rand_dmg = randint(1, 200)
 
-            args = list(set(random.choice(ret_list) - set(self.blocked)))
+            args = random.choice(list(set(ret_list) - set(self.blocked)))
 
             if self.username not in self.life.keys():
                 self.life[self.username] = 200
