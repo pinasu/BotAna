@@ -939,7 +939,7 @@ class BotAna(QtCore.QThread):
 
     def perform_pompa(self, username):
         json_str = self.get_chatters()
-        
+
         if json_str:
             ret_list = []
             rand_mod = username
@@ -951,11 +951,13 @@ class BotAna(QtCore.QThread):
 
             rand_user = username
             if json_str['chatters']['viewers']:
-                while rand_user == username or rand_user == 'nightbot' or rand_user == 'logviewer':
+                while rand_user == username:
+                    self.print_message('a')
                     rand_user = random.choice(json_str['chatters']['viewers'])
 
             ret_list.append(rand_user)
             rand_dmg = randint(1, 200)
+            args = random.choice(ret_list)
 
             if self.username not in self.life.keys():
                 self.life[self.username] = 200
@@ -963,10 +965,11 @@ class BotAna(QtCore.QThread):
                 self.life[args] = self.life[args] - rand_dmg
             else:
                 self.life[args] = 200 - rand_dmg
-            if self.life[args] <= 0:
-                self.add_to_blocked(args, 120)
 
-            self.send_message(username+' ha fatto '+ str(rand_dmg)+' danni in testa col pompa a '+random.choice(ret_list)+'['+str(self.life[args])+'/200] LUL')
+            self.send_message(username+' ha fatto '+ str(rand_dmg)+' danni in testa col pompa a '+args+' ['+str(self.life[args])+'/200] LUL')
+            if self.life[args] <= 0:
+                time.sleep(1)
+                self.add_to_blocked(args, 120)
         else:
             self.send_message('Mi dispiace '+username+', ma tu non pomperai nessuno oggi LUL')
 
@@ -1374,10 +1377,11 @@ class BotAna(QtCore.QThread):
                         self.life[args] = self.life[args] - rand_dmg
                     else:
                         self.life[args] = 200 - rand_dmg
-                    if self.life[args] <= 0:
-                        self.add_to_blocked(args, 120)
 
-                    self.send_message(self.username + ' ha fatto ' + str(rand_dmg) + ' danni in testa col pompa a '+ args +'['+str(self.life(args))+'/200] LUL')
+                    self.send_message(self.username + ' ha fatto ' + str(rand_dmg) + ' danni in testa col pompa a '+ args +' ['+str(self.life[args])+'/200] LUL')
+                    if self.life[args] <= 0:
+                        time.sleep(1)
+                        self.add_to_blocked(args, 120)
             else:
                 threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
