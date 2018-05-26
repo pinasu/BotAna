@@ -1364,7 +1364,7 @@ class BotAna(QtCore.QThread):
             else:
                 threading.Thread(target=self.perform_love, args=(self.username, rand, emote)).start()
 
-        elif self.message == '!pompa':
+        elif self.message == '!pompa' and not self.is_in_timeout('!pompa'):
             self.add_in_timeout('!pompa')
             threading.Thread(target=self.perform_pompa, args=(self.username,)).start()
 
