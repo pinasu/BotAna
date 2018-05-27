@@ -439,7 +439,6 @@ class BotAna(QtCore.QThread):
             time.sleep(1)
 
         self.blocked.remove(name)
-        self.send_message(name+' ora può riutilizzare i comandi SeemsGood')
 
     def check_new_follows(self, old):
         while True:
