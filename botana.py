@@ -333,7 +333,7 @@ class BotAna(QtCore.QThread):
 
     def get_user_id(self, user):
         try:
-            url = 'https://api.twitch.tv/kraken/users?login='+user
+            url = 'https://api.twitch.tv/helix/users?login='+user
             params = {
                 'Accept': 'application/vnd.twitchtv.v5+json',
                 'Client-ID' : ''+self.CLIENT_ID+''
@@ -341,7 +341,7 @@ class BotAna(QtCore.QThread):
             resp = requests.get(url=url, headers=params)
             user = json.loads(resp.text)
             if user:
-                return user['users'][0]['_id']
+                return user['data'][0]['id']
         except:
             file = open('LogError.txt', 'a')
             file.write(time.strftime('[%d/%m/%Y - %H:%M:%S] ') + traceback.format_exc() + '\n')
@@ -1477,7 +1477,6 @@ class BotAna(QtCore.QThread):
             self.send_message('Shhhhhh silenzio!')
 
     def call_sound(self, name):
-
         if self.user_info['subscriber'] == '1' or self.user_info['mod'] == '1' or self.username == self.NICK:
             if name[:1] == '!':
                 sname = name[1:]
@@ -1495,7 +1494,7 @@ class BotAna(QtCore.QThread):
             elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
                 self.play_sound(sname)
         else:
-            self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers, subba subito per avere questo vantaggio! Kappa')
+            self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers ('+self.message+'), subba subito per avere questo vantaggio! Kappa')
 
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
