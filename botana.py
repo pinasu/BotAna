@@ -1402,7 +1402,7 @@ class BotAna(QtCore.QThread):
             self.word_in_timeout('classic')
             self.send_message('CLASSIC LUL')
             
-        if 'zizory' in message.lower() and not self.is_word_in_timeout('zizory'):
+        if 'zizory' in message.lower() and not self.is_word_in_timeout('zizory') and self.username.lower() != 'zizory':
             self.word_in_timeout('zizory')
             self.send_message('Zizory PepeHands')
         
