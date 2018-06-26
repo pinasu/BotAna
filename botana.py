@@ -1215,14 +1215,17 @@ class BotAna(QtCore.QThread):
 
     def call_command_pleb(self):
         if self.message == '!cit' and not self.is_in_timeout('!cit'):
-            self.add_in_timeout('!cit')
-            if self.arguments:
-                if self.arguments.isdigit():
-                    self.get_quote(self.arguments)
+            if self.user_info['subscriber'] == '1':
+                self.add_in_timeout('!cit')
+                if self.arguments:
+                    if self.arguments.isdigit():
+                        self.get_quote(self.arguments)
+                    else:
+                        self.add_quote(self.arguments)
                 else:
-                    self.add_quote(self.arguments)
+                    self.get_rand_quote()
             else:
-                self.get_rand_quote()
+                self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers ('+self.message+'), subba subito per avere questo vantaggio! Kappa')
 
         self.message = self.message.lower()
 
@@ -1293,7 +1296,7 @@ class BotAna(QtCore.QThread):
                     self.send_message(self.username+', ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp')
             else:
                 self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers ('+self.message+'), subba subito per avere questo vantaggio! Kappa')
-            
+
         elif self.message == '!players' and not self.is_in_timeout('!players'):
             if self.players:
                 pl = ', '.join(self.players)
@@ -1404,7 +1407,7 @@ class BotAna(QtCore.QThread):
         if 'classic' in message.lower() and not self.is_word_in_timeout('classic'):
             self.word_in_timeout('classic')
             self.send_message('CLASSIC LUL')
-       
+
         elif 'anche io' in message.lower() and not self.is_word_in_timeout('anche io'):
             self.word_in_timeout('anche io')
             self.send_message('Anche io KappaPride')
