@@ -1287,10 +1287,13 @@ class BotAna(QtCore.QThread):
             threading.Thread(target=self.get_patch, args=()).start()
 
         elif self.message == '!play':
-            if self.username not in self.players:
-                self.players.append(self.username)
-                self.send_message(self.username+', ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp')
-
+            if self.user_info['subscriber'] == '1':
+                if self.username not in self.players:
+                    self.players.append(self.username)
+                    self.send_message(self.username+', ti ho aggiunto alla lista dei viewers che vogliono giocare PogChamp')
+            else:
+                self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers ('+self.message+'), subba subito per avere questo vantaggio! Kappa')
+            
         elif self.message == '!players' and not self.is_in_timeout('!players'):
             if self.players:
                 pl = ', '.join(self.players)
