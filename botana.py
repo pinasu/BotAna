@@ -1,4 +1,4 @@
-import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom
+import socket, time, json, requests, datetime, command, configparser, os, traceback, subprocess, random, csv, pygame, threading, pythoncom, botanaDiscordIntegration
 import win32com.client as wincl
 from datetime import datetime as dt
 from bs4 import BeautifulSoup
@@ -143,6 +143,7 @@ class BotAna(QtCore.QThread):
             self.USER_ID = self.get_user_id(self.NICK)
             self.TELEGRAM = self.get_config('config.ini', config, 'telegram')
             self.TRN_Api_Key = self.get_config('config.ini', config, 'TRN-Api-Key')
+            self.DISCORD_TOKEN = self.get_config('config.ini', config, 'Discord_Token')
 
             self.load_commands()
             self.load_sounds()
@@ -182,7 +183,7 @@ class BotAna(QtCore.QThread):
                     file = open('LogError.txt', 'a')
                     file.write(time.strftime('[%d/%m/%Y - %H:%M:%S] ') + '\n' + '-----------------MI è ARRIVATO UN OGGETTO SUL TIPO DELLO STREAM SBAGLIATO---------------------- (linea 154)' + '\n' + '\n')
                     continue
-                '''
+
                 if tmponline['stream'] == None:
                     if self.state_string != 'offline':
                         self.print_message(self.NICK+' is offline.')
@@ -198,6 +199,7 @@ class BotAna(QtCore.QThread):
                 elif tmponline['stream']['stream_type'] == 'rerun':
                     if self.state_string != 'vodcast':
                         self.print_message(self.NICK+' is in a vodcast.')
+                        botanaDiscordIntegration.notify_live(self.DISCORD_TOKEN, '[VODCAST] '+tmponline['channel']['status'], tmponline['stream']['channel']['name'])
                         self.state_string = 'vodcast'
 
                     if rec:
@@ -220,11 +222,12 @@ class BotAna(QtCore.QThread):
                 else:
                     if self.state_string != 'live':
                         self.print_message(self.NICK+' is online.')
+                        botanaDiscordIntegration.notify_live(self.DISCORD_TOKEN, '[LIVE] '+tmponline['stream']['channel']['status'], tmponline['stream']['channel']['name'])
                         self.state_string = 'live'
 
                     if self.vodded:
                         self.vodded = []
-                '''
+
                 if self.rec:
                     for line in self.rec:
                         if 'USERNOTICE' in line:
