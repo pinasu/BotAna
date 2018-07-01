@@ -10,3 +10,4 @@ def notify_live(TOKEN, liveTitle, channel_name):
         await client.send_message(list(client.get_all_channels())[0], msg)
 
     client.run(TOKEN)
+    client.close()

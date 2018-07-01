@@ -158,7 +158,7 @@ class BotAna(QtCore.QThread):
 
             self.print_message('I\'m now connected to '+ self.NICK + '.')
 
-            #self.send_message('Don\'t even worry guys, '+self.botName+' is back anaLove')
+            self.send_message('Don\'t even worry guys, '+self.botName+' is back anaLove')
 
             threading.Thread(target=self.reset_trap, args=()).start()
 
@@ -199,7 +199,7 @@ class BotAna(QtCore.QThread):
                 elif tmponline['stream']['stream_type'] == 'rerun':
                     if self.state_string != 'vodcast':
                         self.print_message(self.NICK+' is in a vodcast.')
-                        botanaDiscordIntegration.notify_live(self.DISCORD_TOKEN, '[VODCAST] '+tmponline['channel']['status'], tmponline['stream']['channel']['name'])
+                        threading.Thread(target=botanaDiscordIntegration.notify_live, args=(self.DISCORD_TOKEN, '[VODCAST] '+tmponline['channel']['status'], tmponline['stream']['channel']['name'],)).start()
                         self.state_string = 'vodcast'
 
                     if rec:
@@ -222,7 +222,7 @@ class BotAna(QtCore.QThread):
                 else:
                     if self.state_string != 'live':
                         self.print_message(self.NICK+' is online.')
-                        botanaDiscordIntegration.notify_live(self.DISCORD_TOKEN, '[LIVE] '+tmponline['stream']['channel']['status'], tmponline['stream']['channel']['name'])
+                        threading.Thread(target=botanaDiscordIntegration.notify_live, args=(self.DISCORD_TOKEN, '[LIVE] '+tmponline['stream']['channel']['status'], tmponline['stream']['channel']['name'],)).start()
                         self.state_string = 'live'
 
                     if self.vodded:
@@ -783,7 +783,6 @@ class BotAna(QtCore.QThread):
                 return
 
             PATH = 'res\\Sounds\\'
-            self.print_message(PATH)
             snd = str(tmp[0])[1:]+'.wav'
             if not os.path.isfile(PATH+snd):
                 self.print_message(PATH+snd)
@@ -955,7 +954,6 @@ class BotAna(QtCore.QThread):
             rand_user = username
             if json_str['chatters']['viewers']:
                 while rand_user == username:
-                    self.print_message('a')
                     rand_user = random.choice(json_str['chatters']['viewers'])
 
             ret_list.append(rand_user)
