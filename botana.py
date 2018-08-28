@@ -251,11 +251,15 @@ class BotAna(QtCore.QThread):
 
                             parts = line.split(':', 2)
 
-                            if len(parts) < 3: continue
-                            if 'QUIT' not in parts[1] and 'JOIN' not in parts[1] and 'PARTS' not in parts[1]:
-                                self.message = parts[2]
+                            if len(parts) == 4:
+                                self.message = parts[3]
+                                usernamesplit = parts[2].split('!')
+                            else:
+                                if len(parts) < 3: continue
+                                if 'QUIT' not in parts[1] and 'JOIN' not in parts[1] and 'PARTS' not in parts[1]:
+                                    self.message = parts[2]
+                                    usernamesplit = parts[1].split('!')
 
-                            usernamesplit = parts[1].split('!')
                             self.username = usernamesplit[0]
 
                             if 'tmi.twitch.tv' in self.username:
