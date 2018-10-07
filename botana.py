@@ -327,7 +327,7 @@ class BotAna(QtCore.QThread):
             self.previous_title = j['status']
             self.previous_game = j['game']
             self.send_message('!title AFK')
-            self.send_message('!game IRL')
+            self.send_message('!game Just Chatting')
         except:
             file = open('LogError.txt', 'a')
             file.write(time.strftime('[%d/%m/%Y - %H:%M:%S] ') + traceback.format_exc() + '\n')
