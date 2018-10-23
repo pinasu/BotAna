@@ -10,8 +10,8 @@ from sound import Sound
 from quote import Quote
 from PyQt5 import QtCore
 from PyQt5.QtCore import pyqtSignal
-import git
-from git import Repo
+#import git
+#from git import 
 
 class BotAna(QtCore.QThread):
     sign = pyqtSignal(str)
@@ -125,7 +125,7 @@ class BotAna(QtCore.QThread):
 
         self.can_move = False
 
-        self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
+        #self.repo = Repo(os.path.dirname(os.path.realpath(__file__)))
 
         self.blocked = []
 
@@ -649,11 +649,11 @@ class BotAna(QtCore.QThread):
             file.close()
 
     def restart(self):
-        try:
-            o = self.repo.remotes.origin
-            o.pull()
-        finally:
-            self.fast_restart()
+        #try:
+        #    o = self.repo.remotes.origin
+        #    o.pull()
+        #finally:
+        self.fast_restart()
 
     def call_command_mod(self):
         self.message = self.message.lower()
