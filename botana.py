@@ -1489,24 +1489,21 @@ class BotAna(QtCore.QThread):
             self.send_message('Shhhhhh silenzio!')
 
     def call_sound(self, name):
-        if self.user_info['subscriber'] == '1' or self.user_info['mod'] == '1' or self.username == self.NICK:
-            if name[:1] == '!':
-                sname = name[1:]
+        if name[:1] == '!':
+            sname = name[1:]
 
-            if name == '!gg':
-                self.sound_add_in_timeout(name)
+        if name == '!gg':
+            self.sound_add_in_timeout(name)
 
-                if self.username not in self.gged:
-                    self.gged[self.username] = 0
+            if self.username not in self.gged:
+                self.gged[self.username] = 0
 
-                if time.time() - self.gged[self.username] > 7:
-                    self.play_sound(sname)
-                    self.gged[self.username] = time.time()
-
-            elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
+            if time.time() - self.gged[self.username] > 7:
                 self.play_sound(sname)
-        else:
-            self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers ('+self.message+'), subba subito per avere questo vantaggio! Kappa')
+                self.gged[self.username] = time.time()
+
+        elif not self.sound_is_in_timeout(name) and self.is_for_current_game(self.sounds[name]):
+            self.play_sound(sname)
 
     def is_for_current_game(self, command):
         if not command.is_for_specific_game():
