@@ -1222,17 +1222,14 @@ class BotAna(QtCore.QThread):
 
     def call_command_pleb(self):
         if self.message == '!cit' and not self.is_in_timeout('!cit'):
-            if self.user_info['subscriber'] == '1':
-                self.add_in_timeout('!cit')
-                if self.arguments:
-                    if self.arguments.isdigit():
-                        self.get_quote(self.arguments)
-                    else:
-                        self.add_quote(self.arguments)
+            self.add_in_timeout('!cit')
+            if self.arguments:
+                if self.arguments.isdigit():
+                    self.get_quote(self.arguments)
                 else:
-                    self.get_rand_quote()
+                    self.add_quote(self.arguments)
             else:
-                self.send_whisper('Ciao! A quanto pare hai provato a usare un comando per soli subscribers ('+self.message+'), subba subito per avere questo vantaggio! Kappa')
+                self.get_rand_quote()
 
         self.message = self.message.lower()
 
