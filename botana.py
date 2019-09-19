@@ -1140,12 +1140,11 @@ class BotAna(QtCore.QThread):
         self.is_muted = False
 
     def speak_text(self, text):
-        if self.user_info['subscriber'] == '1' or self.user_info['mod'] == '1':
-            if not self.is_muted:
-                self.text_to_speech = time.time()
-                pythoncom.CoInitialize()
-                self.speak = wincl.Dispatch('SAPI.SpVoice')
-                self.speak.Speak(text)
+        if not self.is_muted:
+            self.text_to_speech = time.time()
+            pythoncom.CoInitialize()
+            self.speak = wincl.Dispatch('SAPI.SpVoice')
+            self.speak.Speak(text)
 
     def get_rand_quote(self):
         rand = randint(0, len(self.quotes)-1)
